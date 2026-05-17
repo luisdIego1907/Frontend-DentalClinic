@@ -1,7 +1,12 @@
 import { useState } from "react";
+import type { PatientData } from "../../data/patient";
 
-export default function PatientForm({ onSubmit }) {
-  const [formData, setFormData] = useState({
+interface PatientFormProps {
+  onSubmit: (patientData: PatientData) => void;
+}
+
+export default function PatientForm({ onSubmit }: PatientFormProps) {
+  const [formData, setFormData] = useState<PatientData>({
     identification: "",
     first_name: "",
     last_name: "",
@@ -13,10 +18,12 @@ export default function PatientForm({ onSubmit }) {
     status: "Activo",
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof PatientData, string>>
+  >({});
 
   const validateForm = () => {
-    const newErrors = {};
+    const newErrors: Partial<Record<keyof PatientData, string>> = {};
 
     if (!formData.identification.trim()) {
       newErrors.identification = "La identificación es obligatoria.";
@@ -57,7 +64,11 @@ export default function PatientForm({ onSubmit }) {
     return newErrors;
   };
 
-  const handleChange = (event) => {
+  const handleChange = (
+    event: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value } = event.target;
 
     setFormData({
@@ -66,7 +77,7 @@ export default function PatientForm({ onSubmit }) {
     });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateForm();
@@ -83,8 +94,9 @@ export default function PatientForm({ onSubmit }) {
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Identificación</label>
+        <label htmlFor="identification">Identificación</label>
         <input
+          id="identification"
           type="text"
           name="identification"
           value={formData.identification}
@@ -94,8 +106,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Nombre</label>
+        <label htmlFor="first_name">Nombre</label>
         <input
+          id="first_name"
           type="text"
           name="first_name"
           value={formData.first_name}
@@ -105,8 +118,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Apellido</label>
+        <label htmlFor="last_name">Apellido</label>
         <input
+          id="last_name"
           type="text"
           name="last_name"
           value={formData.last_name}
@@ -116,8 +130,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Fecha de nacimiento</label>
+        <label htmlFor="birth_date">Fecha de nacimiento</label>
         <input
+          id="birth_date"
           type="date"
           name="birth_date"
           value={formData.birth_date}
@@ -127,8 +142,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Teléfono</label>
+        <label htmlFor="phone">Teléfono</label>
         <input
+          id="phone"
           type="text"
           name="phone"
           value={formData.phone}
@@ -138,8 +154,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Correo electrónico</label>
+        <label htmlFor="email">Correo electrónico</label>
         <input
+          id="email"
           type="email"
           name="email"
           value={formData.email}
@@ -149,8 +166,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Dirección</label>
+        <label htmlFor="address">Dirección</label>
         <textarea
+          id="address"
           name="address"
           value={formData.address}
           onChange={handleChange}
@@ -159,8 +177,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Género</label>
+        <label htmlFor="gender">Género</label>
         <select
+          id="gender"
           name="gender"
           value={formData.gender}
           onChange={handleChange}
@@ -174,8 +193,9 @@ export default function PatientForm({ onSubmit }) {
       </div>
 
       <div>
-        <label>Estado</label>
+        <label htmlFor="status">Estado</label>
         <select
+          id="status"
           name="status"
           value={formData.status}
           onChange={handleChange}
