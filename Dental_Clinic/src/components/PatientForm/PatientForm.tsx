@@ -1,68 +1,15 @@
 import { useState } from "react";
 import type { PatientData } from "../../data/patient";
+import { validatePatientForm, type PatientFormErrors } from "./PatientValidation";
+import { initialPatientFormData } from "./PatientInitialData";
 
 interface PatientFormProps {
   onSubmit: (patientData: PatientData) => void;
 }
-
 export default function PatientForm({ onSubmit }: PatientFormProps) {
-  const [formData, setFormData] = useState<PatientData>({
-    identification: "",
-    first_name: "",
-    last_name: "",
-    birth_date: "",
-    phone: "",
-    email: "",
-    address: "",
-    gender: "",
-    status: "Activo",
-  });
+  const [formData, setFormData] = useState<PatientData>(initialPatientFormData);
 
-  const [errors, setErrors] = useState<
-    Partial<Record<keyof PatientData, string>>
-  >({});
-
-  const validateForm = () => {
-    const newErrors: Partial<Record<keyof PatientData, string>> = {};
-
-    if (!formData.identification.trim()) {
-      newErrors.identification = "La identificación es obligatoria.";
-    }
-
-    if (!formData.first_name.trim()) {
-      newErrors.first_name = "El nombre es obligatorio.";
-    }
-
-    if (!formData.last_name.trim()) {
-      newErrors.last_name = "El apellido es obligatorio.";
-    }
-
-    if (!formData.birth_date) {
-      newErrors.birth_date = "La fecha de nacimiento es obligatoria.";
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "El teléfono es obligatorio.";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "El correo es obligatorio.";
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "La dirección es obligatoria.";
-    }
-
-    if (!formData.gender) {
-      newErrors.gender = "El género es obligatorio.";
-    }
-
-    if (!formData.status) {
-      newErrors.status = "El estado es obligatorio.";
-    }
-
-    return newErrors;
-  };
+  const [errors, setErrors] = useState<PatientFormErrors>({});
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -76,11 +23,10 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
       [name]: value,
     });
   };
-
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const validationErrors = validateForm();
+    const validationErrors = validatePatientForm(formData);
 
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
