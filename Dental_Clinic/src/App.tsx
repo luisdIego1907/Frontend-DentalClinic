@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
-//import RegisterPatient from "./pages/patients/RegisterPatient";
+import RegisterPatient from "./pages/patients/RegisterPatient";
 import Home from "./features/home/Home";
 import './App.css'
 
@@ -14,7 +14,7 @@ function App() {
         <main className="flex-1 flex flex-col">
           <Routes>         
             <Route path="/" element={<Home />} />
-           {/* <Route path="/patients/register" element={<RegisterPatient />} /> */}
+            <Route path="/patients/register" element={<RegisterPatient />} /> 
           </Routes>
         </main>
 
