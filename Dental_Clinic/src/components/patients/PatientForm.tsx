@@ -91,122 +91,201 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
     onSubmit(formData);
   };
 
+  const inputClass =
+    "mt-1 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
+
+  const textareaClass =
+    "mt-1 w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
+
+  const labelClass = "text-sm font-medium text-gray-700";
+
+  const errorClass = "mt-1 block text-sm text-red-600";
+
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="identification">Identificación</label>
-        <input
-          id="identification"
-          type="text"
-          name="identification"
-          value={formData.identification}
-          onChange={handleChange}
-        />
-        {errors.identification && <span>{errors.identification}</span>}
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
+    >
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Registrar paciente
+        </h2>
+        <p className="mt-1 text-sm text-gray-500">
+          Complete la información del paciente para guardarlo en el sistema.
+        </p>
       </div>
 
-      <div>
-        <label htmlFor="first_name">Nombre</label>
-        <input
-          id="first_name"
-          type="text"
-          name="first_name"
-          value={formData.first_name}
-          onChange={handleChange}
-        />
-        {errors.first_name && <span>{errors.first_name}</span>}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        <div>
+          <label htmlFor="identification" className={labelClass}>
+            Identificación
+          </label>
+          <input
+            id="identification"
+            type="text"
+            name="identification"
+            value={formData.identification}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder="Ej: 1-2345-6789"
+          />
+          {errors.identification && (
+            <span className={errorClass}>{errors.identification}</span>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="first_name" className={labelClass}>
+            Nombre
+          </label>
+          <input
+            id="first_name"
+            type="text"
+            name="first_name"
+            value={formData.first_name}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder="Nombre del paciente"
+          />
+          {errors.first_name && (
+            <span className={errorClass}>{errors.first_name}</span>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="last_name" className={labelClass}>
+            Apellido
+          </label>
+          <input
+            id="last_name"
+            type="text"
+            name="last_name"
+            value={formData.last_name}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder="Apellido del paciente"
+          />
+          {errors.last_name && (
+            <span className={errorClass}>{errors.last_name}</span>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="birth_date" className={labelClass}>
+            Fecha de nacimiento
+          </label>
+          <input
+            id="birth_date"
+            type="date"
+            name="birth_date"
+            value={formData.birth_date}
+            onChange={handleChange}
+            className={inputClass}
+          />
+          {errors.birth_date && (
+            <span className={errorClass}>{errors.birth_date}</span>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="phone" className={labelClass}>
+            Teléfono
+          </label>
+          <input
+            id="phone"
+            type="text"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder="Ej: 8888-8888"
+          />
+          {errors.phone && <span className={errorClass}>{errors.phone}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="email" className={labelClass}>
+            Correo electrónico
+          </label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className={inputClass}
+            placeholder="paciente@correo.com"
+          />
+          {errors.email && <span className={errorClass}>{errors.email}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="gender" className={labelClass}>
+            Género
+          </label>
+          <select
+            id="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="">Seleccione un género</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+          {errors.gender && (
+            <span className={errorClass}>{errors.gender}</span>
+          )}
+        </div>
+
+        <div>
+          <label htmlFor="status" className={labelClass}>
+            Estado
+          </label>
+          <select
+            id="status"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="Activo">Activo</option>
+            <option value="Inactivo">Inactivo</option>
+          </select>
+          {errors.status && (
+            <span className={errorClass}>{errors.status}</span>
+          )}
+        </div>
+
+        <div className="md:col-span-2">
+          <label htmlFor="address" className={labelClass}>
+            Dirección
+          </label>
+          <textarea
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            className={textareaClass}
+            placeholder="Dirección del paciente"
+            rows={4}
+          />
+          {errors.address && (
+            <span className={errorClass}>{errors.address}</span>
+          )}
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="last_name">Apellido</label>
-        <input
-          id="last_name"
-          type="text"
-          name="last_name"
-          value={formData.last_name}
-          onChange={handleChange}
-        />
-        {errors.last_name && <span>{errors.last_name}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="birth_date">Fecha de nacimiento</label>
-        <input
-          id="birth_date"
-          type="date"
-          name="birth_date"
-          value={formData.birth_date}
-          onChange={handleChange}
-        />
-        {errors.birth_date && <span>{errors.birth_date}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="phone">Teléfono</label>
-        <input
-          id="phone"
-          type="text"
-          name="phone"
-          value={formData.phone}
-          onChange={handleChange}
-        />
-        {errors.phone && <span>{errors.phone}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="email">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        {errors.email && <span>{errors.email}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="address">Dirección</label>
-        <textarea
-          id="address"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-        />
-        {errors.address && <span>{errors.address}</span>}
-      </div>
-
-      <div>
-        <label htmlFor="gender">Género</label>
-        <select
-          id="gender"
-          name="gender"
-          value={formData.gender}
-          onChange={handleChange}
+      <div className="mt-8 flex justify-end">
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
         >
-          <option value="">Seleccione un género</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Femenino">Femenino</option>
-          <option value="Otro">Otro</option>
-        </select>
-        {errors.gender && <span>{errors.gender}</span>}
+          Guardar paciente
+        </button>
       </div>
-
-      <div>
-        <label htmlFor="status">Estado</label>
-        <select
-          id="status"
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-        >
-          <option value="Activo">Activo</option>
-          <option value="Inactivo">Inactivo</option>
-        </select>
-        {errors.status && <span>{errors.status}</span>}
-      </div>
-
-      <button type="submit">Guardar</button>
     </form>
   );
 }
