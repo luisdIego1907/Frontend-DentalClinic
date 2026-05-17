@@ -1,4 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./shared/Header";
+import Footer from "./shared/Footer";
 import './App.css'
 
 function App() {
