@@ -7,9 +7,8 @@ import './App.css'
 
 function App() {
   return (
-    <div className="">
+    <div className="min-h-screen flex flex-col bg-slate-50">
       <BrowserRouter>
-        <Header />
 
         <main className="flex-1 flex flex-col">
           <Routes>         
