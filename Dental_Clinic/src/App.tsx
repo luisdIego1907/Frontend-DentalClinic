@@ -1,22 +1,19 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Footer } from "./shared/Footer";
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./shared/Header";
+import Footer from "./shared/Footer";
+import RegisterPatient from "./pages/patients/RegisterPatient";
+import Home from "./features/home/Home";
+import './App.css'
 
 function App() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <BrowserRouter>
 
-        <main className="flex-1 flex flex-col items-center justify-center">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <h1 className="text-4xl font-bold text-sky-500">
-                  Clínica Dental
-                </h1>
-              }
-            />
+        <main className="flex-1 flex flex-col">
+          <Routes>         
+            <Route path="/" element={<Home />} />
+            <Route path="/patients/register" element={<RegisterPatient />} /> 
           </Routes>
         </main>
 
