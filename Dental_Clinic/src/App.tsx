@@ -4,6 +4,7 @@ import Footer from "./shared/Footer";
 import RegisterPatient from "./pages/patients/RegisterPatient";
 import Home from "./features/home/Home";
 import './App.css'
+import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
         <main className="flex-1 flex flex-col">
           <Routes>         
             <Route path="/" element={<Home />} />
-            <Route path="/patients/register" element={<RegisterPatient />} /> 
+            <Route path="/patients/register" element={<RegisterPatient />} />
+            <Route path="/appointments/schedule" element={<ScheduleAppointment />} /> 
           </Routes>
         </main>
 
