@@ -31,6 +31,24 @@ export default function PatientList({ patients }: Props) {
 
   return (
     <div className="container mx-auto px-6 py-8">
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-800">
+            Lista de Pacientes
+          </h1>
+
+          <p className="text-slate-500 mt-1">
+            Gestiona los pacientes registrados en el sistema
+          </p>
+        </div>
+
+        <Link
+          to="/patients/register"
+          className="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-3 rounded-xl font-medium transition-colors"
+        >
+          Registrar Paciente
+        </Link>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {patients.map((patient) => (
@@ -43,7 +61,6 @@ export default function PatientList({ patients }: Props) {
           </Link>
         ))}
       </div>
-
     </div>
   );
 }
