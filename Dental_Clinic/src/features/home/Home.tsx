@@ -12,6 +12,11 @@ export default function Home() {
       <Link to="/patients/register">
         Ir a registrar paciente
       </Link>
+
+      <Link to="/appointments/schedule">
+        Ir a agendar cita
+      </Link>
+
     </main>
   );
 }

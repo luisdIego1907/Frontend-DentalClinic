@@ -3,8 +3,9 @@ import Header from "./shared/Header";
 import Footer from "./shared/Footer";
 import RegisterPatient from "./pages/patients/RegisterPatient";
 import Home from "./features/home/Home";
-import "./App.css";
 import Login from "./pages/Login";
+import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
+import "./App.css";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               path="/odontologo"
               element={<h1>Home Odontólogo - En construcción</h1>}
             />
+            <Route path="/appointments/schedule" element={<ScheduleAppointment />} /> 
           </Routes>
         </main>
 
