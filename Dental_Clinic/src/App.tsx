@@ -1,6 +1,11 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Header from "./shared/Header";
+import Footer from "./shared/Footer";
+import RegisterPatient from "./pages/patients/RegisterPatient";
+import Home from "./features/home/Home";
 import PatientList from "./features/PatientList";
-import './App.css';
+import './App.css'
+import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
 
 function App() {
 
@@ -29,15 +34,11 @@ function App() {
     <div className="min-h-screen flex flex-col bg-slate-50">
       <BrowserRouter>
 
-        <main className="flex-1">
-
-          <Routes>
-
-            <Route
-              path="/"
-              element={<PatientList patients={patients} />}
-            />
-
+        <main className="flex-1 flex flex-col">
+          <Routes>         
+            <Route path="/" element={<Home />} />
+            <Route path="/patients/register" element={<RegisterPatient />} />
+            <Route path="/appointments/schedule" element={<ScheduleAppointment />} /> 
           </Routes>
 
         </main>
