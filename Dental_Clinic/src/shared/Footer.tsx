@@ -1,6 +1,6 @@
 import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 
-export function Footer() {
+export default function Footer() {
   return (
     <footer className="w-full bg-white border-t border-sky-100 mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-5">
