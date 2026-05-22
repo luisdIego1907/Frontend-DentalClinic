@@ -6,8 +6,13 @@ type Props = {
     identification: string;
     phone: string;
   };
+  /*Indica si la tarjeta esta seleccionada o no.
+    Opcional porque la tarjeta en si puede usarse sin seleccion*/ 
   selected?: boolean;
+
   onClick?: () => void;
+
+  /*Funcion opcional que se ejecuta cuando se marca o desmarca el checkbox*/ 
   onSelect?: () => void;
 };
 
@@ -18,6 +23,8 @@ export default function PatientCard({
   onSelect,
 }: Props) {
   return (
+    
+    /*Al hacer click ejecuta onClick, navega al detalle del paciente*/
     <div
       onClick={onClick}
       className={`
@@ -27,20 +34,27 @@ export default function PatientCard({
         shadow-sm overflow-hidden
         hover:shadow-xl hover:-translate-y-1
         ${
+          //Si la tarjeta esta seleccionada, cambia el borde y la sombra
           selected
             ? "border-sky-500 shadow-lg"
+            //sino, se mantiente normal
             : "border-slate-200 hover:border-sky-300"
         }
       `}
     >
+      {/*Contenedor del checkbox ubicado en la esquina superior derecha */}
       <div className="absolute top-4 right-4">
         <input
           type="checkbox"
           checked={selected}
+          //Se ejecuta cuando el usuario marca o desmarca el checkbox
           onChange={(e) => {
+            //Evita que el click del checkbox active tambien el click de la tarjeta
             e.stopPropagation();
+            //Ejecuta la funcion de seleccion
             onSelect?.();
           }}
+          // También detiene la propagación del click.
           onClick={(e) => e.stopPropagation()}
           className="
             w-5 h-5 rounded
@@ -49,7 +63,8 @@ export default function PatientCard({
           "
         />
       </div>
-
+      
+      {/*Contenedor de la informacion visible de la tarjeta*/}
       <div className="flex items-start gap-4">
         <div
           className="
