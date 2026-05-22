@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { AppointmentData } from "../../data/appointment";
+import type { PatientData } from "../../data/patient";
 import {
   validateAppointmentForm,
   type AppointmentFormErrors,
@@ -7,33 +8,18 @@ import {
 import { initialAppointmentFormData } from "./AppointmentInitialData";
 
 interface AppointmentFormProps {
+  patients: PatientData[];
   onSubmit: (appointmentData: AppointmentData) => void;
 }
 
-const generateTimeSlots = (
-  startHour: number,
-  endHour: number,
-  intervalMinutes: number
-) => {
-  const slots: string[] = [];
-
-  for (let hour = startHour; hour <= endHour; hour++) {
-    for (let minutes = 0; minutes < 60; minutes += intervalMinutes) {
-      slots.push(
-        `${String(hour).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`
-      );
-    }
-  }
-
-  return slots;
-};
-
-export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
+export default function AppointmentForm({ patients, onSubmit }: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentData>(
     initialAppointmentFormData
   );
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
+
+  const activePatients = patients.filter((patient) => patient.status === "Activo");
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -45,6 +31,17 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
     setFormData({
       ...formData,
       [name]: name === "durationMinutes" ? Number(value) : value,
+    });
+  };
+
+  const handlePatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedPatient = activePatients.find(
+      (patient) => patient.identification === event.target.value
+    );
+
+    setFormData({
+      ...formData,
+      patient: selectedPatient ?? null,
     });
   };
 
@@ -72,13 +69,11 @@ export default function AppointmentForm({ onSubmit }: AppointmentFormProps) {
 
   const errorClass = "mt-1 block text-sm text-red-600";
 
-  const timeSlots = generateTimeSlots(7, 16, 30);
+  const appointmentHours = Array.from({ length: 24 }, (_, index) =>
+    String(index).padStart(2, "0")
+  );
 
-const appointmentHours = Array.from({ length: 24 }, (_, index) =>
-  String(index).padStart(2, "0")
-);
-
-const appointmentMinutes = ["00", "15", "30", "45"];
+  const appointmentMinutes = ["00", "15", "30", "45"];
 
   return (
     <form
@@ -86,9 +81,7 @@ const appointmentMinutes = ["00", "15", "30", "45"];
       className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Registrar cita
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900">Registrar cita</h2>
         <p className="mt-1 text-sm text-gray-500">
           Complete los datos de la cita para agendarla en el sistema.
         </p>
@@ -96,21 +89,26 @@ const appointmentMinutes = ["00", "15", "30", "45"];
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
         <div>
-          <label htmlFor="patientName" className={labelClass}>
+          <label htmlFor="patient" className={labelClass}>
             Paciente
           </label>
-          <input
-            id="patientName"
-            type="text"
-            name="patientName"
-            value={formData.patientName}
-            onChange={handleChange}
+          <select
+            id="patient"
+            name="patient"
+            value={formData.patient?.identification ?? ""}
+            onChange={handlePatientChange}
             className={inputClass}
-            placeholder="Nombre del paciente"
-          />
-          {errors.patientName && (
-            <span className={errorClass}>{errors.patientName}</span>
-          )}
+          >
+            <option value="" disabled>
+              Seleccione un paciente
+            </option>
+            {activePatients.map((patient) => (
+              <option key={patient.identification} value={patient.identification}>
+                {patient.first_name} {patient.last_name} - {patient.identification}
+              </option>
+            ))}
+          </select>
+          {errors.patient && <span className={errorClass}>{errors.patient}</span>}
         </div>
 
         <div>
@@ -128,69 +126,69 @@ const appointmentMinutes = ["00", "15", "30", "45"];
           {errors.date && <span className={errorClass}>{errors.date}</span>}
         </div>
 
-<div>
-  <label className={labelClass}>Hora de la cita</label>
+        <div>
+          <label className={labelClass}>Hora de la cita</label>
 
-  <div className="mt-1 grid grid-cols-2 gap-3">
-    <div>
-      <label htmlFor="hour" className={labelClass}>
-        Hora
-      </label>
-      <select
-        id="hour"
-        value={formData.time.split(":")[0] || ""}
-        onChange={(event) => {
-          const minutes = formData.time.split(":")[1] || "";
+          <div className="mt-1 grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="hour" className={labelClass}>
+                Hora
+              </label>
+              <select
+                id="hour"
+                value={formData.time.split(":")[0] || ""}
+                onChange={(event) => {
+                  const minutes = formData.time.split(":")[1] || "";
 
-          setFormData({
-            ...formData,
-            time: `${event.target.value}:${minutes}`,
-          });
-        }}
-        className={inputClass}
-      >
-        <option value="" disabled>
-          Seleccione
-        </option>
-        {appointmentHours.map((hour) => (
-          <option key={hour} value={hour}>
-            {hour}
-          </option>
-        ))}
-      </select>
-    </div>
+                  setFormData({
+                    ...formData,
+                    time: `${event.target.value}:${minutes}`,
+                  });
+                }}
+                className={inputClass}
+              >
+                <option value="" disabled>
+                  Seleccione
+                </option>
+                {appointmentHours.map((hour) => (
+                  <option key={hour} value={hour}>
+                    {hour}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-    <div>
-      <label htmlFor="minutes" className={labelClass}>
-        Minutos
-      </label>
-      <select
-        id="minutes"
-        value={formData.time.split(":")[1] || ""}
-        onChange={(event) => {
-          const hour = formData.time.split(":")[0] || "";
+            <div>
+              <label htmlFor="minutes" className={labelClass}>
+                Minutos
+              </label>
+              <select
+                id="minutes"
+                value={formData.time.split(":")[1] || ""}
+                onChange={(event) => {
+                  const hour = formData.time.split(":")[0] || "";
 
-          setFormData({
-            ...formData,
-            time: `${hour}:${event.target.value}`,
-          });
-        }}
-        className={inputClass}
-      >
-        <option value="" disabled>
-          Seleccione
-        </option>
-        {appointmentMinutes.map((minutes) => (
-          <option key={minutes} value={minutes}>
-            {minutes}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
+                  setFormData({
+                    ...formData,
+                    time: `${hour}:${event.target.value}`,
+                  });
+                }}
+                className={inputClass}
+              >
+                <option value="" disabled>
+                  Seleccione
+                </option>
+                {appointmentMinutes.map((minutes) => (
+                  <option key={minutes} value={minutes}>
+                    {minutes}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-  {errors.time && <span className={errorClass}>{errors.time}</span>}
-</div>
+          {errors.time && <span className={errorClass}>{errors.time}</span>}
+        </div>
 
         <div>
           <label htmlFor="durationMinutes" className={labelClass}>
@@ -223,9 +221,7 @@ const appointmentMinutes = ["00", "15", "30", "45"];
             placeholder="Motivo de la cita"
             rows={4}
           />
-          {errors.reason && (
-            <span className={errorClass}>{errors.reason}</span>
-          )}
+          {errors.reason && <span className={errorClass}>{errors.reason}</span>}
         </div>
       </div>
 

@@ -7,15 +7,17 @@ export function validateAppointmentForm(
 ): AppointmentFormErrors {
   const newErrors: AppointmentFormErrors = {};
 
-  if (!formData.patientName.trim()) {
-    newErrors.patientName = "El nombre del paciente es obligatorio.";
+  const [hour, minutes] = formData.time.split(":");
+
+  if (!formData.patient) {
+    newErrors.patient = "El paciente es obligatorio.";
   }
 
   if (!formData.date) {
     newErrors.date = "La fecha de la cita es obligatoria.";
   }
 
-  if (!formData.time) {
+  if (!hour || !minutes) {
     newErrors.time = "La hora de la cita es obligatoria.";
   }
 
