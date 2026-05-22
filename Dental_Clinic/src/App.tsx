@@ -6,7 +6,9 @@ import Home from "./features/home/Home";
 import PatientList from "./features/PatientList";
 
 import RegisterPatient from "./pages/patients/RegisterPatient";
+import Login from "./pages/Login";
 import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
+import "./App.css";
 
 import { patientsMock } from "./mocks/patient.mock";
 
@@ -36,6 +38,21 @@ function App() {
               path="/appointments/schedule"
               element={<ScheduleAppointment />}
             />
+            <Route path="/patients/register" element={<RegisterPatient />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/admin"
+              element={<h1>Home Admin - En construcción</h1>}
+            />
+            <Route
+              path="/recepcionista"
+              element={<h1>Home Recepcionista - En construcción</h1>}
+            />
+            <Route
+              path="/odontologo"
+              element={<h1>Home Odontólogo - En construcción</h1>}
+            />
+            <Route path="/appointments/schedule" element={<ScheduleAppointment />} /> 
           </Routes>
         </main>
 
