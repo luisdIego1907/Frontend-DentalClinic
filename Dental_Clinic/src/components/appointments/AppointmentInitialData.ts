@@ -2,7 +2,7 @@ import type { AppointmentData } from "../../data/appointment";
 
 export const initialAppointmentFormData: AppointmentData = {
   id: 0,
-  patientName: "",
+  patient: null,
   date: "",
   time: "",
   durationMinutes: 15,

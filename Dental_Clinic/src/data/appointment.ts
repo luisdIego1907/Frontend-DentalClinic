@@ -1,6 +1,8 @@
+import type { PatientData } from "./patient";
+
 export interface AppointmentData {
   id: number;
-  patientName: string;
+  patient: PatientData | null;
   date: string;
   time: string;
   durationMinutes: number;

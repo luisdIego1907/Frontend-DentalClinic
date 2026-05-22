@@ -1,6 +1,43 @@
 import { useState } from "react";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import type { AppointmentData } from "../../data/appointment";
+import type { PatientData } from "../../data/patient";
+
+const mockPatients: PatientData[] = [
+  {
+    identification: "1-1902-1157",
+    first_name: "María",
+    last_name: "González",
+    birth_date: "1998-04-12",
+    phone: "8743-3451",
+    email: "mariaza06@gmail.com",
+    address: "San José, Costa Rica",
+    gender: "Femenino",
+    status: "Activo",
+  },
+  {
+    identification: "3-4421-4254",
+    first_name: "Carlos",
+    last_name: "Ramírez",
+    birth_date: "1995-09-23",
+    phone: "6543-8634",
+    email: "carlosram82@gmail.com",
+    address: "Cartago, Costa Rica",
+    gender: "Masculino",
+    status: "Inactivo",
+  },
+  {
+    identification: "2-6282-4595",
+    first_name: "Antonio",
+    last_name: "Ramos",
+    birth_date: "1991-01-12",
+    phone: "3485-9951",
+    email: "antamos44@gmail.com",
+    address: "San José, Costa Rica",
+    gender: "Masculino",
+    status: "Activo",
+  },
+];
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -30,7 +67,7 @@ export default function ScheduleAppointments() {
   const [appointments, setAppointments] = useState<AppointmentData[]>([
     {
       id: 1,
-      patientName: "Paciente de prueba",
+      patient: mockPatients[0],
       date: "2026-07-06",
       time: "07:30",
       durationMinutes: 30,
@@ -44,6 +81,11 @@ export default function ScheduleAppointments() {
   const handleSaveAppointment = (appointmentData: AppointmentData) => {
     setSuccessMessage("");
     setErrorMessage("");
+
+    if (!appointmentData.patient || appointmentData.patient.status !== "Activo") {
+      setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
+      return;
+    }
 
     const newStart = convertTimeToMinutes(appointmentData.time);
     const newEnd = newStart + appointmentData.durationMinutes;
@@ -108,7 +150,7 @@ export default function ScheduleAppointments() {
           </div>
         )}
 
-        <AppointmentForm onSubmit={handleSaveAppointment} />
+        <AppointmentForm patients={mockPatients} onSubmit={handleSaveAppointment} />
 
         <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
@@ -123,15 +165,29 @@ export default function ScheduleAppointments() {
                 className="rounded-xl border border-gray-200 bg-gray-50 p-4"
               >
                 <p className="font-semibold text-gray-900">
-                  {appointment.patientName}
+                  {appointment.patient
+                    ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
+                    : "Paciente no seleccionado"}
                 </p>
+
+                {appointment.patient && (
+                  <p className="text-sm text-gray-600">
+                    Identificación: {appointment.patient.identification}
+                  </p>
+                )}
+
                 <p className="text-sm text-gray-600">
                   Fecha: {formatDateToDayMonthYear(appointment.date)}
                 </p>
+
                 <p className="text-sm text-gray-600">
                   Horario: {appointment.time} -{" "}
-                  {getAppointmentEndTime(appointment.time, appointment.durationMinutes)}
+                  {getAppointmentEndTime(
+                    appointment.time,
+                    appointment.durationMinutes
+                  )}
                 </p>
+
                 <p className="text-sm text-gray-600">
                   Motivo: {appointment.reason}
                 </p>
