@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import PatientCard from "./PatientCard";
 
+// Define la estructura de un paciente.
 type Patient = {
   id: number;
   name: string;
@@ -10,7 +11,9 @@ type Patient = {
   phone: string;
 };
 
+// Define las propiedades que recibe PatientList.
 type Props = {
+  // Lista de pacientes que se recibe desde otro componente
   patients: Patient[];
 };
 
@@ -21,21 +24,25 @@ export default function PatientList({ patients }: Props) {
   const [selectedPatients, setSelectedPatients] = useState<number[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Función para seleccionar o deseleccionar un paciente.
   const handleSelectPatient = (patientId: number) => {
     setSuccessMessage("");
 
     setSelectedPatients((prevSelected) => {
+      // Si el paciente ya estaba seleccionado, se elimina de la selección.
       if (prevSelected.includes(patientId)) {
         return prevSelected.filter((id) => id !== patientId);
       }
-
+      // Si el paciente no estaba seleccionado, se agrega a la selección.
       return [...prevSelected, patientId];
     });
   };
 
+  // Función que elimina los pacientes seleccionados.
   const handleDeletePatients = () => {
     if (selectedPatients.length === 0) return;
 
+    // Muestra una ventana de confirmación antes de eliminar.
     const confirmDelete = window.confirm(
       `¿Está seguro de que desea eliminar ${selectedPatients.length} paciente(s)?`
     );
