@@ -75,6 +75,9 @@ export default function ScheduleAppointments() {
     },
   ]);
 
+  const [appointmentToEdit, setAppointmentToEdit] =
+    useState<AppointmentData | null>(null);
+
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -91,6 +94,10 @@ export default function ScheduleAppointments() {
     const newEnd = newStart + appointmentData.durationMinutes;
 
     const appointmentExists = appointments.some((appointment) => {
+      if (appointmentToEdit && appointment.id === appointmentToEdit.id) {
+        return false;
+      }
+
       if (appointment.date !== appointmentData.date) {
         return false;
       }
@@ -106,6 +113,23 @@ export default function ScheduleAppointments() {
       return;
     }
 
+    if (appointmentToEdit) {
+      const updatedAppointments = appointments.map((appointment) =>
+        appointment.id === appointmentToEdit.id
+          ? {
+              ...appointmentData,
+              id: appointmentToEdit.id,
+              patient: appointmentToEdit.patient,
+            }
+          : appointment
+      );
+
+      setAppointments(updatedAppointments);
+      setAppointmentToEdit(null);
+      setSuccessMessage("Cita modificada correctamente.");
+      return;
+    }
+
     const newAppointment: AppointmentData = {
       ...appointmentData,
       id: appointments.length + 1,
@@ -113,6 +137,18 @@ export default function ScheduleAppointments() {
 
     setAppointments([...appointments, newAppointment]);
     setSuccessMessage("Cita agendada correctamente.");
+  };
+
+  const handleEditAppointment = (appointment: AppointmentData) => {
+    setSuccessMessage("");
+    setErrorMessage("");
+    setAppointmentToEdit(appointment);
+  };
+
+  const handleCancelEdit = () => {
+    setAppointmentToEdit(null);
+    setSuccessMessage("");
+    setErrorMessage("");
   };
 
   const sortedAppointments = [...appointments].sort((a, b) => {
@@ -150,7 +186,12 @@ export default function ScheduleAppointments() {
           </div>
         )}
 
-        <AppointmentForm patients={mockPatients} onSubmit={handleSaveAppointment} />
+        <AppointmentForm
+          patients={mockPatients}
+          onSubmit={handleSaveAppointment}
+          appointmentToEdit={appointmentToEdit}
+          onCancelEdit={handleCancelEdit}
+        />
 
         <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
@@ -164,33 +205,45 @@ export default function ScheduleAppointments() {
                 key={appointment.id}
                 className="rounded-xl border border-gray-200 bg-gray-50 p-4"
               >
-                <p className="font-semibold text-gray-900">
-                  {appointment.patient
-                    ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
-                    : "Paciente no seleccionado"}
-                </p>
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {appointment.patient
+                        ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
+                        : "Paciente no seleccionado"}
+                    </p>
 
-                {appointment.patient && (
-                  <p className="text-sm text-gray-600">
-                    Identificación: {appointment.patient.identification}
-                  </p>
-                )}
+                    {appointment.patient && (
+                      <p className="text-sm text-gray-600">
+                        Identificación: {appointment.patient.identification}
+                      </p>
+                    )}
 
-                <p className="text-sm text-gray-600">
-                  Fecha: {formatDateToDayMonthYear(appointment.date)}
-                </p>
+                    <p className="text-sm text-gray-600">
+                      Fecha: {formatDateToDayMonthYear(appointment.date)}
+                    </p>
 
-                <p className="text-sm text-gray-600">
-                  Horario: {appointment.time} -{" "}
-                  {getAppointmentEndTime(
-                    appointment.time,
-                    appointment.durationMinutes
-                  )}
-                </p>
+                    <p className="text-sm text-gray-600">
+                      Horario: {appointment.time} -{" "}
+                      {getAppointmentEndTime(
+                        appointment.time,
+                        appointment.durationMinutes
+                      )}
+                    </p>
 
-                <p className="text-sm text-gray-600">
-                  Motivo: {appointment.reason}
-                </p>
+                    <p className="text-sm text-gray-600">
+                      Motivo: {appointment.reason}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleEditAppointment(appointment)}
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                  >
+                    Editar
+                  </button>
+                </div>
               </div>
             ))}
           </div>
