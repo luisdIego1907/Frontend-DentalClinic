@@ -2,25 +2,17 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import PatientCard from "./PatientCard";
+import type {PatientListItem} from "../data/patient";
 
-// Define la estructura de un paciente.
-type Patient = {
-  id: number;
-  name: string;
-  identification: string;
-  phone: string;
-};
-
-// Define las propiedades que recibe PatientList.
 type Props = {
   // Lista de pacientes que se recibe desde otro componente
-  patients: Patient[];
+  patients: PatientListItem[];
 };
 
 export default function PatientList({ patients }: Props) {
   const navigate = useNavigate();
 
-  const [patientList, setPatientList] = useState<Patient[]>(patients);
+  const [patientList, setPatientList] = useState<PatientListItem[]>(patients);
   const [selectedPatients, setSelectedPatients] = useState<number[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
 
