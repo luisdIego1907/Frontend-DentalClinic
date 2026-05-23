@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { patientsMock } from "../mocks/patient.mock";
-import type {PatientDetails} from "../data/patient";
-
-type PatientDetailsErrors = Partial<Record<keyof PatientDetails, string>>;
+import type { PatientDetails } from "../data/patient";
+import PatientEditForm from "../components/UpdatePatient/PatientEditForm";
+import PatientInfo from "./PatientInfo";
 
 export default function PatientDetail() {
   const { id } = useParams();
@@ -16,15 +16,10 @@ export default function PatientDetail() {
     foundPatient
   );
 
-  const [formData, setFormData] = useState<PatientDetails | undefined>(
-    foundPatient
-  );
-
   const [isEditing, setIsEditing] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
-  const [errors, setErrors] = useState<PatientDetailsErrors>({});
 
-  if (!patient || !formData) {
+  if (!patient) {
     return (
       <main className="container mx-auto px-6 py-12">
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
@@ -47,67 +42,21 @@ export default function PatientDetail() {
     );
   }
 
-  const validateForm = () => {
-    const newErrors: PatientDetailsErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "El nombre completo es obligatorio.";
-    }
-
-    if (!formData.identification.trim()) {
-      newErrors.identification = "La identificación es obligatoria.";
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "El teléfono es obligatorio.";
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "La dirección es obligatoria.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
-    setFormData((prevData) => {
-      if (!prevData) return prevData;
-
-      return {
-        ...prevData,
-        [name]: value,
-      };
-    });
-  };
-
   const handleEdit = () => {
     setIsEditing(true);
     setSuccessMessage("");
   };
 
   const handleCancel = () => {
-    setFormData(patient);
     setIsEditing(false);
-    setErrors({});
   };
 
-  const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSavePatient = (updatedPatient: PatientDetails) => {
+    console.log("Paciente actualizado:", updatedPatient);
 
-    if (!validateForm()) {
-      return;
-    }
-
-    console.log("Paciente actualizado:", formData);
-
-    setPatient(formData);
+    setPatient(updatedPatient);
     setIsEditing(false);
     setSuccessMessage("Paciente actualizado correctamente.");
-    setErrors({});
   };
 
   return (
@@ -151,165 +100,13 @@ export default function PatientDetail() {
         </div>
 
         {isEditing ? (
-          <form onSubmit={handleSave} className="space-y-6">
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-2">
-                Nombre completo
-              </label>
-
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className={`
-                  w-full rounded-xl border px-4 py-3 outline-none transition
-                  ${
-                    errors.name
-                      ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-                  }
-                `}
-              />
-
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-2">
-                Identificación
-              </label>
-
-              <input
-                type="text"
-                name="identification"
-                value={formData.identification}
-                onChange={handleChange}
-                className={`
-                  w-full rounded-xl border px-4 py-3 outline-none transition
-                  ${
-                    errors.identification
-                      ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-                  }
-                `}
-              />
-
-              {errors.identification && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.identification}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-2">
-                Teléfono
-              </label>
-
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className={`
-                  w-full rounded-xl border px-4 py-3 outline-none transition
-                  ${
-                    errors.phone
-                      ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-                  }
-                `}
-              />
-
-              {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-2">
-                Dirección
-              </label>
-
-              <input
-                type="text"
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                className={`
-                  w-full rounded-xl border px-4 py-3 outline-none transition
-                  ${
-                    errors.address
-                      ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                      : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-                  }
-                `}
-              />
-
-              {errors.address && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.address}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end gap-3 pt-4">
-              <button
-                type="button"
-                onClick={handleCancel}
-                className="px-5 py-3 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-100 transition-colors"
-              >
-                Cancelar
-              </button>
-
-              <button
-                type="submit"
-                className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium transition-colors"
-              >
-                Guardar
-              </button>
-            </div>
-          </form>
+          <PatientEditForm
+            patient={patient}
+            onSave={handleSavePatient}
+            onCancel={handleCancel}
+          />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p className="text-sm font-semibold text-slate-500">ID</p>
-              <p className="text-lg text-slate-800">{patient.id}</p>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-slate-500">
-                Nombre completo
-              </p>
-              <p className="text-lg text-slate-800">{patient.name}</p>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-slate-500">
-                Identificación
-              </p>
-              <p className="text-lg text-slate-800">
-                {patient.identification}
-              </p>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-slate-500">
-                Teléfono
-              </p>
-              <p className="text-lg text-slate-800">{patient.phone}</p>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold text-slate-500">
-                Dirección
-              </p>
-              <p className="text-lg text-slate-800">{patient.address}</p>
-            </div>
-          </div>
+          <PatientInfo patient={patient} />
         )}
       </section>
     </main>

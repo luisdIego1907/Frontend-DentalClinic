@@ -1,35 +1,27 @@
 import { useState } from "react";
+import type { PatientDetails } from "../../data/patient";
 
-type Patient = {
-  id: number;
-  name: string;
-  identification: string;
-  phone: string;
-};
-
-type PatientFormErrors = Partial<Record<keyof Patient, string>>;
+type PatientDetailsErrors = Partial<Record<keyof PatientDetails, string>>;
 
 type Props = {
-  patient: Patient;
-  onSave: (updatedPatient: Patient) => void;
+  patient: PatientDetails;
+  onSave: (updatedPatient: PatientDetails) => void;
   onCancel: () => void;
 };
 
-export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
-  const [formData, setFormData] = useState<Patient>({
-    id: patient.id,
-    name: patient.name,
-    identification: patient.identification,
-    phone: patient.phone,
-  });
-
-  const [errors, setErrors] = useState<PatientFormErrors>({});
+export default function PatientEditForm({
+  patient,
+  onSave,
+  onCancel,
+}: Props) {
+  const [formData, setFormData] = useState<PatientDetails>(patient);
+  const [errors, setErrors] = useState<PatientDetailsErrors>({});
 
   const validateForm = () => {
-    const newErrors: PatientFormErrors = {};
+    const newErrors: PatientDetailsErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "El nombre es obligatorio.";
+      newErrors.name = "El nombre completo es obligatorio.";
     }
 
     if (!formData.identification.trim()) {
@@ -38,6 +30,10 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
 
     if (!formData.phone.trim()) {
       newErrors.phone = "El teléfono es obligatorio.";
+    }
+
+    if (!formData.address.trim()) {
+      newErrors.address = "La dirección es obligatoria.";
     }
 
     setErrors(newErrors);
@@ -54,7 +50,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
     }));
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!validateForm()) {
@@ -65,7 +61,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSave} className="space-y-6">
       <div>
         <label className="block text-sm font-semibold text-slate-600 mb-2">
           Nombre completo
@@ -76,11 +72,14 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
           name="name"
           value={formData.name}
           onChange={handleChange}
-          className={`w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 ${
-            errors.name
-              ? "border-red-400 focus:ring-red-200"
-              : "border-slate-300 focus:ring-blue-200"
-          }`}
+          className={`
+            w-full rounded-xl border px-4 py-3 outline-none transition
+            ${
+              errors.name
+                ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            }
+          `}
         />
 
         {errors.name && (
@@ -98,11 +97,14 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
           name="identification"
           value={formData.identification}
           onChange={handleChange}
-          className={`w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 ${
-            errors.identification
-              ? "border-red-400 focus:ring-red-200"
-              : "border-slate-300 focus:ring-blue-200"
-          }`}
+          className={`
+            w-full rounded-xl border px-4 py-3 outline-none transition
+            ${
+              errors.identification
+                ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            }
+          `}
         />
 
         {errors.identification && (
@@ -122,11 +124,14 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
           name="phone"
           value={formData.phone}
           onChange={handleChange}
-          className={`w-full rounded-lg border px-4 py-2 outline-none focus:ring-2 ${
-            errors.phone
-              ? "border-red-400 focus:ring-red-200"
-              : "border-slate-300 focus:ring-blue-200"
-          }`}
+          className={`
+            w-full rounded-xl border px-4 py-3 outline-none transition
+            ${
+              errors.phone
+                ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            }
+          `}
         />
 
         {errors.phone && (
@@ -134,18 +139,43 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
         )}
       </div>
 
+      <div>
+        <label className="block text-sm font-semibold text-slate-600 mb-2">
+          Dirección
+        </label>
+
+        <input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+          className={`
+            w-full rounded-xl border px-4 py-3 outline-none transition
+            ${
+              errors.address
+                ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            }
+          `}
+        />
+
+        {errors.address && (
+          <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+        )}
+      </div>
+
       <div className="flex justify-end gap-3 pt-4">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-2 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 transition"
+          className="px-5 py-3 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-100 transition-colors"
         >
           Cancelar
         </button>
 
         <button
           type="submit"
-          className="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+          className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium transition-colors"
         >
           Guardar
         </button>
