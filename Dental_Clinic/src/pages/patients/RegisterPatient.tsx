@@ -1,5 +1,5 @@
 import { useState } from "react";
-import PatientForm from "../../components/PatientForm/PatientForm";
+import PatientForm from "../../components/Forms/RegisterPatientForm/PatientForm";
 import type { PatientData } from "../../data/patient";
 
 export default function RegisterPatient() {

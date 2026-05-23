@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { PatientData } from "../../data/patient";
-import { validatePatientForm, type PatientFormErrors } from "./PatientValidation";
+import type { PatientData } from "../../../data/patient";
+import { validatePatientForm, type PatientFormErrors } from "../PatientValidation";
 import { initialPatientFormData } from "./PatientInitialData";
 
 interface PatientFormProps {

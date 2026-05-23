@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { patientsMock } from "../mocks/patient.mock";
 import type { PatientDetails } from "../data/patient";
-import PatientEditForm from "../components/UpdatePatient/PatientEditForm";
+import PatientEditForm from "../components/Forms/UpdatePatientForm/PatientEditForm";
 import PatientInfo from "./PatientInfo";
 
 export default function PatientDetail() {

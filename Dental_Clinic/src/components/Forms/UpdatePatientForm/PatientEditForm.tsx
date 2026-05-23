@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { PatientDetails } from "../../data/patient";
+import type { PatientDetails } from "../../../data/patient";
 import {
   validatePatientEditForm,
   type PatientEditFormErrors,
-} from "../PatientForm/PatientValidation";
+} from "../PatientValidation";
 
 type Props = {
   patient: PatientDetails;
