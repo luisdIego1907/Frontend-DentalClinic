@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
 import "./App.css";
 import NotFound from "./shared/NotFound";
+import PatientDetail from "./features/PatientDetail";
 
 import { patientsMock } from "./mocks/patient.mock";
 
@@ -26,6 +27,11 @@ function App() {
             <Route
               path="/patients"
               element={<PatientList patients={patientsMock} />}
+            />
+
+            <Route 
+              path="/patients/:id" 
+              element={<PatientDetail />} 
             />
 
             <Route
