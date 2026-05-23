@@ -1,26 +1,65 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
-import RegisterPatient from "./pages/patients/RegisterPatient";
 import Home from "./features/home/Home";
-import './App.css'
+import PatientList from "./features/PatientList";
+import RegisterPatient from "./pages/patients/RegisterPatient";
+import Login from "./pages/Login";
+import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
+import "./App.css";
+import NotFound from "./shared/NotFound";
+
+import { patientsMock } from "./mocks/patient.mock";
+
+import "./App.css";
 
 function App() {
   return (
-    <div className="">
-      <BrowserRouter>
+    <BrowserRouter>
+      <div className="flex flex-col min-h-screen">
         <Header />
 
         <main className="flex-1 flex flex-col">
-          <Routes>         
+          <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/patients/register" element={<RegisterPatient />} /> 
+
+            <Route
+              path="/patients"
+              element={<PatientList patients={patientsMock} />}
+            />
+
+            <Route
+              path="/patients/register"
+              element={<RegisterPatient />}
+            />
+
+            <Route
+              path="/appointments/schedule"
+              element={<ScheduleAppointment />}
+            />
+            <Route path="/patients/register" element={<RegisterPatient />} />
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/admin"
+              element={<h1>Home Admin - En construcción</h1>}
+            />
+            <Route
+              path="/recepcionista"
+              element={<h1>Home Recepcionista - En construcción</h1>}
+            />
+            <Route
+              path="/odontologo"
+              element={<h1>Home Odontólogo - En construcción</h1>}
+            />
+            <Route path="/appointments/schedule" element={<ScheduleAppointment />} />
+
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
 
         <Footer />
-      </BrowserRouter>
-    </div>
+      </div>
+    </BrowserRouter>
   );
 }
 
