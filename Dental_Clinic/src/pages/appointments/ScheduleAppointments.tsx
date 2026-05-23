@@ -72,6 +72,8 @@ export default function ScheduleAppointments() {
       time: "07:30",
       durationMinutes: 30,
       reason: "Limpieza dental",
+      doctor: "Dr. Jones",
+      status: "Pendiente",
     },
   ]);
 
@@ -82,8 +84,13 @@ export default function ScheduleAppointments() {
     setSuccessMessage("");
     setErrorMessage("");
 
-    if (!appointmentData.patient || appointmentData.patient.status !== "Activo") {
-      setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
+    if (
+      !appointmentData.patient ||
+      appointmentData.patient.status !== "Activo"
+    ) {
+      setErrorMessage(
+        "No se puede agendar una cita para un paciente inactivo.",
+      );
       return;
     }
 
@@ -134,7 +141,8 @@ export default function ScheduleAppointments() {
           <h1 className="text-3xl font-bold text-gray-900">Agendar cita</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar una cita odontológica.
+            Complete la información necesaria para registrar una cita
+            odontológica.
           </p>
         </div>
 
@@ -150,7 +158,10 @@ export default function ScheduleAppointments() {
           </div>
         )}
 
-        <AppointmentForm patients={mockPatients} onSubmit={handleSaveAppointment} />
+        <AppointmentForm
+          patients={mockPatients}
+          onSubmit={handleSaveAppointment}
+        />
 
         <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
@@ -184,7 +195,7 @@ export default function ScheduleAppointments() {
                   Horario: {appointment.time} -{" "}
                   {getAppointmentEndTime(
                     appointment.time,
-                    appointment.durationMinutes
+                    appointment.durationMinutes,
                   )}
                 </p>
 
