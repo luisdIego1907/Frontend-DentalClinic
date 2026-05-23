@@ -1,6 +1,10 @@
-import type { PatientData } from "../../data/patient";
+import type { PatientData, PatientDetails} from "../../data/patient";
 
 export type PatientFormErrors = Partial<Record<keyof PatientData, string>>;
+
+export type PatientEditFormErrors = Partial<
+  Record<keyof PatientDetails, string>
+>;
 
 export function validatePatientForm(formData: PatientData): PatientFormErrors {
   const newErrors: PatientFormErrors = {};
@@ -39,6 +43,30 @@ export function validatePatientForm(formData: PatientData): PatientFormErrors {
 
   if (!formData.status) {
     newErrors.status = "El estado es obligatorio.";
+  }
+
+  return newErrors;
+}
+
+export function validatePatientEditForm(
+  formData: PatientDetails
+): PatientEditFormErrors {
+  const newErrors: PatientEditFormErrors = {};
+
+  if (!formData.name.trim()) {
+    newErrors.name = "El nombre completo es obligatorio.";
+  }
+
+  if (!formData.identification.trim()) {
+    newErrors.identification = "La identificación es obligatoria.";
+  }
+
+  if (!formData.phone.trim()) {
+    newErrors.phone = "El teléfono es obligatorio.";
+  }
+
+  if (!formData.address.trim()) {
+    newErrors.address = "La dirección es obligatoria.";
   }
 
   return newErrors;

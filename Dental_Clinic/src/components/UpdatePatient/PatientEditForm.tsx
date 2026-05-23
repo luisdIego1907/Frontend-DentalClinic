@@ -1,7 +1,9 @@
 import { useState } from "react";
 import type { PatientDetails } from "../../data/patient";
-
-type PatientDetailsErrors = Partial<Record<keyof PatientDetails, string>>;
+import {
+  validatePatientEditForm,
+  type PatientEditFormErrors,
+} from "../PatientForm/PatientValidation";
 
 type Props = {
   patient: PatientDetails;
@@ -15,31 +17,8 @@ export default function PatientEditForm({
   onCancel,
 }: Props) {
   const [formData, setFormData] = useState<PatientDetails>(patient);
-  const [errors, setErrors] = useState<PatientDetailsErrors>({});
+  const [errors, setErrors] = useState<PatientEditFormErrors>({});
 
-  const validateForm = () => {
-    const newErrors: PatientDetailsErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "El nombre completo es obligatorio.";
-    }
-
-    if (!formData.identification.trim()) {
-      newErrors.identification = "La identificación es obligatoria.";
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = "El teléfono es obligatorio.";
-    }
-
-    if (!formData.address.trim()) {
-      newErrors.address = "La dirección es obligatoria.";
-    }
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -51,9 +30,12 @@ export default function PatientEditForm({
   };
 
   const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
+    
     event.preventDefault();
 
-    if (!validateForm()) {
+      const validationErrors = validatePatientEditForm(formData);
+
+    if (Object.keys(validationErrors).length > 0) {
       return;
     }
 
@@ -74,10 +56,9 @@ export default function PatientEditForm({
           onChange={handleChange}
           className={`
             w-full rounded-xl border px-4 py-3 outline-none transition
-            ${
-              errors.name
-                ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            ${errors.name
+              ? "border-red-400 focus:ring-2 focus:ring-red-200"
+              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
             }
           `}
         />
@@ -99,10 +80,9 @@ export default function PatientEditForm({
           onChange={handleChange}
           className={`
             w-full rounded-xl border px-4 py-3 outline-none transition
-            ${
-              errors.identification
-                ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            ${errors.identification
+              ? "border-red-400 focus:ring-2 focus:ring-red-200"
+              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
             }
           `}
         />
@@ -126,10 +106,9 @@ export default function PatientEditForm({
           onChange={handleChange}
           className={`
             w-full rounded-xl border px-4 py-3 outline-none transition
-            ${
-              errors.phone
-                ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            ${errors.phone
+              ? "border-red-400 focus:ring-2 focus:ring-red-200"
+              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
             }
           `}
         />
@@ -151,10 +130,9 @@ export default function PatientEditForm({
           onChange={handleChange}
           className={`
             w-full rounded-xl border px-4 py-3 outline-none transition
-            ${
-              errors.address
-                ? "border-red-400 focus:ring-2 focus:ring-red-200"
-                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            ${errors.address
+              ? "border-red-400 focus:ring-2 focus:ring-red-200"
+              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
             }
           `}
         />
