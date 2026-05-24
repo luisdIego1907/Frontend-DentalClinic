@@ -1,5 +1,6 @@
+
+import PatientForm from "../../components/Forms/RegisterPatientForm/PatientForm";
 import { useState } from "react"; //hook que permite guardar y modificar datos dentro del componente. Se usa para guardar mensaje de exito cuando el paciente se registra.
-import PatientForm from "../../components/PatientForm/PatientForm";
 import type { PatientData } from "../../data/patient";
 //El import type significa que se esta importando una definicion de tip TypeScript
 

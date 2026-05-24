@@ -1,11 +1,9 @@
 import { UserRound, Phone, IdCard } from "lucide-react";
+import type {PatientListItem} from "../data/patient";
 
 type Props = {
-  patient: {
-    name: string;
-    identification: string;
-    phone: string;
-  };
+  
+  patient: PatientListItem;
   /*Indica si la tarjeta esta seleccionada o no.
     Opcional porque la tarjeta en si puede usarse sin seleccion*/ 
   selected?: boolean;

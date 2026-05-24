@@ -1,6 +1,7 @@
+
+import { validatePatientForm, type PatientFormErrors } from "../PatientValidation";
 import { useState } from "react"; //Permite guardar informacion que cambia dentro del componente
-import type { PatientData } from "../../data/patient";
-import { validatePatientForm, type PatientFormErrors } from "./PatientValidation";
+import type { PatientData } from "../../../data/patient";
 import { initialPatientFormData } from "./PatientInitialData";
 
 interface PatientFormProps {

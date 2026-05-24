@@ -1,20 +1,17 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./shared/Header";
 import Footer from "./shared/Footer";
-import Home from "./features/home/Home";
 import PatientList from "./features/PatientList";
 import RegisterPatient from "./pages/patients/RegisterPatient";
 import Login from "./pages/login/Login";
 import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
-import "./App.css";
 import NotFound from "./shared/NotFound";
-
-import { patientsMock } from "./mocks/patient.mock";
-
-import "./App.css";
+import PatientDetail from "./features/PatientDetail";
 import HomeDentist from "./features/home/homeDentist";
 import HomeRecepcionist from "./features/home/homeReceptionist";
 import HomeAdmin from "./features/home/homeAdmin";
+import { patientsMock } from "./mocks/patient.mock";
+import "./App.css";
 
 function App() {
   return (
@@ -31,7 +28,15 @@ function App() {
               element={<PatientList patients={patientsMock} />}
             />
 
-            <Route path="/patients/register" element={<RegisterPatient />} />
+            <Route 
+              path="/patients/:id" 
+              element={<PatientDetail />} 
+            />
+
+            <Route
+              path="/patients/register"
+              element={<RegisterPatient />}
+            />
 
             <Route
               path="/appointments/schedule"

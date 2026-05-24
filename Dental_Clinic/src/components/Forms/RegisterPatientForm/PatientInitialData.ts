@@ -1,4 +1,4 @@
-import type { PatientData } from "../../data/patient";
+import type { PatientData } from "../../../data/patient";
 
 export const initialPatientFormData: PatientData = {
   identification: "",
