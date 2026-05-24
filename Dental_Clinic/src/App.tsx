@@ -4,7 +4,7 @@ import Footer from "./shared/Footer";
 import Home from "./features/home/Home";
 import PatientList from "./features/PatientList";
 import RegisterPatient from "./pages/patients/RegisterPatient";
-import Login from "./pages/Login";
+import Login from "./pages/login/Login";
 import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
 import "./App.css";
 import NotFound from "./shared/NotFound";
@@ -12,6 +12,9 @@ import NotFound from "./shared/NotFound";
 import { patientsMock } from "./mocks/patient.mock";
 
 import "./App.css";
+import HomeDentist from "./features/home/homeDentist";
+import HomeRecepcionist from "./features/home/homeReceptionist";
+import HomeAdmin from "./features/home/homeAdmin";
 
 function App() {
   return (
@@ -21,37 +24,27 @@ function App() {
 
         <main className="flex-1 flex flex-col">
           <Routes>
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<Login />} />
 
             <Route
               path="/patients"
               element={<PatientList patients={patientsMock} />}
             />
 
-            <Route
-              path="/patients/register"
-              element={<RegisterPatient />}
-            />
+            <Route path="/patients/register" element={<RegisterPatient />} />
 
             <Route
               path="/appointments/schedule"
               element={<ScheduleAppointment />}
             />
             <Route path="/patients/register" element={<RegisterPatient />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/admin" element={<HomeAdmin />} />
+            <Route path="/recepcionista" element={<HomeRecepcionist />} />
+            <Route path="/odontologo" element={<HomeDentist />} />
             <Route
-              path="/admin"
-              element={<h1>Home Admin - En construcción</h1>}
+              path="/appointments/schedule"
+              element={<ScheduleAppointment />}
             />
-            <Route
-              path="/recepcionista"
-              element={<h1>Home Recepcionista - En construcción</h1>}
-            />
-            <Route
-              path="/odontologo"
-              element={<h1>Home Odontólogo - En construcción</h1>}
-            />
-            <Route path="/appointments/schedule" element={<ScheduleAppointment />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
