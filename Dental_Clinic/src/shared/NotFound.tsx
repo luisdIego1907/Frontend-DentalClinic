@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { BackButton } from "./BackButton";
 
 export default function NotFound() {
   return (
@@ -16,12 +16,7 @@ export default function NotFound() {
           La página que estás buscando no existe o fue movida a otra ubicación.
         </p>
 
-        <Link
-          to="/"
-          className="inline-flex rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
-        >
-          Volver al inicio
-        </Link>
+        <BackButton />
       </section>
     </main>
   );

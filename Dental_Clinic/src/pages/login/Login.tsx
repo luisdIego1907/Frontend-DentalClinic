@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockUsers } from "../mocks/auth.mock";
+import { mockUsers } from "../../mocks/auth.mock";
+import { useAuth } from "../../hook/useAuth";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { goHome } = useAuth(); // Para redirigir al home despues de logearse
+
+  // Si ya hay sesión activa, redirige al home del rol
+  useEffect(() => {
+    const stored = localStorage.getItem("user");
+    if (stored) goHome();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +28,9 @@ export default function Login() {
       alert("Credenciales incorrectas");
       return;
     }
+
+    // Guardar sesión -- Ejemplo si alguien ya esta dentro y vuelve a login no le pide volver ingresar credenciales
+    localStorage.setItem("user", JSON.stringify(user));
 
     if (user.rol === "admin") navigate("/admin");
     if (user.rol === "recepcionista") navigate("/recepcionista");

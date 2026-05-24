@@ -1,5 +1,14 @@
 import type { PatientData, PatientDetails} from "../../data/patient";
 
+/*
+  Se crea un tipo llamado PatientFormErrors
+  Significa que un obejto puede tener como claves los mismos campos de PatientData (predeterminados) y
+  como valor un mensaje de error tipo string.
+
+  keyof PatientData: este obtiene el nombre de las propiedades de PatientData.
+  Record<keyof PatientData, string> : Crea un objeto donde todas las propiedades de PatientData deberian existir y tener un string
+  Partial<> : Hace que propiedades sean opcionales. Puede que no todos los campos tengan error.
+*/ 
 export type PatientFormErrors = Partial<Record<keyof PatientData, string>>;
 
 export type PatientEditFormErrors = Partial<
@@ -7,6 +16,11 @@ export type PatientEditFormErrors = Partial<
 >;
 
 export function validatePatientForm(formData: PatientData): PatientFormErrors {
+
+  /*
+    Se crea un objeto vacio llmado newErrors
+    Donde se guardan los errorres
+  */
   const newErrors: PatientFormErrors = {};
 
   if (!formData.identification.trim()) {
@@ -45,6 +59,10 @@ export function validatePatientForm(formData: PatientData): PatientFormErrors {
     newErrors.status = "El estado es obligatorio.";
   }
 
+  /*
+    Devuelve el objeto con todos los errores
+    Si no hubo, devuelve vacio
+  */ 
   return newErrors;
 }
 
