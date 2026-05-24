@@ -1,43 +1,7 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import type { AppointmentData } from "../../data/appointment";
-import type { PatientData } from "../../data/patient";
-
-const mockPatients: PatientData[] = [
-  {
-    identification: "1-1902-1157",
-    first_name: "María",
-    last_name: "González",
-    birth_date: "1998-04-12",
-    phone: "8743-3451",
-    email: "mariaza06@gmail.com",
-    address: "San José, Costa Rica",
-    gender: "Femenino",
-    status: "Activo",
-  },
-  {
-    identification: "3-4421-4254",
-    first_name: "Carlos",
-    last_name: "Ramírez",
-    birth_date: "1995-09-23",
-    phone: "6543-8634",
-    email: "carlosram82@gmail.com",
-    address: "Cartago, Costa Rica",
-    gender: "Masculino",
-    status: "Inactivo",
-  },
-  {
-    identification: "2-6282-4595",
-    first_name: "Antonio",
-    last_name: "Ramos",
-    birth_date: "1991-01-12",
-    phone: "3485-9951",
-    email: "antamos44@gmail.com",
-    address: "San José, Costa Rica",
-    gender: "Masculino",
-    status: "Activo",
-  },
-];
+import { Mockpacientes, mockCitas } from "../../mocks/appointment.mock";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -64,16 +28,7 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
 };
 
 export default function ScheduleAppointments() {
-  const [appointments, setAppointments] = useState<AppointmentData[]>([
-    {
-      id: 1,
-      patient: mockPatients[0],
-      date: "2026-07-06",
-      time: "07:30",
-      durationMinutes: 30,
-      reason: "Limpieza dental",
-    },
-  ]);
+  const [appointments, setAppointments] = useState<AppointmentData[]>(mockCitas);
 
   const [appointmentToEdit, setAppointmentToEdit] =
     useState<AppointmentData | null>(null);
@@ -81,11 +36,13 @@ export default function ScheduleAppointments() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const formSectionRef = useRef<HTMLDivElement | null>(null);
+
   const handleSaveAppointment = (appointmentData: AppointmentData) => {
     setSuccessMessage("");
     setErrorMessage("");
 
-    if (!appointmentData.patient || appointmentData.patient.status !== "Activo") {
+    if (!appointmentData.patient || appointmentData.patient.status === "Inactivo") {
       setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
       return;
     }
@@ -117,10 +74,12 @@ export default function ScheduleAppointments() {
       const updatedAppointments = appointments.map((appointment) =>
         appointment.id === appointmentToEdit.id
           ? {
-              ...appointmentData,
-              id: appointmentToEdit.id,
-              patient: appointmentToEdit.patient,
-            }
+            ...appointmentData,
+            id: appointmentToEdit.id,
+            patient: appointmentToEdit.patient,
+            doctor: appointmentToEdit.doctor,
+            status: appointmentToEdit.status,
+          }
           : appointment
       );
 
@@ -133,6 +92,8 @@ export default function ScheduleAppointments() {
     const newAppointment: AppointmentData = {
       ...appointmentData,
       id: appointments.length + 1,
+      doctor: appointmentData.doctor || "Dr. Rojas",
+      status: appointmentData.status || "Pendiente",
     };
 
     setAppointments([...appointments, newAppointment]);
@@ -143,6 +104,13 @@ export default function ScheduleAppointments() {
     setSuccessMessage("");
     setErrorMessage("");
     setAppointmentToEdit(appointment);
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 0);
   };
 
   const handleCancelEdit = () => {
@@ -170,7 +138,8 @@ export default function ScheduleAppointments() {
           <h1 className="text-3xl font-bold text-gray-900">Agendar cita</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar una cita odontológica.
+            Complete la información necesaria para registrar o modificar una cita
+            odontológica.
           </p>
         </div>
 
@@ -186,12 +155,14 @@ export default function ScheduleAppointments() {
           </div>
         )}
 
-        <AppointmentForm
-          patients={mockPatients}
-          onSubmit={handleSaveAppointment}
-          appointmentToEdit={appointmentToEdit}
-          onCancelEdit={handleCancelEdit}
-        />
+        <div ref={formSectionRef}>
+          <AppointmentForm
+            patients={Mockpacientes}
+            onSubmit={handleSaveAppointment}
+            appointmentToEdit={appointmentToEdit}
+            onCancelEdit={handleCancelEdit}
+          />
+        </div>
 
         <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
@@ -229,6 +200,14 @@ export default function ScheduleAppointments() {
                         appointment.time,
                         appointment.durationMinutes
                       )}
+                    </p>
+
+                    <p className="text-sm text-gray-600">
+                      Doctor: {appointment.doctor}
+                    </p>
+
+                    <p className="text-sm text-gray-600">
+                      Estado: {appointment.status}
                     </p>
 
                     <p className="text-sm text-gray-600">

@@ -26,7 +26,10 @@ export default function AppointmentForm({
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
 
-  const activePatients = patients.filter((patient) => patient.status === "Activo");
+  const activePatients = patients.filter(
+    (patient) => patient.status !== "Inactivo"
+  );
+
   const isEditing = appointmentToEdit !== null;
 
   useEffect(() => {
@@ -92,7 +95,6 @@ export default function AppointmentForm({
     "mt-1 w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
 
   const labelClass = "text-sm font-medium text-gray-700";
-
   const errorClass = "mt-1 block text-sm text-red-600";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
@@ -122,23 +124,39 @@ export default function AppointmentForm({
           <label htmlFor="patient" className={labelClass}>
             Paciente
           </label>
-          <select
-            id="patient"
-            name="patient"
-            value={formData.patient?.identification ?? ""}
-            onChange={handlePatientChange}
-            className={isEditing ? disabledInputClass : inputClass}
-            disabled={isEditing}
-          >
-            <option value="" disabled>
-              Seleccione un paciente
-            </option>
-            {activePatients.map((patient) => (
-              <option key={patient.identification} value={patient.identification}>
-                {patient.first_name} {patient.last_name} - {patient.identification}
+
+          {isEditing ? (
+            <input
+              id="patient"
+              type="text"
+              value={
+                formData.patient
+                  ? `${formData.patient.first_name} ${formData.patient.last_name} - ${formData.patient.identification}`
+                  : "Paciente no seleccionado"
+              }
+              className={disabledInputClass}
+              disabled
+            />
+          ) : (
+            <select
+              id="patient"
+              name="patient"
+              value={formData.patient?.identification ?? ""}
+              onChange={handlePatientChange}
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Seleccione un paciente
               </option>
-            ))}
-          </select>
+              {activePatients.map((patient) => (
+                <option key={patient.identification} value={patient.identification}>
+                  {patient.first_name} {patient.last_name} -{" "}
+                  {patient.identification}
+                </option>
+              ))}
+            </select>
+          )}
+
           {errors.patient && <span className={errorClass}>{errors.patient}</span>}
         </div>
 
