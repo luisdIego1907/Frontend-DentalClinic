@@ -9,3 +9,18 @@ export interface PatientData {
   gender: string;
   status: string;
 }
+
+export type PatientListItem = {
+  id: number;
+  name: string;
+  identification: string;
+  phone: string;
+};
+
+export type PatientDetails = {
+  id: number;
+  name: string;
+  identification: string;
+  phone: string;
+  address: string;
+};

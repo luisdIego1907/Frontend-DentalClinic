@@ -1,33 +1,57 @@
-import { useState } from "react";
-import type { PatientData } from "../../data/patient";
-import { validatePatientForm, type PatientFormErrors } from "./PatientValidation";
+
+import { validatePatientForm, type PatientFormErrors } from "../PatientValidation";
+import { useState } from "react"; //Permite guardar informacion que cambia dentro del componente
+import type { PatientData } from "../../../data/patient";
 import { initialPatientFormData } from "./PatientInitialData";
 
 interface PatientFormProps {
   onSubmit: (patientData: PatientData) => void;
 }
 export default function PatientForm({ onSubmit }: PatientFormProps) {
+
+  /*
+    Se crea el estado formData
+    setFormData sirve para actualizar los datos
+  */ 
   const [formData, setFormData] = useState<PatientData>(initialPatientFormData);
 
   const [errors, setErrors] = useState<PatientFormErrors>({});
 
+  /*
+    Se ejecuta cada vez que el usuario ya sea que escriba o seleccione algo en un campo del formulario
+  */
   const handleChange = (
+    //se define el tipo de evento
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
+    /*
+      Se extra el name (nombre del campo)
+      y value (valor escrito o seleccionado)
+    */ 
     const { name, value } = event.target;
 
+    /*
+      Copia todos los datos del formulario del momento
+    */ 
     setFormData({
       ...formData,
       [name]: value,
     });
   };
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    /*
+      Un formulario HTML recarga la pagina al enviarse. Hace que se pierda el estado.
+      Evita esa recarga.
+    */
     event.preventDefault();
 
     const validationErrors = validatePatientForm(formData);
 
+    //Si faltan campos, validationErrors tendra mensajes de error
+    //Object.keys: ["first_name", "email"]
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
