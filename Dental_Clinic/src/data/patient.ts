@@ -19,8 +19,14 @@ export type PatientListItem = {
 
 export type PatientDetails = {
   id: number;
-  name: string;
   identification: string;
+  first_name: string;
+  last_name: string;
+  birth_date: Date;
   phone: string;
+  email:string;
   address: string;
+  gender: string;
+  created_at: Date;
+  status: string;
 };
