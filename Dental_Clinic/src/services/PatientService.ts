@@ -19,3 +19,18 @@ export async function getPatients() : Promise<PatientDetails[]>{
         throw error;
     }
 }
+
+export async function getPatientById(id: number): Promise<PatientDetails> {
+  try {
+    const response = await fetch(`${API_URL}/${id}`);
+
+    if (!response.ok) {
+      throw new Error("Error al obtener el paciente");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error en getPatientById:", error);
+    throw error;
+  }
+}

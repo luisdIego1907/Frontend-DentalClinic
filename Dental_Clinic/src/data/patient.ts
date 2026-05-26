@@ -18,15 +18,14 @@ export type PatientListItem = {
 };
 
 export type PatientDetails = {
-  id: number;
+  patient_id: number;
   identification: string;
   first_name: string;
   last_name: string;
-  birth_date: Date;
+  birth_date: string;
   phone: string;
-  email:string;
+  email: string;
   address: string;
   gender: string;
-  created_at: Date;
   status: string;
 };
