@@ -1,46 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { patientsMock } from "../mocks/patient.mock";
 import type { PatientDetails } from "../data/patient";
 import PatientEditForm from "../components/Forms/UpdatePatientForm/PatientEditForm";
 import PatientInfo from "./PatientInfo";
+import { getPatientById } from "../services/PatientService";
 
 export default function PatientDetail() {
   const { id } = useParams();
 
-  const foundPatient = patientsMock.find(
-    (patient) => patient.id === Number(id)
-  );
+  /* Guarda la información del paciente obtenida desde el backend. */
+  const [patient, setPatient] = useState<PatientDetails | undefined>(undefined);
 
-  const [patient, setPatient] = useState<PatientDetails | undefined>(
-    foundPatient
-  );
+  /* Indica si la información del paciente todavía se está cargando. */
+  const [loading, setLoading] = useState(true);
+
+  /* Guarda un mensaje de error si ocurre un problema al consultar el backend. */
+  const [error, setError] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
 
-  if (!patient) {
-    return (
-      <main className="container mx-auto px-6 py-12">
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
-          <h1 className="text-2xl font-bold text-slate-800">
-            Paciente no encontrado
-          </h1>
+  /* Se ejecuta cuando se carga el componente o cuando cambia el ID de la URL.
+     Busca el paciente en el backend usando el ID recibido por parámetros. */
+  useEffect(() => {
+    async function loadPatient() {
+      if (!id) {
+        setError("No se recibió un ID de paciente válido.");
+        setLoading(false);
+        return;
+      }
 
-          <p className="text-slate-500 mt-2">
-            No existe un paciente registrado con el ID {id}.
-          </p>
+      try {
+        const data = await getPatientById(Number(id));
+        setPatient(data);
+      } catch (error) {
+        console.error("Error al cargar el paciente:", error);
+        setError("No se pudo cargar la información del paciente.");
+      } finally {
+        setLoading(false);
+      }
+    }
 
-          <Link
-            to="/patients"
-            className="inline-block mt-6 bg-cyan-600 text-white px-5 py-2 rounded-lg hover:bg-cyan-700 transition"
-          >
-            Volver a pacientes
-          </Link>
-        </div>
-      </main>
-    );
-  }
+    loadPatient();
+  }, [id]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -58,6 +60,41 @@ export default function PatientDetail() {
     setIsEditing(false);
     setSuccessMessage("Paciente actualizado correctamente.");
   };
+
+  if (loading) {
+    return (
+      <main className="container mx-auto px-6 py-12">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
+          <p className="text-slate-500">Cargando información del paciente...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (error || !patient) {
+    return (
+      <main className="container mx-auto px-6 py-12">
+        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
+          <h1 className="text-2xl font-bold text-slate-800">
+            Paciente no encontrado
+          </h1>
+
+          <p className="text-slate-500 mt-2">
+            {error || `No existe un paciente registrado con el ID ${id}.`}
+          </p>
+
+          <Link
+            to="/patients"
+            className="inline-block mt-6 bg-cyan-600 text-white px-5 py-2 rounded-lg hover:bg-cyan-700 transition"
+          >
+            Volver a pacientes
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
     <main className="container mx-auto px-6 py-10">
@@ -80,7 +117,7 @@ export default function PatientDetail() {
         <div className="border-b border-slate-200 pb-6 mb-6 flex items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-slate-800">
-              {patient.name}
+              {fullName}
             </h1>
 
             <p className="text-slate-500 mt-1">
