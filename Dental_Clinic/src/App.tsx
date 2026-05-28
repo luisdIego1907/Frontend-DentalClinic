@@ -65,7 +65,9 @@ function App() {
                       <Route
                         path="/patients"
                         element={
-                          <ProtectedRoute rol={["admin", "assistant"]}>
+                          <ProtectedRoute
+                            rol={["admin", "assistant", "odontologist"]}
+                          >
                             <PatientList patients={patientsMock} />
                           </ProtectedRoute>
                         }

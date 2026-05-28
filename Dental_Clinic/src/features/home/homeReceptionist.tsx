@@ -48,7 +48,7 @@ export default function HomeRecepcionist() {
       </h2>
       <div className="grid grid-cols-3 gap-4 mb-8">
         <QuickAccessButton
-          label="Concretar cita"
+          label="Registrar cita"
           description="Nueva reserva de cita"
           to="/appointments/schedule"
           icon={CalendarPlus}
@@ -68,7 +68,7 @@ export default function HomeRecepcionist() {
         <QuickAccessButton
           label="Ver Pacientes"
           description="Agenda completa del día"
-          to="/patients" // Parte no trabajada todavía, pero se asume que esta ruta mostraría el calendario completo de citas para el día
+          to="/patients"
           icon={Users}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}

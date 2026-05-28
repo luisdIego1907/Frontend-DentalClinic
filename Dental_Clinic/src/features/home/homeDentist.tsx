@@ -50,7 +50,7 @@ export default function HomeDentist() {
         <QuickAccessButton
           label="Registrar consulta"
           description="Crear una nueva consulta médica"
-          to="/consultations/new" // Parte no trabajada todavía, pero se asume que esta ruta permitiría registrar una nueva consulta para un paciente específico
+          to="/patients"
           icon={ClipboardPlus}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
@@ -59,7 +59,7 @@ export default function HomeDentist() {
         <QuickAccessButton
           label="Ver mis pacientes"
           description="Lista de pacientes asignados"
-          to="/patients" // Parte no trabajada todavía, pero se asume que esta ruta mostraría solo los pacientes del doctor
+          to="/patients"
           icon={Users}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
