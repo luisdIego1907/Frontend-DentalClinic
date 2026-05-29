@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import type { AppointmentData } from "../../data/appointment";
-import { Mockpacientes, mockCitas } from "../../mocks/appointment.mock";
+import { Mockpacientes, mockCitas, mockDoctores } from "../../mocks/appointment.mock";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -28,6 +29,8 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
 };
 
 export default function ScheduleAppointments() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const appointmentIdParam = searchParams.get("appointmentId");
   const [appointments, setAppointments] = useState<AppointmentData[]>(mockCitas);
 
   const [appointmentToEdit, setAppointmentToEdit] =
@@ -35,16 +38,34 @@ export default function ScheduleAppointments() {
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitButtonErrorSignal, setSubmitButtonErrorSignal] = useState(0);
 
   const formSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSaveAppointment = (appointmentData: AppointmentData) => {
+  useEffect(() => {
+    const appointmentId = Number(appointmentIdParam);
+
+    if (!appointmentId) {
+      setAppointmentToEdit(null);
+      return;
+    }
+
+    const appointment = appointments.find(
+      (currentAppointment) => currentAppointment.id === appointmentId
+    );
+
+    if (appointment) {
+      setAppointmentToEdit(appointment);
+    }
+  }, [appointments, appointmentIdParam]);
+
+  const handleSaveAppointment = (appointmentData: AppointmentData): boolean => {
     setSuccessMessage("");
     setErrorMessage("");
 
     if (!appointmentData.patient || appointmentData.patient.status === "Inactivo") {
       setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
-      return;
+      return false;
     }
 
     const newStart = convertTimeToMinutes(appointmentData.time);
@@ -59,6 +80,10 @@ export default function ScheduleAppointments() {
         return false;
       }
 
+      if (appointment.doctor !== appointmentData.doctor) {
+        return false;
+      }
+
       const existingStart = convertTimeToMinutes(appointment.time);
       const existingEnd = existingStart + appointment.durationMinutes;
 
@@ -66,8 +91,9 @@ export default function ScheduleAppointments() {
     });
 
     if (appointmentExists) {
-      setErrorMessage("El horario seleccionado no se encuentra disponible.");
-      return;
+      setErrorMessage("El doctor seleccionado ya tiene una cita en ese horario.");
+      setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
+      return false;
     }
 
     if (appointmentToEdit) {
@@ -77,7 +103,6 @@ export default function ScheduleAppointments() {
             ...appointmentData,
             id: appointmentToEdit.id,
             patient: appointmentToEdit.patient,
-            doctor: appointmentToEdit.doctor,
             status: appointmentToEdit.status,
           }
           : appointment
@@ -85,19 +110,21 @@ export default function ScheduleAppointments() {
 
       setAppointments(updatedAppointments);
       setAppointmentToEdit(null);
+      setSearchParams({});
       setSuccessMessage("Cita modificada correctamente.");
-      return;
+      return true;
     }
 
     const newAppointment: AppointmentData = {
       ...appointmentData,
       id: appointments.length + 1,
-      doctor: appointmentData.doctor || "Dr. Rojas",
+      doctor: appointmentData.doctor,
       status: appointmentData.status || "Pendiente",
     };
 
     setAppointments([...appointments, newAppointment]);
     setSuccessMessage("Cita agendada correctamente.");
+    return true;
   };
 
   const handleEditAppointment = (appointment: AppointmentData) => {
@@ -117,6 +144,7 @@ export default function ScheduleAppointments() {
     setAppointmentToEdit(null);
     setSuccessMessage("");
     setErrorMessage("");
+    setSearchParams({});
   };
 
   const sortedAppointments = [...appointments].sort((a, b) => {
@@ -158,9 +186,11 @@ export default function ScheduleAppointments() {
         <div ref={formSectionRef}>
           <AppointmentForm
             patients={Mockpacientes}
+            doctors={mockDoctores}
             onSubmit={handleSaveAppointment}
             appointmentToEdit={appointmentToEdit}
             onCancelEdit={handleCancelEdit}
+            submitButtonErrorSignal={submitButtonErrorSignal}
           />
         </div>
 

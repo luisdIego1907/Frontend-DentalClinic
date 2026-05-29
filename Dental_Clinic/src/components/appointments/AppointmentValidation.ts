@@ -17,6 +17,10 @@ export function validateAppointmentForm(
     newErrors.date = "La fecha de la cita es obligatoria.";
   }
 
+  if (!formData.doctor.trim()) {
+    newErrors.doctor = "El doctor es obligatorio.";
+  }
+
   if (!hour || !minutes) {
     newErrors.time = "La hora de la cita es obligatoria.";
   }

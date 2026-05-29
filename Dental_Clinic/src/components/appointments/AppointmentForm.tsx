@@ -9,22 +9,27 @@ import { initialAppointmentFormData } from "./AppointmentInitialData";
 
 interface AppointmentFormProps {
   patients: PatientData[];
-  onSubmit: (appointmentData: AppointmentData) => void;
+  doctors: readonly string[];
+  onSubmit: (appointmentData: AppointmentData) => boolean;
   appointmentToEdit?: AppointmentData | null;
   onCancelEdit?: () => void;
+  submitButtonErrorSignal?: number;
 }
 
 export default function AppointmentForm({
   patients,
+  doctors,
   onSubmit,
   appointmentToEdit = null,
   onCancelEdit,
+  submitButtonErrorSignal = 0,
 }: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentData>(
     initialAppointmentFormData
   );
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
+  const [showSubmitErrorFeedback, setShowSubmitErrorFeedback] = useState(false);
 
   const activePatients = patients.filter(
     (patient) => patient.status !== "Inactivo"
@@ -42,6 +47,19 @@ export default function AppointmentForm({
     setFormData(initialAppointmentFormData);
     setErrors({});
   }, [appointmentToEdit]);
+
+
+  useEffect(() => {
+    if (submitButtonErrorSignal === 0) return;
+
+    setShowSubmitErrorFeedback(true);
+
+    const timeoutId = window.setTimeout(() => {
+      setShowSubmitErrorFeedback(false);
+    }, 450);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [submitButtonErrorSignal]);
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -78,9 +96,9 @@ export default function AppointmentForm({
     }
 
     setErrors({});
-    onSubmit(formData);
+    const wasSaved = onSubmit(formData);
 
-    if (!isEditing) {
+    if (!isEditing && wasSaved) {
       setFormData(initialAppointmentFormData);
     }
   };
@@ -96,6 +114,10 @@ export default function AppointmentForm({
 
   const labelClass = "text-sm font-medium text-gray-700";
   const errorClass = "mt-1 block text-sm text-red-600";
+
+  const submitButtonClass = showSubmitErrorFeedback
+    ? "rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 active:scale-95"
+    : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
     String(index).padStart(2, "0")
@@ -158,6 +180,29 @@ export default function AppointmentForm({
           )}
 
           {errors.patient && <span className={errorClass}>{errors.patient}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="doctor" className={labelClass}>
+            Doctor
+          </label>
+          <select
+            id="doctor"
+            name="doctor"
+            value={formData.doctor}
+            onChange={handleChange}
+            className={inputClass}
+          >
+            <option value="" disabled>
+              Seleccione un doctor
+            </option>
+            {doctors.map((doctor) => (
+              <option key={doctor} value={doctor}>
+                {doctor}
+              </option>
+            ))}
+          </select>
+          {errors.doctor && <span className={errorClass}>{errors.doctor}</span>}
         </div>
 
         <div>
@@ -287,7 +332,7 @@ export default function AppointmentForm({
 
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+          className={submitButtonClass}
         >
           {isEditing ? "Guardar cambios" : "Agendar cita"}
         </button>
