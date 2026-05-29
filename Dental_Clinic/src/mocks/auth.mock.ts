@@ -3,6 +3,6 @@
 
 export const mockUsers = [
   { email: "admin@dental.com", password: "Admin123", rol: "admin" },
-  { email: "recepcion@dental.com", password: "Recep123", rol: "recepcionista" },
-  { email: "doctor@dental.com", password: "Doctor123", rol: "odontologo" },
+  { email: "recepcion@dental.com", password: "Recep123", rol: "assistant" },
+  { email: "doctor@dental.com", password: "Doctor123", rol: "odontologist" },
 ];

@@ -1,27 +1,26 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import type { PatientDetails } from "../data/patient";
+import type { ConsultationFormData } from "../data/consultationData";
 import PatientEditForm from "../components/Forms/UpdatePatientForm/PatientEditForm";
+import ConsultationForm from "../components/Forms/ConsultationForm/ConsultationForm";
 import PatientInfo from "./PatientInfo";
+import { usePermissions } from "../hook/usePermissions";
 import { getPatientById } from "../services/PatientService";
+
+type Tab = "info" | "consultas" | "nueva-consulta";
 
 export default function PatientDetail() {
   const { id } = useParams();
+  const permisos = usePermissions();
 
-  /* Guarda la información del paciente obtenida desde el backend. */
   const [patient, setPatient] = useState<PatientDetails | undefined>(undefined);
-
-  /* Indica si la información del paciente todavía se está cargando. */
   const [loading, setLoading] = useState(true);
-
-  /* Guarda un mensaje de error si ocurre un problema al consultar el backend. */
   const [error, setError] = useState("");
-
   const [isEditing, setIsEditing] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+  const [tabActivo, setTabActivo] = useState<Tab>("info");
 
-  /* Se ejecuta cuando se carga el componente o cuando cambia el ID de la URL.
-     Busca el paciente en el backend usando el ID recibido por parámetros. */
   useEffect(() => {
     async function loadPatient() {
       if (!id) {
@@ -55,10 +54,16 @@ export default function PatientDetail() {
 
   const handleSavePatient = (updatedPatient: PatientDetails) => {
     console.log("Paciente actualizado:", updatedPatient);
-
     setPatient(updatedPatient);
     setIsEditing(false);
     setSuccessMessage("Paciente actualizado correctamente.");
+  };
+
+  const handleSaveConsultation = (data: ConsultationFormData) => {
+    console.log("Consulta a guardar:", data);
+    // TODO: POST /consultations cuando el backend esté listo
+    setSuccessMessage("Consulta registrada correctamente.");
+    setTabActivo("consultas");
   };
 
   if (loading) {
@@ -78,11 +83,9 @@ export default function PatientDetail() {
           <h1 className="text-2xl font-bold text-slate-800">
             Paciente no encontrado
           </h1>
-
           <p className="text-slate-500 mt-2">
             {error || `No existe un paciente registrado con el ID ${id}.`}
           </p>
-
           <Link
             to="/patients"
             className="inline-block mt-6 bg-cyan-600 text-white px-5 py-2 rounded-lg hover:bg-cyan-700 transition"
@@ -116,16 +119,13 @@ export default function PatientDetail() {
       <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
         <div className="border-b border-slate-200 pb-6 mb-6 flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">
-              {fullName}
-            </h1>
-
+            <h1 className="text-3xl font-bold text-slate-800">{fullName}</h1>
             <p className="text-slate-500 mt-1">
               Información detallada del paciente
             </p>
           </div>
 
-          {!isEditing && (
+          {permisos.editarPerfil && !isEditing && tabActivo === "info" && (
             <button
               type="button"
               onClick={handleEdit}
@@ -136,14 +136,70 @@ export default function PatientDetail() {
           )}
         </div>
 
-        {isEditing ? (
-          <PatientEditForm
-            patient={patient}
-            onSave={handleSavePatient}
-            onCancel={handleCancel}
+        <div className="flex border-b border-slate-200 mb-6">
+          <button
+            onClick={() => { setTabActivo("info"); setIsEditing(false); }}
+            className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tabActivo === "info"
+                ? "border-teal-500 text-teal-600"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Información
+          </button>
+
+          {permisos.verConsultas && (
+            <button
+              onClick={() => { setTabActivo("consultas"); setIsEditing(false); }}
+              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                tabActivo === "consultas"
+                  ? "border-teal-500 text-teal-600"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              Consultas
+            </button>
+          )}
+
+          {permisos.registrarConsulta && (
+            <button
+              onClick={() => { setTabActivo("nueva-consulta"); setIsEditing(false); }}
+              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                tabActivo === "nueva-consulta"
+                  ? "border-teal-500 text-teal-600"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
+            >
+              Registrar consulta
+            </button>
+          )}
+        </div>
+
+        {tabActivo === "info" && (
+          isEditing ? (
+            <PatientEditForm
+              patient={patient}
+              onSave={handleSavePatient}
+              onCancel={handleCancel}
+            />
+          ) : (
+            <PatientInfo patient={patient} />
+          )
+        )}
+
+        {tabActivo === "consultas" && permisos.verConsultas && (
+          <div className="text-slate-500 text-sm py-4 text-center">
+            {/* TODO: lista de consultas del paciente */}
+            No hay consultas registradas.
+          </div>
+        )}
+
+        {tabActivo === "nueva-consulta" && permisos.registrarConsulta && (
+          <ConsultationForm
+            recordId={1}
+            onSave={handleSaveConsultation}
+            onCancel={() => setTabActivo("consultas")}
           />
-        ) : (
-          <PatientInfo patient={patient} />
         )}
       </section>
     </main>

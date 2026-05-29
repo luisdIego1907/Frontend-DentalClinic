@@ -5,6 +5,7 @@ import {
   Clock,
   Trash2,
   FileText,
+  Link,
 } from "lucide-react";
 import { mockCitas, Mockpacientes } from "../../mocks/appointment.mock";
 import { PageGreeting } from "../../components/home/PageGreeting";
@@ -71,7 +72,7 @@ export default function HomeAdmin() {
         <QuickAccessButton
           label="Ver citas"
           description="Agenda global de hoy"
-          to="/appointments"
+          to="/appointments/schedule"
           icon={Calendar}
           iconBg={PURPLE.bg}
           iconColor={PURPLE.dark}
@@ -113,10 +114,13 @@ export default function HomeAdmin() {
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 transition-colors">
+              <Link
+                to={`/patients/${p.identification}`}
+                className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 transition-colors"
+              >
                 <FileText className="w-3.5 h-3.5" />
                 Ver expediente
-              </button>
+              </Link>
               <button className="flex items-center gap-1.5 text-xs text-red-600 border border-red-100 bg-red-50 rounded-lg px-3 py-1.5 hover:bg-red-100 transition-colors">
                 <Trash2 className="w-3.5 h-3.5" />
                 Eliminar

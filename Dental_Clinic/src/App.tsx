@@ -10,6 +10,7 @@ import PatientDetail from "./features/PatientDetail";
 import HomeDentist from "./features/home/homeDentist";
 import HomeRecepcionist from "./features/home/homeReceptionist";
 import HomeAdmin from "./features/home/homeAdmin";
+import ProtectedRoute from "./components/security/ProtectedRoute";
 import { patientsMock } from "./mocks/patient.mock";
 import "./App.css";
 
@@ -17,45 +18,100 @@ function App() {
   return (
     <BrowserRouter>
       <div className="flex flex-col min-h-screen">
-        <Header />
+        <Routes>
+          {/* Login — sin header ni footer */}
+          <Route path="/" element={<Login />} />
 
-        <main className="flex-1 flex flex-col">
-          <Routes>
-            <Route path="/" element={<Login />} />
+          {/* Rutas protegidas — con header y footer */}
+          <Route
+            path="/*"
+            element={
+              <ProtectedRoute>
+                <div className="flex flex-col min-h-screen">
+                  <Header />
+                  <main className="flex-1 flex flex-col">
+                    <Routes>
+                      {/* Admin */}
+                      <Route
+                        path="/admin"
+                        element={
+                          <ProtectedRoute rol="admin">
+                            <HomeAdmin />
+                          </ProtectedRoute>
+                        }
+                      />
 
-            <Route
-              path="/patients"
-              element={<PatientList patients={patientsMock} />}
-            />
+                      {/* Recepcionista */}
+                      <Route
+                        path="/assistant"
+                        element={
+                          <ProtectedRoute rol="assistant">
+                            <HomeRecepcionist />
+                          </ProtectedRoute>
+                        }
+                      />
 
-            <Route 
-              path="/patients/:id" 
-              element={<PatientDetail />} 
-            />
+                      {/* Odontólogo */}
+                      <Route
+                        path="/odontologist"
+                        element={
+                          <ProtectedRoute rol="odontologist">
+                            <HomeDentist />
+                          </ProtectedRoute>
+                        }
+                      />
 
-            <Route
-              path="/patients/register"
-              element={<RegisterPatient />}
-            />
+                      {/* Pacientes — admin y assistant */}
+                      <Route
+                        path="/patients"
+                        element={
+                          <ProtectedRoute
+                            rol={["admin", "assistant", "odontologist"]}
+                          >
+                            <PatientList patients={patientsMock} />
+                          </ProtectedRoute>
+                        }
+                      />
 
-            <Route
-              path="/appointments/schedule"
-              element={<ScheduleAppointment />}
-            />
-            <Route path="/patients/register" element={<RegisterPatient />} />
-            <Route path="/admin" element={<HomeAdmin />} />
-            <Route path="/recepcionista" element={<HomeRecepcionist />} />
-            <Route path="/odontologo" element={<HomeDentist />} />
-            <Route
-              path="/appointments/schedule"
-              element={<ScheduleAppointment />}
-            />
+                      <Route
+                        path="/patients/:id"
+                        element={
+                          <ProtectedRoute
+                            rol={["admin", "assistant", "odontologist"]}
+                          >
+                            <PatientDetail />
+                          </ProtectedRoute>
+                        }
+                      />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </main>
+                      <Route
+                        path="/patients/register"
+                        element={
+                          <ProtectedRoute rol={["admin", "assistant"]}>
+                            <RegisterPatient />
+                          </ProtectedRoute>
+                        }
+                      />
 
-        <Footer />
+                      {/* Citas */}
+                      <Route
+                        path="/appointments/schedule"
+                        element={
+                          <ProtectedRoute rol={["admin", "assistant"]}>
+                            <ScheduleAppointment />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </main>
+                  <Footer />
+                </div>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
       </div>
     </BrowserRouter>
   );
