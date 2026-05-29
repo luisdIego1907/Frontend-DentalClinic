@@ -1,9 +1,9 @@
 import { UserRound, Phone, IdCard } from "lucide-react";
-import type {PatientListItem} from "../data/patient";
+import type {PatientDetails} from "../data/patient";
 
 type Props = {
   
-  patient: PatientListItem;
+  patient: PatientDetails;
   /*Indica si la tarjeta esta seleccionada o no.
     Opcional porque la tarjeta en si puede usarse sin seleccion*/ 
   selected?: boolean;
@@ -20,6 +20,9 @@ export default function PatientCard({
   onClick,
   onSelect,
 }: Props) {
+
+  const fullName = `${patient.first_name} ${patient.last_name}`;
+
   return (
     
     /*Al hacer click ejecuta onClick, navega al detalle del paciente*/
@@ -80,7 +83,7 @@ export default function PatientCard({
 
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-slate-800 truncate">
-            {patient.name}
+            {fullName}
           </h3>
 
           <div className="mt-4 space-y-2">

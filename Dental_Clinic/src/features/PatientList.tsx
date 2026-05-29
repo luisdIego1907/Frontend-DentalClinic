@@ -1,20 +1,48 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import PatientCard from "./PatientCard";
-import type {PatientListItem} from "../data/patient";
+import type { PatientDetails } from "../data/patient";
+import { getPatients } from "../services/PatientService";
 
-type Props = {
-  // Lista de pacientes que se recibe desde otro componente
-  patients: PatientListItem[];
-};
-
-export default function PatientList({ patients }: Props) {
+export default function PatientList() {
   const navigate = useNavigate();
 
-  const [patientList, setPatientList] = useState<PatientListItem[]>(patients);
+  /* Lista de pacientes que se obtiene desde el backend.
+     Antes se recibía desde otro componente por medio de props,
+     pero ahora la información viene desde la base de datos mediante el BE. */
+  const [patientList, setPatientList] = useState<PatientDetails[]>([]);
+
+  /* Lista de IDs de pacientes seleccionados.
+     Se usa para saber cuáles pacientes fueron marcados con el checkbox. */
   const [selectedPatients, setSelectedPatients] = useState<number[]>([]);
+
+  /* Mensaje que se muestra cuando una acción se ejecuta correctamente. */
   const [successMessage, setSuccessMessage] = useState("");
+
+  /* Estado que indica si la información aún se está cargando desde el backend. */
+  const [loading, setLoading] = useState(true);
+
+  /* Estado que guarda un mensaje de error si falla la carga de pacientes. */
+  const [error, setError] = useState("");
+
+  /* Se ejecuta cuando el componente se carga por primera vez.
+     Obtiene la lista de pacientes desde el backend usando el servicio getPatients. */
+  useEffect(() => {
+    async function loadPatients() {
+      try {
+        const data = await getPatients();
+        setPatientList(data);
+      } catch (error) {
+        console.error("Error al cargar pacientes:", error);
+        setError("No se pudieron cargar los pacientes.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadPatients();
+  }, []);
 
   // Función para seleccionar o deseleccionar un paciente.
   const handleSelectPatient = (patientId: number) => {
@@ -25,6 +53,7 @@ export default function PatientList({ patients }: Props) {
       if (prevSelected.includes(patientId)) {
         return prevSelected.filter((id) => id !== patientId);
       }
+
       // Si el paciente no estaba seleccionado, se agrega a la selección.
       return [...prevSelected, patientId];
     });
@@ -41,13 +70,38 @@ export default function PatientList({ patients }: Props) {
 
     if (!confirmDelete) return;
 
+    /* Elimina los pacientes seleccionados solamente de la lista local del frontend.
+       Importante: esto no elimina todavía los pacientes de la base de datos.
+       Para eliminarlos realmente, se necesita consumir un endpoint DELETE del backend. */
     setPatientList((prevPatients) =>
-      prevPatients.filter((patient) => !selectedPatients.includes(patient.id))
+      prevPatients.filter(
+        (patient) => !selectedPatients.includes(patient.patient_id)
+      )
     );
 
     setSelectedPatients([]);
     setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
   };
+
+  /* Mientras se cargan los datos desde el backend,
+     se muestra un mensaje de carga. */
+  if (loading) {
+    return (
+      <div className="container mx-auto px-6 py-20 text-center">
+        <p className="text-slate-500">Cargando pacientes...</p>
+      </div>
+    );
+  }
+
+  /* Si ocurre un error al obtener los pacientes,
+     se muestra el mensaje de error correspondiente. */
+  if (error) {
+    return (
+      <div className="container mx-auto px-6 py-20 text-center">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-6 py-8">
@@ -114,14 +168,15 @@ export default function PatientList({ patients }: Props) {
           </div>
         </div>
       ) : (
+        // Contenedor que muestra las tarjetas de pacientes en forma de grid.
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {patientList.map((patient) => (
             <PatientCard
-              key={patient.id}
+              key={patient.patient_id}
               patient={patient}
-              selected={selectedPatients.includes(patient.id)}
-              onSelect={() => handleSelectPatient(patient.id)}
-              onClick={() => navigate(`/patients/${patient.id}`)}
+              selected={selectedPatients.includes(patient.patient_id)}
+              onSelect={() => handleSelectPatient(patient.patient_id)}
+              onClick={() => navigate(`/patients/${patient.patient_id}`)}
             />
           ))}
         </div>
