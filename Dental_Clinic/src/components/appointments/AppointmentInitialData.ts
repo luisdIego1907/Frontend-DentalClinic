@@ -7,4 +7,6 @@ export const initialAppointmentFormData: AppointmentData = {
   time: "",
   durationMinutes: 15,
   reason: "",
+  doctor: "",
+  status: "Pendiente",
 };
