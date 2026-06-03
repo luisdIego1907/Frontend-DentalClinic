@@ -62,9 +62,29 @@ export default function Header() {
       <div className="container mx-auto px-6 h-20 flex items-center justify-between">
         <button
           onClick={goHome}
-          className="flex items-center gap-3 text-2xl font-extrabold text-slate-800"
+          className="flex items-center gap-4 text-slate-800 hover:opacity-90 transition"
         >
-          Clínica<span className="text-sky-500 ml-2">Dental</span>
+          <div className="w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center shadow-sm">
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 64 64"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M32 8C24 8 18 12 18 20C18 24 16 28 16 32C16 40 18 56 24 56C28 56 28 48 28 44C28 42 28 40 30 40H34C36 40 36 42 36 44C36 48 36 56 40 56C46 56 48 40 48 32C48 28 46 24 46 20C46 12 40 8 32 8Z"
+                fill="#0EA5E9"
+              />
+            </svg>
+          </div>
+
+          <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
+            Clínica
+            <span className="text-sky-500 ml-2">
+              Dental
+            </span>
+          </span>
         </button>
 
         <div className="hidden md:flex items-center gap-6">
