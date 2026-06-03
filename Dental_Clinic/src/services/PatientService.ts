@@ -34,7 +34,7 @@ export async function getPatientById(id: number): Promise<PatientDetails> {
 }
 
 export async function createPatient(patientData: PatientData): Promise<PatientDetails> {
-  
+
   try {
     const response = await fetch(API_URL, {
       method: "POST",
@@ -54,6 +54,22 @@ export async function createPatient(patientData: PatientData): Promise<PatientDe
 
   } catch (error) {
     console.error("Error en createPatient", error);
+    throw error;
+  }
+}
+
+export async function deletePatient(id : number) : Promise<void>{
+
+  try{
+      const response = await fetch(`${API_URL}/${id}` ,{method: "DELETE"});
+
+      if(!response.ok){
+        throw new Error("Error al eliminar el paciente");
+      }
+
+  }catch(error){
+    console.error("Error en deltePatient: " , error);
+
     throw error;
   }
 }
