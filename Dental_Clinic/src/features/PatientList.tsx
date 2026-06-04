@@ -8,16 +8,26 @@ import { getPatients } from "../services/PatientService";
 export default function PatientList() {
   const navigate = useNavigate();
 
+   /* Lista de pacientes que se obtiene desde el backend.
+     Antes se recibía desde otro componente por medio de props,
+     pero ahora la información viene desde la base de datos mediante el BE. */
   const [patientList, setPatientList] = useState<PatientDetails[]>([]);
 
+  /* Lista de IDs de pacientes seleccionados.
+     Se usa para saber cuáles pacientes fueron marcados con el checkbox. */
   const [selectedPatients, setSelectedPatients] = useState<number[]>([]);
 
+   /* Mensaje que se muestra cuando una acción se ejecuta correctamente. */
   const [successMessage, setSuccessMessage] = useState("");
 
+    /* Estado que indica si la información aún se está cargando desde el backend. */
   const [loading, setLoading] = useState(true);
 
+   /* Estado que guarda un mensaje de error si falla la carga de pacientes. */
   const [error, setError] = useState("");
 
+    /* Se ejecuta cuando el componente se carga por primera vez.
+     Obtiene la lista de pacientes desde el backend usando el servicio getPatients. */
   useEffect(() => {
     async function loadPatients() {
       try {
@@ -34,27 +44,35 @@ export default function PatientList() {
     loadPatients();
   }, []);
 
+    // Función para seleccionar o deseleccionar un paciente.
   const handleSelectPatient = (patientId: number) => {
     setSuccessMessage("");
 
     setSelectedPatients((prevSelected) => {
+       // Si el paciente ya estaba seleccionado, se elimina de la selección.
       if (prevSelected.includes(patientId)) {
         return prevSelected.filter((id) => id !== patientId);
       }
 
+       // Si el paciente no estaba seleccionado, se agrega a la selección.
       return [...prevSelected, patientId];
     });
   };
 
+    // Función que elimina los pacientes seleccionados.
   const handleDeletePatients = () => {
     if (selectedPatients.length === 0) return;
 
+    // Muestra una ventana de confirmación antes de eliminar.
     const confirmDelete = window.confirm(
       `¿Está seguro de que desea eliminar ${selectedPatients.length} paciente(s)?`
     );
 
     if (!confirmDelete) return;
 
+     /* Elimina los pacientes seleccionados solamente de la lista local del frontend.
+       Importante: esto no elimina todavía los pacientes de la base de datos.
+       Para eliminarlos realmente, se necesita consumir un endpoint DELETE del backend. */
     setPatientList((prevPatients) =>
       prevPatients.filter(
         (patient) => !selectedPatients.includes(patient.patient_id)
@@ -65,6 +83,8 @@ export default function PatientList() {
     setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
   };
 
+  /* Mientras se cargan los datos desde el backend,
+     se muestra un mensaje de carga. */
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24">
@@ -81,6 +101,8 @@ export default function PatientList() {
     );
   }
 
+  /* Si ocurre un error al obtener los pacientes,
+     se muestra el mensaje de error correspondiente. */
   if (error) {
     return (
       <div className="flex justify-center py-24">
@@ -175,6 +197,8 @@ export default function PatientList() {
           </div>
         </div>
       ) : (
+
+         // Contenedor que muestra las tarjetas de pacientes en forma de grid.
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {patientList.map((patient) => (
             <PatientCard
