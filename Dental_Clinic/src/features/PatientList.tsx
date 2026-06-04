@@ -76,9 +76,7 @@ export default function PatientList() {
       await Promise.all(
         selectedPatients.map((patientId) => deletePatient(patientId))
       );
-      /* Elimina los pacientes seleccionados solamente de la lista local del frontend.
-      Importante: esto no elimina todavía los pacientes de la base de datos.
-      Para eliminarlos realmente, se necesita consumir un endpoint DELETE del backend. */
+      /* Elimina los pacientes seleccionados*/
       setPatientList((prevPatients) =>
         prevPatients.filter(
           (patient) => !selectedPatients.includes(patient.patient_id)
@@ -92,16 +90,6 @@ export default function PatientList() {
       console.error("Error al eliminar pacientes:", error);
       setDeleteError("No se pudieron eliminar los pacientes seleccionados.");
     }
-
-
-     /* Elimina los pacientes seleccionados solamente de la lista local del frontend.
-       Importante: esto no elimina todavía los pacientes de la base de datos.
-       Para eliminarlos realmente, se necesita consumir un endpoint DELETE del backend. */
-    setPatientList((prevPatients) =>
-      prevPatients.filter(
-        (patient) => !selectedPatients.includes(patient.patient_id)
-      )
-    );
 
     setSelectedPatients([]);
     setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
