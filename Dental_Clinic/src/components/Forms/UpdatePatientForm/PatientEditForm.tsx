@@ -30,12 +30,14 @@ export default function PatientEditForm({
   };
 
   const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
-    
     event.preventDefault();
 
-      const validationErrors = validatePatientEditForm(formData);
+    const validationErrors = validatePatientEditForm(formData);
+
+    setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
+      console.log("ERRORES:", validationErrors);
       return;
     }
 
@@ -46,26 +48,30 @@ export default function PatientEditForm({
     <form onSubmit={handleSave} className="space-y-6">
       <div>
         <label className="block text-sm font-semibold text-slate-600 mb-2">
-          Nombre completo
+          Nombre
         </label>
 
         <input
           type="text"
-          name="name"
-          value={formData.name}
+          name="first_name"
+          value={formData.first_name}
           onChange={handleChange}
-          className={`
-            w-full rounded-xl border px-4 py-3 outline-none transition
-            ${errors.name
-              ? "border-red-400 focus:ring-2 focus:ring-red-200"
-              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-            }
-          `}
+          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:ring-2 focus:ring-cyan-200"
         />
+      </div>
 
-        {errors.name && (
-          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-        )}
+      <div>
+        <label className="block text-sm font-semibold text-slate-600 mb-2">
+          Apellido
+        </label>
+
+        <input
+          type="text"
+          name="last_name"
+          value={formData.last_name}
+          onChange={handleChange}
+          className="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none transition focus:ring-2 focus:ring-cyan-200"
+        />
       </div>
 
       <div>

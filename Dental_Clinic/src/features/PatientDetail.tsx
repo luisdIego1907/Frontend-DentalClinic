@@ -6,7 +6,10 @@ import PatientEditForm from "../components/Forms/UpdatePatientForm/PatientEditFo
 import ConsultationForm from "../components/Forms/ConsultationForm/ConsultationForm";
 import PatientInfo from "./PatientInfo";
 import { usePermissions } from "../hook/usePermissions";
-import { getPatientById } from "../services/PatientService";
+import {
+  getPatientById,
+  updatePatient,
+} from "../services/PatientService";
 
 type Tab = "info" | "consultas" | "nueva-consulta";
 
@@ -52,11 +55,28 @@ export default function PatientDetail() {
     setIsEditing(false);
   };
 
-  const handleSavePatient = (updatedPatient: PatientDetails) => {
-    console.log("Paciente actualizado:", updatedPatient);
-    setPatient(updatedPatient);
-    setIsEditing(false);
-    setSuccessMessage("Paciente actualizado correctamente.");
+  const handleSavePatient = async (updatedPatient: PatientDetails) => {
+    try {
+      await updatePatient(updatedPatient.patient_id, {
+        identification: updatedPatient.identification,
+        first_name: updatedPatient.first_name,
+        last_name: updatedPatient.last_name,
+        birth_date: updatedPatient.birth_date,
+        phone: updatedPatient.phone,
+        email: updatedPatient.email,
+        address: updatedPatient.address,
+        gender: updatedPatient.gender,
+        status: updatedPatient.status,
+      });
+
+      setPatient(updatedPatient);
+      setIsEditing(false);
+      setSuccessMessage("Paciente actualizado correctamente");
+
+    } catch (error) {
+      console.error("Error al actualizar paciente:", error);
+      setError("No se pudo actualizar el paciente");
+    }
   };
 
   const handleSaveConsultation = (data: ConsultationFormData) => {
@@ -139,11 +159,10 @@ export default function PatientDetail() {
         <div className="flex border-b border-slate-200 mb-6">
           <button
             onClick={() => { setTabActivo("info"); setIsEditing(false); }}
-            className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-              tabActivo === "info"
-                ? "border-teal-500 text-teal-600"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-            }`}
+            className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${tabActivo === "info"
+              ? "border-teal-500 text-teal-600"
+              : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
           >
             Información
           </button>
@@ -151,11 +170,10 @@ export default function PatientDetail() {
           {permisos.verConsultas && (
             <button
               onClick={() => { setTabActivo("consultas"); setIsEditing(false); }}
-              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                tabActivo === "consultas"
-                  ? "border-teal-500 text-teal-600"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${tabActivo === "consultas"
+                ? "border-teal-500 text-teal-600"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               Consultas
             </button>
@@ -164,11 +182,10 @@ export default function PatientDetail() {
           {permisos.registrarConsulta && (
             <button
               onClick={() => { setTabActivo("nueva-consulta"); setIsEditing(false); }}
-              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                tabActivo === "nueva-consulta"
-                  ? "border-teal-500 text-teal-600"
-                  : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${tabActivo === "nueva-consulta"
+                ? "border-teal-500 text-teal-600"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+                }`}
             >
               Registrar consulta
             </button>
