@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import PatientCard from "./PatientCard";
 import type { PatientDetails } from "../data/patient";
-import { getPatients } from "../services/PatientService";
+import { deletePatient, getPatients } from "../services/PatientService";
+import DeleteButton from "../shared/DeleteButton";
 
 export default function PatientList() {
   const navigate = useNavigate();
@@ -20,6 +21,9 @@ export default function PatientList() {
    /* Mensaje que se muestra cuando una acción se ejecuta correctamente. */
   const [successMessage, setSuccessMessage] = useState("");
 
+  const [deleteError, setDeleteError] = useState("");
+
+  /* Estado que indica si la información aún se está cargando desde el backend. */
     /* Estado que indica si la información aún se está cargando desde el backend. */
   const [loading, setLoading] = useState(true);
 
@@ -59,16 +63,36 @@ export default function PatientList() {
     });
   };
 
-    // Función que elimina los pacientes seleccionados.
-  const handleDeletePatients = () => {
+  // Función que elimina los pacientes seleccionados.
+  const handleDeletePatients = async () => {
     if (selectedPatients.length === 0) return;
 
-    // Muestra una ventana de confirmación antes de eliminar.
-    const confirmDelete = window.confirm(
-      `¿Está seguro de que desea eliminar ${selectedPatients.length} paciente(s)?`
-    );
+    try {
 
-    if (!confirmDelete) return;
+      setSuccessMessage("");
+      setDeleteError("");
+
+
+      await Promise.all(
+        selectedPatients.map((patientId) => deletePatient(patientId))
+      );
+      /* Elimina los pacientes seleccionados solamente de la lista local del frontend.
+      Importante: esto no elimina todavía los pacientes de la base de datos.
+      Para eliminarlos realmente, se necesita consumir un endpoint DELETE del backend. */
+      setPatientList((prevPatients) =>
+        prevPatients.filter(
+          (patient) => !selectedPatients.includes(patient.patient_id)
+        )
+      );
+
+      setSelectedPatients([]);
+      setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
+
+    } catch (error) {
+      console.error("Error al eliminar pacientes:", error);
+      setDeleteError("No se pudieron eliminar los pacientes seleccionados.");
+    }
+
 
      /* Elimina los pacientes seleccionados solamente de la lista local del frontend.
        Importante: esto no elimina todavía los pacientes de la base de datos.
@@ -137,22 +161,13 @@ export default function PatientList() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={handleDeletePatients}
+          <DeleteButton
+            label="Eliminar pacientes"
+            loadingLabel="Eliminando pacientes..."
             disabled={selectedPatients.length === 0}
-            className={`
-              flex items-center gap-2 px-5 py-3 rounded-xl font-medium transition-colors
-              ${
-                selectedPatients.length > 0
-                  ? "bg-red-600 hover:bg-red-700 text-white cursor-pointer"
-                  : "bg-slate-200 text-slate-400 cursor-not-allowed"
-              }
-            `}
-          >
-            <Trash2 size={18} />
-            Eliminar Pacientes
-          </button>
+            confirmMessage={`¿Está seguro de que desea eliminar ${selectedPatients.length} paciente(s)?`}
+            onDelete={handleDeletePatients}
+          />
 
           <Link
             to="/patients/register"
