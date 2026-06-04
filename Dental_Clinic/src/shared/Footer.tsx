@@ -9,9 +9,23 @@ export default function Footer() {
 
           <div className="flex items-center gap-3">
 
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 64 64"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-sky-500"
+            >
+              <path
+                d="M32 8C24 8 18 12 18 20C18 24 16 28 16 32C16 40 18 56 24 56C28 56 28 48 28 44C28 42 28 40 30 40H34C36 40 36 42 36 44C36 48 36 56 40 56C46 56 48 40 48 32C48 28 46 24 46 20C46 12 40 8 32 8Z"
+                fill="currentColor"
+              />
+            </svg>
+
             <div>
               <h2 className="text-sm font-bold text-slate-800">
-                Clínica Dental
+                Clínica <span className="text-sky-500">Dental</span>
               </h2>
 
               <p className="text-xs text-slate-500">
@@ -47,7 +61,7 @@ export default function Footer() {
               w-10 h-10 rounded-full bg-white text-slate-600
               shadow-sm border border-slate-200 transition-all duration-300
               hover:-translate-y-1 hover:shadow-lg">
-                
+
               <span
                 className="absolute inset-0 rounded-full
                 ring-0 ring-blue-500/30 group-hover:ring-4
@@ -64,7 +78,7 @@ export default function Footer() {
           </div>
 
           <p className="text-sm text-slate-500">
-            © 2026 Clínica Dental. Todos los derechos reservados.
+            © 2026 Clínica Dental. Todos los derechos reservados
           </p>
 
         </div>
@@ -72,5 +86,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-
 }
