@@ -35,7 +35,8 @@ export default function Login() {
       });
 
       goHome();
-    } catch {
+    } catch (error){
+      console.error("Error al iniciar sesión:", error);
       setErrorMessage("Credenciales incorrectas");
     } finally {
       setIsSubmitting(false);

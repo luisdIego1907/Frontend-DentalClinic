@@ -1,9 +1,10 @@
-// Se encarga de definir que puede hacer cada rol de usuario dentro de la aplicación
-//Usar autenticación y autorizacion en el backend para controlar esta parte
-
+// src/hook/usePermissions.ts
+import { getRoles } from "../auth/sessionAuth";
 import { permissions } from "../config/permissions";
 import type { Permissions } from "../config/permissions";
-import { useAuth } from "./useAuth";
+
+type BackendRole = "ADMIN" | "ODO" | "ASSIS";
+type FrontendRole = keyof typeof permissions;
 
 const defaultPermissions: Permissions = {
   editarPerfil: false,
@@ -11,11 +12,20 @@ const defaultPermissions: Permissions = {
   registrarConsulta: false,
 };
 
+const roleMap: Record<BackendRole, FrontendRole> = {
+  ADMIN: "admin",
+  ODO: "odontologist",
+  ASSIS: "assistant",
+};
+
 export function usePermissions(): Permissions {
-  const { getUser } = useAuth();
-  const user = getUser();
+  const roles = getRoles();
 
-  if (!user?.rol) return defaultPermissions;
+  const firstRole = roles[0];
 
-  return permissions[user.rol] ?? defaultPermissions;
+  if (!firstRole) return defaultPermissions;
+
+  const frontendRole = roleMap[firstRole];
+
+  return permissions[frontendRole] ?? defaultPermissions;
 }

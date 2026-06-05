@@ -1,22 +1,43 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../hook/useAuth";
+import { getRoles, isAuthenticated } from "../../auth/sessionAuth";
 
-type Props = {
+type RoleCode = "ADMIN" | "ODO" | "ASSIS";
+
+interface ProtectedRouteProps {
   children: React.ReactNode;
-  rol?: string | string[]; // si se pasa, verifica el rol
-};
+  rol?: RoleCode | RoleCode[];
+}
 
-export default function ProtectedRoute({ children, rol }: Props) {
-  const { getUser } = useAuth();
-  const user = getUser();
+export default function ProtectedRoute({ children, rol }: ProtectedRouteProps) {
+  if (!isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
 
-  // Si no hay sesión → login
-  if (!user) return <Navigate to="/" replace />;
+  if (!rol) {
+    return <>{children}</>;
+  }
 
-  // Si se especifica un rol y no coincide → login
-  if (rol) {
-    const roles = Array.isArray(rol) ? rol : [rol];
-    if (!roles.includes(user.rol)) return <Navigate to="/" replace />;
+  const userRoles = getRoles();
+  const allowedRoles = Array.isArray(rol) ? rol : [rol];
+
+  const hasPermission = allowedRoles.some((allowedRole) =>
+    userRoles.includes(allowedRole)
+  );
+
+  if (!hasPermission) {
+    if (userRoles.includes("ADMIN")) {
+      return <Navigate to="/admin" replace />;
+    }
+
+    if (userRoles.includes("ODO")) {
+      return <Navigate to="/odontologist" replace />;
+    }
+
+    if (userRoles.includes("ASSIS")) {
+      return <Navigate to="/assistant" replace />;
+    }
+
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
