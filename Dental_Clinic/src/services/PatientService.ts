@@ -58,18 +58,42 @@ export async function createPatient(patientData: PatientData): Promise<PatientDe
   }
 }
 
-export async function deletePatient(id : number) : Promise<void>{
+export async function deletePatient(id: number): Promise<void> {
 
-  try{
-      const response = await fetch(`${API_URL}/${id}` ,{method: "DELETE"});
+  try {
+    const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
 
-      if(!response.ok){
-        throw new Error("Error al eliminar el paciente");
-      }
+    if (!response.ok) {
+      throw new Error("Error al eliminar el paciente");
+    }
 
-  }catch(error){
-    console.error("Error en deltePatient: " , error);
+  } catch (error) {
+    console.error("Error en deltePatient: ", error);
 
+    throw error;
+  }
+}
+
+export async function updatePatient(
+  id: number,
+  patientData: PatientData
+): Promise<void> {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(patientData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Error al actualizar el paciente");
+    }
+  } catch (error) {
+    console.error("Error en updatePatient:", error);
     throw error;
   }
 }
