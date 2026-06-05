@@ -1,40 +1,45 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { mockUsers } from "../../mocks/auth.mock";
 import { useAuth } from "../../hook/useAuth";
+import { loginUser } from "../../services/authService";
+import { isAuthenticated } from "../../auth/sessionAuth";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const { goHome } = useAuth(); // Para redirigir al home despues de logearse
 
   // Si ya hay sesión activa, redirige al home del rol
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) goHome();
+    if (isAuthenticated()) {
+      goHome();
+    }
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const user = mockUsers.find(
-      (u) => u.email === email && u.password === password,
-    );
+    try {
+      setErrorMessage("");
+      setIsSubmitting(true);
 
-    if (!user) {
-      alert("Credenciales incorrectas");
-      return;
+      await loginUser({
+        username,
+        password,
+      });
+
+      goHome();
+    } catch {
+      setErrorMessage("Credenciales incorrectas");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // Guardar sesión -- Ejemplo si alguien ya esta dentro y vuelve a login no le pide volver ingresar credenciales
-    localStorage.setItem("user", JSON.stringify(user));
-
-    if (user.rol === "admin") navigate("/admin");
-    if (user.rol === "assistant") navigate("/assistant");
-    if (user.rol === "odontologist") navigate("/odontologist");
   };
 
   return (
@@ -74,9 +79,11 @@ export default function Login() {
               />
             </svg>
           </div>
+
           <h1 className="text-5xl font-semibold text-white mb-4 tracking-tight">
             DentalCare
           </h1>
+
           <p className="text-white/90 text-lg max-w-md mx-auto">
             Sistema de gestión interno para clínicas dentales
           </p>
@@ -100,6 +107,7 @@ export default function Login() {
                 fill="#1D9E75"
               />
             </svg>
+
             <span className="ml-2 text-xl font-semibold text-foreground">
               DentalCare
             </span>
@@ -119,6 +127,7 @@ export default function Login() {
                 fill="#1D9E75"
               />
             </svg>
+
             <span className="ml-2 text-lg font-medium text-foreground">
               DentalCare
             </span>
@@ -129,26 +138,28 @@ export default function Login() {
             <h2 className="text-3xl font-medium text-foreground mb-3">
               Bienvenido
             </h2>
+
             <p className="text-muted-foreground text-sm mb-8">
               Ingresa tus credenciales para continuar
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Input */}
+              {/* Username Input */}
               <div>
                 <label
-                  htmlFor="email"
+                  htmlFor="username"
                   className="block text-sm font-medium text-foreground mb-2"
                 >
-                  Correo electrónico
+                  Usuario
                 </label>
+
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full px-4 py-3 bg-white border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
-                  placeholder="tu@email.com"
+                  placeholder="Nombre de usuario"
                   required
                 />
               </div>
@@ -161,6 +172,7 @@ export default function Login() {
                 >
                   Contraseña
                 </label>
+
                 <div className="relative">
                   <input
                     id="password"
@@ -171,6 +183,7 @@ export default function Login() {
                     placeholder="••••••••"
                     required
                   />
+
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
@@ -188,12 +201,17 @@ export default function Login() {
                 </div>
               </div>
 
+              {errorMessage && (
+                <p className="text-sm text-red-600">{errorMessage}</p>
+              )}
+
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-primary text-primary-foreground py-3.5 px-4 rounded-lg font-medium hover:bg-[#188968] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all shadow-sm hover:shadow-md"
+                disabled={isSubmitting}
+                className="w-full bg-primary text-primary-foreground py-3.5 px-4 rounded-lg font-medium hover:bg-[#188968] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                Iniciar sesión
+                {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
               </button>
             </form>
 

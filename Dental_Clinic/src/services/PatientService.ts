@@ -1,17 +1,15 @@
 import type { PatientDetails, PatientData } from "../data/patient";
 import { config } from "../config";
+import { apiClient } from "../data/apiUser";
 
 const API_URL = `${config.api.url}/api/patients`;
 
 export async function getPatients(): Promise<PatientDetails[]> {
+
   try {
-    const response = await fetch(API_URL);
 
-    if (!response.ok) {
-      throw new Error("Error al obtener los productos");
-    }
-
-    return await response.json();
+    return await apiClient<PatientDetails[]>(API_URL);
+    
   } catch (error) {
     console.error("Error en patientservice: ", error);
     throw error;
