@@ -8,6 +8,7 @@ export function useAuth() {
 
   const goHome = () => {
 
+    // Primero valida si el usuario tiene una sesión activa. Si no tiene sesión, lo manda al login.
     if (!isAuthenticated()) {
       navigate("/", { replace: true });
       return;
@@ -16,11 +17,13 @@ export function useAuth() {
     const roles = getRoles();
     const firstRole = roles[0];
 
+    // Si no existe ningún rol guardado se manda al login.
     if (!firstRole) {
       navigate("/", { replace: true });
       return;
     }
 
+    // Redirige al home correspondiente según el rol.
     navigate(ROLE_HOME_PATH[firstRole], { replace: true });
   };
 

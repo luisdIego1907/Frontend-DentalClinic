@@ -2,17 +2,20 @@
 import { getRoles } from "../auth/sessionAuth";
 import { permissions } from "../config/permissions";
 import type { Permissions } from "../config/permissions";
+import type { RoleCode } from "../config/roles";
 
-type BackendRole = "ADMIN" | "ODO" | "ASSIS";
+
 type FrontendRole = keyof typeof permissions;
 
+// Define los permisos por defecto. cuando el usuario no tiene rol ono se encuentra un rol válido,
 const defaultPermissions: Permissions = {
   editarPerfil: false,
   verConsultas: false,
   registrarConsulta: false,
 };
 
-const roleMap: Record<BackendRole, FrontendRole> = {
+// Mapea los roles que vienen del backend a los n usados en el front
+const roleMap: Record<RoleCode, FrontendRole> = {
   ADMIN: "admin",
   ODO: "odontologist",
   ASSIS: "assistant",

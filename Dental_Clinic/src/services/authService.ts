@@ -1,9 +1,12 @@
+// saveSession guarda el token y la fecha de expiración.
 import {
   saveSession,
   saveRoles,
 } from "../auth/sessionAuth";
 import { config } from "../config";
 import { VALID_ROLES, type RoleCode } from "../config/roles";
+// LoginRequest representa lo que se envía al backend.
+// LoginResponse representa lo que responde el backend.
 import type { LoginRequest, LoginResponse } from "../auth/Login";
 
 const LOGIN_URL = `${config.api.url}/api/authorization/authorize`;
@@ -14,13 +17,19 @@ interface JwtPayload {
   name?: string;
 }
 
+//  estructura esperada de la respuesta del endpoint de roles.
 interface RolesResponse {
   roles: string[];
 }
 
+// Decodifica el payload del JWT.
+// El JWT tiene tres partes header.payload.signature
+// toma el payload.
 function decodeJwtPayload(token: string): JwtPayload {
+
   const payload = token.split(".")[1];
 
+  // Si no existe payload, el token no tiene una estructura válida.
   if (!payload) {
     throw new Error("Token inválido");
   }
@@ -78,8 +87,10 @@ export async function loginUser(request: LoginRequest): Promise<void> {
     throw new Error("Credenciales incorrectas");
   }
 
+  // Convierte la respuesta del backend a objeto.
   const data: LoginResponse = await response.json();
 
+  // Extrae el token de la respuesta.
   const token = data.bearerToken;
   const expiresIn = data.expiresIn;
 
@@ -93,15 +104,17 @@ export async function loginUser(request: LoginRequest): Promise<void> {
     throw new Error("El token no contiene el identificador del usuario");
   }
 
+  // Guarda el token y la expiración en sessionStorage.
   saveSession(token, expiresIn);
 
   const roles = await getUserRoles(payload.externalId, token);
 
-  console.log("Roles obtenidos desde backend:", roles);
+  //console.log("Roles obtenidos desde backend:", roles);
 
   if (roles.length === 0) {
     throw new Error("El usuario no tiene roles asignados");
   }
 
+   // Guarda los roles en sessionStorage. Luego ProtectedRoute, Header y usePermissions pueden leerlos
   saveRoles(roles);
 }
