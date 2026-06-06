@@ -1,23 +1,12 @@
-// src/services/authService.ts
-
 import {
   saveSession,
   saveRoles,
-  type RoleCode,
 } from "../auth/sessionAuth";
 import { config } from "../config";
+import { VALID_ROLES, type RoleCode } from "../config/roles";
+import type { LoginRequest, LoginResponse } from "../auth/Login";
 
 const LOGIN_URL = `${config.api.url}/api/authorization/authorize`;
-
-interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-interface LoginResponse {
-  bearerToken: string;
-  expiresIn: string;
-}
 
 interface JwtPayload {
   externalId?: string;
@@ -49,7 +38,7 @@ function normalizeRoles(roles: string[]): RoleCode[] {
   return roles
     .map((role) => role.trim().toUpperCase())
     .filter((role): role is RoleCode =>
-      ["ADMIN", "ODO", "ASSIS"].includes(role)
+      VALID_ROLES.includes(role as RoleCode)
     );
 }
 

@@ -1,6 +1,6 @@
 import type { PatientDetails, PatientData } from "../data/patient";
 import { config } from "../config";
-import { apiClient } from "../data/apiUser";
+import { apiClient } from "./apiClient";
 
 const API_URL = `${config.api.url}/api/patients`;
 

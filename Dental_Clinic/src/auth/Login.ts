@@ -7,6 +7,4 @@ export interface LoginRequest {
 export interface LoginResponse {
   bearerToken?: string;
   expiresIn?: string;
-  BearerToken?: string;
-  ExpiresIn?: string;
 }

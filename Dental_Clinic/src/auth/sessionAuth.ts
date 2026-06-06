@@ -1,6 +1,4 @@
-// src/auth/sessionAuth.ts
-
-export type RoleCode = "ADMIN" | "ODO" | "ASSIS";
+import type { RoleCode } from "../config/roles";
 
 const TOKEN_KEY = "auth_token";
 const EXPIRES_KEY = "auth_expires";

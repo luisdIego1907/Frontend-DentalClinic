@@ -1,7 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { getRoles, isAuthenticated } from "../../auth/sessionAuth";
-
-type RoleCode = "ADMIN" | "ODO" | "ASSIS";
+import type { RoleCode } from "../../config/roles";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
