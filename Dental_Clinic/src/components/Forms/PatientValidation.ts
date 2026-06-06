@@ -71,8 +71,12 @@ export function validatePatientEditForm(
 ): PatientEditFormErrors {
   const newErrors: PatientEditFormErrors = {};
 
-  if (!formData.name.trim()) {
-    newErrors.name = "El nombre completo es obligatorio.";
+  if (!formData.first_name.trim()) {
+    newErrors.first_name = "El nombre es obligatorio.";
+  }
+
+  if (!formData.last_name.trim()) {
+    newErrors.last_name = "El apellido es obligatorio.";
   }
 
   if (!formData.identification.trim()) {
@@ -88,4 +92,5 @@ export function validatePatientEditForm(
   }
 
   return newErrors;
+  
 }

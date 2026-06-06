@@ -1,43 +1,8 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import type { AppointmentData } from "../../data/appointment";
-import type { PatientData } from "../../data/patient";
-
-const mockPatients: PatientData[] = [
-  {
-    identification: "1-1902-1157",
-    first_name: "María",
-    last_name: "González",
-    birth_date: "1998-04-12",
-    phone: "8743-3451",
-    email: "mariaza06@gmail.com",
-    address: "San José, Costa Rica",
-    gender: "Femenino",
-    status: "Activo",
-  },
-  {
-    identification: "3-4421-4254",
-    first_name: "Carlos",
-    last_name: "Ramírez",
-    birth_date: "1995-09-23",
-    phone: "6543-8634",
-    email: "carlosram82@gmail.com",
-    address: "Cartago, Costa Rica",
-    gender: "Masculino",
-    status: "Inactivo",
-  },
-  {
-    identification: "2-6282-4595",
-    first_name: "Antonio",
-    last_name: "Ramos",
-    birth_date: "1991-01-12",
-    phone: "3485-9951",
-    email: "antamos44@gmail.com",
-    address: "San José, Costa Rica",
-    gender: "Masculino",
-    status: "Activo",
-  },
-];
+import { Mockpacientes, mockCitas, mockDoctores } from "../../mocks/appointment.mock";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -64,41 +29,58 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
 };
 
 export default function ScheduleAppointments() {
-  const [appointments, setAppointments] = useState<AppointmentData[]>([
-    {
-      id: 1,
-      patient: mockPatients[0],
-      date: "2026-07-06",
-      time: "07:30",
-      durationMinutes: 30,
-      reason: "Limpieza dental",
-      doctor: "Dr. Jones",
-      status: "Pendiente",
-    },
-  ]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const appointmentIdParam = searchParams.get("appointmentId");
+  const [appointments, setAppointments] = useState<AppointmentData[]>(mockCitas);
+
+  const [appointmentToEdit, setAppointmentToEdit] =
+    useState<AppointmentData | null>(null);
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [submitButtonErrorSignal, setSubmitButtonErrorSignal] = useState(0);
 
-  const handleSaveAppointment = (appointmentData: AppointmentData) => {
+  const formSectionRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const appointmentId = Number(appointmentIdParam);
+
+    if (!appointmentId) {
+      setAppointmentToEdit(null);
+      return;
+    }
+
+    const appointment = appointments.find(
+      (currentAppointment) => currentAppointment.id === appointmentId
+    );
+
+    if (appointment) {
+      setAppointmentToEdit(appointment);
+    }
+  }, [appointments, appointmentIdParam]);
+
+  const handleSaveAppointment = (appointmentData: AppointmentData): boolean => {
     setSuccessMessage("");
     setErrorMessage("");
 
-    if (
-      !appointmentData.patient ||
-      appointmentData.patient.status !== "Activo"
-    ) {
-      setErrorMessage(
-        "No se puede agendar una cita para un paciente inactivo.",
-      );
-      return;
+    if (!appointmentData.patient || appointmentData.patient.status === "Inactivo") {
+      setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
+      return false;
     }
 
     const newStart = convertTimeToMinutes(appointmentData.time);
     const newEnd = newStart + appointmentData.durationMinutes;
 
     const appointmentExists = appointments.some((appointment) => {
+      if (appointmentToEdit && appointment.id === appointmentToEdit.id) {
+        return false;
+      }
+
       if (appointment.date !== appointmentData.date) {
+        return false;
+      }
+
+      if (appointment.doctor !== appointmentData.doctor) {
         return false;
       }
 
@@ -109,17 +91,60 @@ export default function ScheduleAppointments() {
     });
 
     if (appointmentExists) {
-      setErrorMessage("El horario seleccionado no se encuentra disponible.");
-      return;
+      setErrorMessage("El doctor seleccionado ya tiene una cita en ese horario.");
+      setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
+      return false;
+    }
+
+    if (appointmentToEdit) {
+      const updatedAppointments = appointments.map((appointment) =>
+        appointment.id === appointmentToEdit.id
+          ? {
+            ...appointmentData,
+            id: appointmentToEdit.id,
+            patient: appointmentToEdit.patient,
+            status: appointmentToEdit.status,
+          }
+          : appointment
+      );
+
+      setAppointments(updatedAppointments);
+      setAppointmentToEdit(null);
+      setSearchParams({});
+      setSuccessMessage("Cita modificada correctamente.");
+      return true;
     }
 
     const newAppointment: AppointmentData = {
       ...appointmentData,
       id: appointments.length + 1,
+      doctor: appointmentData.doctor,
+      status: appointmentData.status || "Pendiente",
     };
 
     setAppointments([...appointments, newAppointment]);
     setSuccessMessage("Cita agendada correctamente.");
+    return true;
+  };
+
+  const handleEditAppointment = (appointment: AppointmentData) => {
+    setSuccessMessage("");
+    setErrorMessage("");
+    setAppointmentToEdit(appointment);
+
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }, 0);
+  };
+
+  const handleCancelEdit = () => {
+    setAppointmentToEdit(null);
+    setSuccessMessage("");
+    setErrorMessage("");
+    setSearchParams({});
   };
 
   const sortedAppointments = [...appointments].sort((a, b) => {
@@ -141,7 +166,7 @@ export default function ScheduleAppointments() {
           <h1 className="text-3xl font-bold text-gray-900">Agendar cita</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar una cita
+            Complete la información necesaria para registrar o modificar una cita
             odontológica.
           </p>
         </div>
@@ -158,10 +183,16 @@ export default function ScheduleAppointments() {
           </div>
         )}
 
-        <AppointmentForm
-          patients={mockPatients}
-          onSubmit={handleSaveAppointment}
-        />
+        <div ref={formSectionRef}>
+          <AppointmentForm
+            patients={Mockpacientes}
+            doctors={mockDoctores}
+            onSubmit={handleSaveAppointment}
+            appointmentToEdit={appointmentToEdit}
+            onCancelEdit={handleCancelEdit}
+            submitButtonErrorSignal={submitButtonErrorSignal}
+          />
+        </div>
 
         <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
           <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
@@ -175,33 +206,53 @@ export default function ScheduleAppointments() {
                 key={appointment.id}
                 className="rounded-xl border border-gray-200 bg-gray-50 p-4"
               >
-                <p className="font-semibold text-gray-900">
-                  {appointment.patient
-                    ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
-                    : "Paciente no seleccionado"}
-                </p>
+                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="font-semibold text-gray-900">
+                      {appointment.patient
+                        ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
+                        : "Paciente no seleccionado"}
+                    </p>
 
-                {appointment.patient && (
-                  <p className="text-sm text-gray-600">
-                    Identificación: {appointment.patient.identification}
-                  </p>
-                )}
+                    {appointment.patient && (
+                      <p className="text-sm text-gray-600">
+                        Identificación: {appointment.patient.identification}
+                      </p>
+                    )}
 
-                <p className="text-sm text-gray-600">
-                  Fecha: {formatDateToDayMonthYear(appointment.date)}
-                </p>
+                    <p className="text-sm text-gray-600">
+                      Fecha: {formatDateToDayMonthYear(appointment.date)}
+                    </p>
 
-                <p className="text-sm text-gray-600">
-                  Horario: {appointment.time} -{" "}
-                  {getAppointmentEndTime(
-                    appointment.time,
-                    appointment.durationMinutes,
-                  )}
-                </p>
+                    <p className="text-sm text-gray-600">
+                      Horario: {appointment.time} -{" "}
+                      {getAppointmentEndTime(
+                        appointment.time,
+                        appointment.durationMinutes
+                      )}
+                    </p>
 
-                <p className="text-sm text-gray-600">
-                  Motivo: {appointment.reason}
-                </p>
+                    <p className="text-sm text-gray-600">
+                      Doctor: {appointment.doctor}
+                    </p>
+
+                    <p className="text-sm text-gray-600">
+                      Estado: {appointment.status}
+                    </p>
+
+                    <p className="text-sm text-gray-600">
+                      Motivo: {appointment.reason}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleEditAppointment(appointment)}
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                  >
+                    Editar
+                  </button>
+                </div>
               </div>
             ))}
           </div>

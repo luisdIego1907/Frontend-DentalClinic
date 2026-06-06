@@ -2,6 +2,7 @@
 import PatientForm from "../../components/Forms/RegisterPatientForm/PatientForm";
 import { useState } from "react"; //hook que permite guardar y modificar datos dentro del componente. Se usa para guardar mensaje de exito cuando el paciente se registra.
 import type { PatientData } from "../../data/patient";
+import { createPatient } from "../../services/PatientService";
 //El import type significa que se esta importando una definicion de tip TypeScript
 
 export default function RegisterPatient() {
@@ -10,19 +11,31 @@ export default function RegisterPatient() {
     Crea un estado llamado successMessage
     Su funcion es cambiar el valor del mensaje.
     Su valor inicial es ""
-  */ 
+  */
   const [successMessage, setSuccessMessage] = useState("");
+
+  const [errorMessage, setErrorMessage] = useState("");
   /*
     Funcion handleSavePatient
     Se ejecuta cuando el formulario envie los datos del paciente
   */
   const handleSavePatient = async (patientData: PatientData) => {
     try {
+
+      setSuccessMessage("");
+      setErrorMessage("");
+
       console.log("Paciente a registrar:", patientData);
+
+      /*
+        Hacer POST del paciente
+      */
+      await createPatient(patientData);
 
       setSuccessMessage("Paciente registrado correctamente.");
     } catch (error) {
       console.error("Error al registrar paciente:", error);
+      setErrorMessage("No se pudo registrar el paciente.");
     }
   };
 
@@ -47,7 +60,7 @@ export default function RegisterPatient() {
         {/*
           Renderizado condicional.
           Si successMessage != de "" muestre lo de dentro.
-        */} 
+        */}
         {successMessage && (
           <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-medium text-green-700 shadow-sm">
             {/*Se muestra el contenido de successMessage*/}

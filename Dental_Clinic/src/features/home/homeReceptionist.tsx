@@ -1,4 +1,5 @@
 import { Calendar, Users, Clock, CalendarPlus, Pencil } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { PageGreeting } from "../../components/home/PageGreeting";
 import { mockCitas } from "../../mocks/appointment.mock";
 import { StatCard } from "../../components/home/StatCard";
@@ -11,6 +12,8 @@ const BLUE = { bg: "#E6F1FB", dark: "#0C447C", mid: "#185FA5" };
 const citas = mockCitas;
 
 export default function HomeRecepcionist() {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <PageGreeting nombre="Recepción" colorClass="text-[#185FA5]" />
@@ -48,7 +51,7 @@ export default function HomeRecepcionist() {
       </h2>
       <div className="grid grid-cols-3 gap-4 mb-8">
         <QuickAccessButton
-          label="Concretar cita"
+          label="Registrar cita"
           description="Nueva reserva de cita"
           to="/appointments/schedule"
           icon={CalendarPlus}
@@ -68,7 +71,7 @@ export default function HomeRecepcionist() {
         <QuickAccessButton
           label="Ver Pacientes"
           description="Agenda completa del día"
-          to="/patients" // Parte no trabajada todavía, pero se asume que esta ruta mostraría el calendario completo de citas para el día
+          to="/patients"
           icon={Users}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
@@ -103,7 +106,11 @@ export default function HomeRecepcionist() {
             <span className="text-xs text-gray-400">
               {cita.durationMinutes} min
             </span>
-            <button className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 hover:border-gray-300 transition-colors">
+            <button
+              type="button"
+              onClick={() => navigate(`/appointments/schedule?appointmentId=${cita.id}`)}
+              className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:scale-95"
+            >
               <Pencil className="w-3.5 h-3.5" />
               Editar
             </button>

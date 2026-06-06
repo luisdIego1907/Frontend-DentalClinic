@@ -1,4 +1,6 @@
 // src/hooks/useAuth.ts
+// Se encarga de manejar la autenticación del usuario, obteniendo su información y redirigiendo según su rol
+
 import { useNavigate } from "react-router-dom";
 
 export function useAuth() {
@@ -16,8 +18,8 @@ export function useAuth() {
       return;
     }
     if (user.rol === "admin") navigate("/admin");
-    if (user.rol === "recepcionista") navigate("/recepcionista");
-    if (user.rol === "odontologo") navigate("/odontologo");
+    if (user.rol === "assistant") navigate("/assistant");
+    if (user.rol === "odontologist") navigate("/odontologist");
   };
 
   const logout = () => {

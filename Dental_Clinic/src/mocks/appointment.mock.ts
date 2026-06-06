@@ -59,6 +59,8 @@ export const Mockpacientes: PatientData[] = [
   },
 ];
 
+export const mockDoctores = ["Dr. Rojas", "Dra. Solano", "Dr. Campos"] as const;
+
 export const mockCitas: AppointmentData[] = [
   {
     id: 1,

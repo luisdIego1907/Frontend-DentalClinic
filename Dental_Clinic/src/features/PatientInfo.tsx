@@ -5,18 +5,20 @@ type Props = {
 };
 
 export default function PatientInfo({ patient }: Props) {
+  const fullName = `${patient.first_name} ${patient.last_name}`;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <p className="text-sm font-semibold text-slate-500">ID</p>
-        <p className="text-lg text-slate-800">{patient.id}</p>
+        <p className="text-lg text-slate-800">{patient.patient_id}</p>
       </div>
 
       <div>
         <p className="text-sm font-semibold text-slate-500">
           Nombre completo
         </p>
-        <p className="text-lg text-slate-800">{patient.name}</p>
+        <p className="text-lg text-slate-800">{fullName}</p>
       </div>
 
       <div>

@@ -33,8 +33,8 @@ export default function Login() {
     localStorage.setItem("user", JSON.stringify(user));
 
     if (user.rol === "admin") navigate("/admin");
-    if (user.rol === "recepcionista") navigate("/recepcionista");
-    if (user.rol === "odontologo") navigate("/odontologo");
+    if (user.rol === "assistant") navigate("/assistant");
+    if (user.rol === "odontologist") navigate("/odontologist");
   };
 
   return (

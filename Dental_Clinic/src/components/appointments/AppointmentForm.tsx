@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { AppointmentData } from "../../data/appointment";
 import type { PatientData } from "../../data/patient";
 import {
@@ -9,17 +9,57 @@ import { initialAppointmentFormData } from "./AppointmentInitialData";
 
 interface AppointmentFormProps {
   patients: PatientData[];
-  onSubmit: (appointmentData: AppointmentData) => void;
+  doctors: readonly string[];
+  onSubmit: (appointmentData: AppointmentData) => boolean;
+  appointmentToEdit?: AppointmentData | null;
+  onCancelEdit?: () => void;
+  submitButtonErrorSignal?: number;
 }
 
-export default function AppointmentForm({ patients, onSubmit }: AppointmentFormProps) {
+export default function AppointmentForm({
+  patients,
+  doctors,
+  onSubmit,
+  appointmentToEdit = null,
+  onCancelEdit,
+  submitButtonErrorSignal = 0,
+}: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentData>(
     initialAppointmentFormData
   );
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
+  const [showSubmitErrorFeedback, setShowSubmitErrorFeedback] = useState(false);
 
-  const activePatients = patients.filter((patient) => patient.status === "Activo");
+  const activePatients = patients.filter(
+    (patient) => patient.status !== "Inactivo"
+  );
+
+  const isEditing = appointmentToEdit !== null;
+
+  useEffect(() => {
+    if (appointmentToEdit) {
+      setFormData(appointmentToEdit);
+      setErrors({});
+      return;
+    }
+
+    setFormData(initialAppointmentFormData);
+    setErrors({});
+  }, [appointmentToEdit]);
+
+
+  useEffect(() => {
+    if (submitButtonErrorSignal === 0) return;
+
+    setShowSubmitErrorFeedback(true);
+
+    const timeoutId = window.setTimeout(() => {
+      setShowSubmitErrorFeedback(false);
+    }, 450);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [submitButtonErrorSignal]);
 
   const handleChange = (
     event: React.ChangeEvent<
@@ -56,18 +96,28 @@ export default function AppointmentForm({ patients, onSubmit }: AppointmentFormP
     }
 
     setErrors({});
-    onSubmit(formData);
+    const wasSaved = onSubmit(formData);
+
+    if (!isEditing && wasSaved) {
+      setFormData(initialAppointmentFormData);
+    }
   };
 
   const inputClass =
     "mt-1 w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
 
+  const disabledInputClass =
+    "mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2.5 text-sm text-gray-600 shadow-sm outline-none";
+
   const textareaClass =
     "mt-1 w-full resize-none rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200";
 
   const labelClass = "text-sm font-medium text-gray-700";
-
   const errorClass = "mt-1 block text-sm text-red-600";
+
+  const submitButtonClass = showSubmitErrorFeedback
+    ? "rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 active:scale-95"
+    : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
     String(index).padStart(2, "0")
@@ -81,9 +131,13 @@ export default function AppointmentForm({ patients, onSubmit }: AppointmentFormP
       className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Registrar cita</h2>
+        <h2 className="text-2xl font-bold text-gray-900">
+          {isEditing ? "Modificar cita" : "Registrar cita"}
+        </h2>
         <p className="mt-1 text-sm text-gray-500">
-          Complete los datos de la cita para agendarla en el sistema.
+          {isEditing
+            ? "Actualice los datos de la cita seleccionada."
+            : "Complete los datos de la cita para agendarla en el sistema."}
         </p>
       </div>
 
@@ -92,23 +146,63 @@ export default function AppointmentForm({ patients, onSubmit }: AppointmentFormP
           <label htmlFor="patient" className={labelClass}>
             Paciente
           </label>
+
+          {isEditing ? (
+            <input
+              id="patient"
+              type="text"
+              value={
+                formData.patient
+                  ? `${formData.patient.first_name} ${formData.patient.last_name} - ${formData.patient.identification}`
+                  : "Paciente no seleccionado"
+              }
+              className={disabledInputClass}
+              disabled
+            />
+          ) : (
+            <select
+              id="patient"
+              name="patient"
+              value={formData.patient?.identification ?? ""}
+              onChange={handlePatientChange}
+              className={inputClass}
+            >
+              <option value="" disabled>
+                Seleccione un paciente
+              </option>
+              {activePatients.map((patient) => (
+                <option key={patient.identification} value={patient.identification}>
+                  {patient.first_name} {patient.last_name} -{" "}
+                  {patient.identification}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {errors.patient && <span className={errorClass}>{errors.patient}</span>}
+        </div>
+
+        <div>
+          <label htmlFor="doctor" className={labelClass}>
+            Doctor
+          </label>
           <select
-            id="patient"
-            name="patient"
-            value={formData.patient?.identification ?? ""}
-            onChange={handlePatientChange}
+            id="doctor"
+            name="doctor"
+            value={formData.doctor}
+            onChange={handleChange}
             className={inputClass}
           >
             <option value="" disabled>
-              Seleccione un paciente
+              Seleccione un doctor
             </option>
-            {activePatients.map((patient) => (
-              <option key={patient.identification} value={patient.identification}>
-                {patient.first_name} {patient.last_name} - {patient.identification}
+            {doctors.map((doctor) => (
+              <option key={doctor} value={doctor}>
+                {doctor}
               </option>
             ))}
           </select>
-          {errors.patient && <span className={errorClass}>{errors.patient}</span>}
+          {errors.doctor && <span className={errorClass}>{errors.doctor}</span>}
         </div>
 
         <div>
@@ -225,12 +319,22 @@ export default function AppointmentForm({ patients, onSubmit }: AppointmentFormP
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-end gap-3">
+        {isEditing && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 active:scale-95"
+          >
+            Cancelar
+          </button>
+        )}
+
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+          className={submitButtonClass}
         >
-          Agendar cita
+          {isEditing ? "Guardar cambios" : "Agendar cita"}
         </button>
       </div>
     </form>
