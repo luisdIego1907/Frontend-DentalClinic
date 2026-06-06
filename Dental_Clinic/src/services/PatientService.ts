@@ -5,11 +5,8 @@ import { apiClient } from "../data/apiUser";
 const API_URL = `${config.api.url}/api/patients`;
 
 export async function getPatients(): Promise<PatientDetails[]> {
-
   try {
-
     return await apiClient<PatientDetails[]>(API_URL);
-    
   } catch (error) {
     console.error("Error en patientservice: ", error);
     throw error;
@@ -18,78 +15,47 @@ export async function getPatients(): Promise<PatientDetails[]> {
 
 export async function getPatientById(id: number): Promise<PatientDetails> {
   try {
-    const response = await fetch(`${API_URL}/${id}`);
-
-    if (!response.ok) {
-      throw new Error("Error al obtener el paciente");
-    }
-
-    return await response.json();
+    return await apiClient<PatientDetails>(`${API_URL}/${id}`);
   } catch (error) {
     console.error("Error en getPatientById:", error);
     throw error;
   }
 }
 
-export async function createPatient(patientData: PatientData): Promise<PatientDetails> {
-
+export async function createPatient(
+  patientData: PatientData,
+): Promise<PatientDetails> {
   try {
-    const response = await fetch(API_URL, {
+    return await apiClient<PatientDetails>(API_URL, {
       method: "POST",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
       body: JSON.stringify(patientData),
     });
-
-    if (!response.ok) {
-      throw new Error("Error al crear el paciente");
-    }
-
-    return await response.json();
-
   } catch (error) {
-    console.error("Error en createPatient", error);
+    console.error("Error en createPatient:", error);
     throw error;
   }
 }
 
 export async function deletePatient(id: number): Promise<void> {
-
   try {
-    const response = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-
-    if (!response.ok) {
-      throw new Error("Error al eliminar el paciente");
-    }
-
+    await apiClient<void>(`${API_URL}/${id}`, {
+      method: "DELETE",
+    });
   } catch (error) {
-    console.error("Error en deltePatient: ", error);
-
+    console.error("Error en deletePatient:", error);
     throw error;
   }
 }
 
 export async function updatePatient(
   id: number,
-  patientData: PatientData
+  patientData: PatientData,
 ): Promise<void> {
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
+    await apiClient<void>(`${API_URL}/${id}`, {
       method: "PUT",
-
-      headers: {
-        "Content-Type": "application/json",
-      },
-
       body: JSON.stringify(patientData),
     });
-
-    if (!response.ok) {
-      throw new Error("Error al actualizar el paciente");
-    }
   } catch (error) {
     console.error("Error en updatePatient:", error);
     throw error;

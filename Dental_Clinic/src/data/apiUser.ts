@@ -6,13 +6,19 @@ export async function apiClient<T>(
 ): Promise<T> {
   const token = getToken();
 
+  const headers = new Headers(options.headers);
+
+  if (!headers.has("Content-Type") && options.body) {
+    headers.set("Content-Type", "application/json");
+  }
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   const response = await fetch(url, {
     ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
+    headers,
   });
 
   if (response.status === 401) {
@@ -32,6 +38,5 @@ export async function apiClient<T>(
     return null as T;
   }
 
-  return await response.json();
+  return (await response.json()) as T;
 }
-
