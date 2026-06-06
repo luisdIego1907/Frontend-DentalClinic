@@ -9,7 +9,6 @@ export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -35,9 +34,15 @@ export default function Login() {
       });
 
       goHome();
-    } catch (error){
+    } catch (error) {
       console.error("Error al iniciar sesión:", error);
-      setErrorMessage("Credenciales incorrectas");
+
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("No se pudo iniciar sesión");
+      }
+
     } finally {
       setIsSubmitting(false);
     }

@@ -1,9 +1,13 @@
 // src/services/authService.ts
 
-import { saveSession, type RoleCode } from "../auth/sessionAuth";
+import {
+  saveSession,
+  saveRoles,
+  type RoleCode,
+} from "../auth/sessionAuth";
 import { config } from "../config";
 
-const API_URL = `${config.api.url}/api/authorization/authorize`;
+const LOGIN_URL = `${config.api.url}/api/authorization/authorize`;
 
 interface LoginRequest {
   username: string;
@@ -16,28 +20,32 @@ interface LoginResponse {
 }
 
 interface JwtPayload {
-  role?: string | string[];
-  roles?: string | string[];
-  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"?:
-    | string
-    | string[];
+  externalId?: string;
+  unique_name?: string;
+  name?: string;
 }
 
-function decodeToken(token: string): JwtPayload {
+interface RolesResponse {
+  roles: string[];
+}
+
+function decodeJwtPayload(token: string): JwtPayload {
   const payload = token.split(".")[1];
 
-  const decodedPayload = atob(
-    payload.replace(/-/g, "+").replace(/_/g, "/")
+  if (!payload) {
+    throw new Error("Token inválido");
+  }
+
+  const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+  const paddedBase64 = base64.padEnd(
+    base64.length + ((4 - (base64.length % 4)) % 4),
+    "="
   );
 
-  return JSON.parse(decodedPayload);
+  return JSON.parse(atob(paddedBase64));
 }
 
-function normalizeRoles(roleClaim: string | string[] | undefined): RoleCode[] {
-  if (!roleClaim) return [];
-
-  const roles = Array.isArray(roleClaim) ? roleClaim : [roleClaim];
-
+function normalizeRoles(roles: string[]): RoleCode[] {
   return roles
     .map((role) => role.trim().toUpperCase())
     .filter((role): role is RoleCode =>
@@ -45,8 +53,28 @@ function normalizeRoles(roleClaim: string | string[] | undefined): RoleCode[] {
     );
 }
 
+async function getUserRoles(
+  userId: string,
+  token: string
+): Promise<RoleCode[]> {
+  const response = await fetch(`${config.api.url}/api/users/${userId}/roles`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("No se pudieron obtener los roles del usuario");
+  }
+
+  const data: RolesResponse = await response.json();
+
+  return normalizeRoles(data.roles);
+}
+
 export async function loginUser(request: LoginRequest): Promise<void> {
-  const response = await fetch(API_URL, {
+  const response = await fetch(LOGIN_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -67,21 +95,24 @@ export async function loginUser(request: LoginRequest): Promise<void> {
   const expiresIn = data.expiresIn;
 
   if (!token || !expiresIn) {
-    throw new Error("El backend no devolvió token o fecha de expiración");
+    throw new Error("El backend no devolvió token o expiración");
   }
 
-  const payload = decodeToken(token);
+  const payload = decodeJwtPayload(token);
 
-  const roleClaim =
-    payload.roles ??
-    payload.role ??
-    payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+  if (!payload.externalId) {
+    throw new Error("El token no contiene el identificador del usuario");
+  }
 
-  const roles = normalizeRoles(roleClaim);
+  saveSession(token, expiresIn);
+
+  const roles = await getUserRoles(payload.externalId, token);
+
+  console.log("Roles obtenidos desde backend:", roles);
 
   if (roles.length === 0) {
-    throw new Error("El token no contiene roles válidos");
+    throw new Error("El usuario no tiene roles asignados");
   }
 
-  saveSession(token, expiresIn, roles);
+  saveRoles(roles);
 }

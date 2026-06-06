@@ -6,13 +6,12 @@ const TOKEN_KEY = "auth_token";
 const EXPIRES_KEY = "auth_expires";
 const ROLES_KEY = "auth_roles";
 
-export function saveSession(
-  token: string,
-  expiresIn: string,
-  roles: RoleCode[]
-): void {
+export function saveSession(token: string, expiresIn: string): void {
   sessionStorage.setItem(TOKEN_KEY, token);
   sessionStorage.setItem(EXPIRES_KEY, expiresIn);
+}
+
+export function saveRoles(roles: RoleCode[]): void {
   sessionStorage.setItem(ROLES_KEY, JSON.stringify(roles));
 }
 
