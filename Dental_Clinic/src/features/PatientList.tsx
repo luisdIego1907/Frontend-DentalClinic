@@ -5,33 +5,35 @@ import PatientCard from "./PatientCard";
 import type { PatientDetails } from "../data/patient";
 import { deletePatient, getPatients } from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
+import { PermissionDenied } from "../shared/PermissionDenied";
 
 export default function PatientList() {
   const navigate = useNavigate();
 
-   /* Lista de pacientes que se obtiene desde el backend.
-     Antes se recibía desde otro componente por medio de props,
-     pero ahora la información viene desde la base de datos mediante el BE. */
+  const [permissionDenied, setPermissionDenied] = useState(false);
+  /* Lista de pacientes que se obtiene desde el backend.
+    Antes se recibía desde otro componente por medio de props,
+    pero ahora la información viene desde la base de datos mediante el BE. */
   const [patientList, setPatientList] = useState<PatientDetails[]>([]);
 
   /* Lista de IDs de pacientes seleccionados.
      Se usa para saber cuáles pacientes fueron marcados con el checkbox. */
   const [selectedPatients, setSelectedPatients] = useState<number[]>([]);
 
-   /* Mensaje que se muestra cuando una acción se ejecuta correctamente. */
+  /* Mensaje que se muestra cuando una acción se ejecuta correctamente. */
   const [successMessage, setSuccessMessage] = useState("");
 
   const [deleteError, setDeleteError] = useState("");
 
   /* Estado que indica si la información aún se está cargando desde el backend. */
-    /* Estado que indica si la información aún se está cargando desde el backend. */
+  /* Estado que indica si la información aún se está cargando desde el backend. */
   const [loading, setLoading] = useState(true);
 
-   /* Estado que guarda un mensaje de error si falla la carga de pacientes. */
+  /* Estado que guarda un mensaje de error si falla la carga de pacientes. */
   const [error, setError] = useState("");
 
-    /* Se ejecuta cuando el componente se carga por primera vez.
-     Obtiene la lista de pacientes desde el backend usando el servicio getPatients. */
+  /* Se ejecuta cuando el componente se carga por primera vez.
+   Obtiene la lista de pacientes desde el backend usando el servicio getPatients. */
   useEffect(() => {
     async function loadPatients() {
       try {
@@ -48,17 +50,17 @@ export default function PatientList() {
     loadPatients();
   }, []);
 
-    // Función para seleccionar o deseleccionar un paciente.
+  // Función para seleccionar o deseleccionar un paciente.
   const handleSelectPatient = (patientId: number) => {
     setSuccessMessage("");
 
     setSelectedPatients((prevSelected) => {
-       // Si el paciente ya estaba seleccionado, se elimina de la selección.
+      // Si el paciente ya estaba seleccionado, se elimina de la selección.
       if (prevSelected.includes(patientId)) {
         return prevSelected.filter((id) => id !== patientId);
       }
 
-       // Si el paciente no estaba seleccionado, se agrega a la selección.
+      // Si el paciente no estaba seleccionado, se agrega a la selección.
       return [...prevSelected, patientId];
     });
   };
@@ -87,13 +89,19 @@ export default function PatientList() {
       setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
 
     } catch (error) {
-      console.error("Error al eliminar pacientes:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Error desconocido";
+
+      if (errorMessage.includes("permisos")) {
+        setPermissionDenied(true);
+        return;
+      }
       setDeleteError("No se pudieron eliminar los pacientes seleccionados.");
     }
 
-    setSelectedPatients([]);
-    setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
   };
+
 
   /* Mientras se cargan los datos desde el backend,
      se muestra un mensaje de carga. */
@@ -129,11 +137,20 @@ export default function PatientList() {
             Verifica que hayas iniciado sesión correctamente o intenta
             nuevamente
           </p>
-          
+
         </div>
       </div>
     );
   }
+
+  if (permissionDenied) {
+  return (
+    <PermissionDenied
+      title="No puede eliminar pacientes"
+      message="Su usuario puede consultar pacientes, pero no tiene permisos para eliminarlos."
+    />
+  );
+}
 
   return (
     <div className="container mx-auto px-6 py-8">
@@ -201,7 +218,7 @@ export default function PatientList() {
         </div>
       ) : (
 
-         // Contenedor que muestra las tarjetas de pacientes en forma de grid.
+        // Contenedor que muestra las tarjetas de pacientes en forma de grid.
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {patientList.map((patient) => (
             <PatientCard
