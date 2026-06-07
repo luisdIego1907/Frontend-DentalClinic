@@ -1,31 +1,40 @@
-// src/hooks/useAuth.ts
-// Se encarga de manejar la autenticación del usuario, obteniendo su información y redirigiendo según su rol
-
 import { useNavigate } from "react-router-dom";
+import { clearSession, getRoles, isAuthenticated } from "../auth/sessionAuth";
+import { ROLE_HOME_PATH } from "../config/roles";
 
 export function useAuth() {
+
   const navigate = useNavigate();
 
-  const getUser = () => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
-  };
-
   const goHome = () => {
-    const user = getUser();
-    if (!user) {
-      navigate("/");
+
+    // Primero valida si el usuario tiene una sesión activa. Si no tiene sesión, lo manda al login.
+    if (!isAuthenticated()) {
+      navigate("/", { replace: true });
       return;
     }
-    if (user.rol === "admin") navigate("/admin");
-    if (user.rol === "assistant") navigate("/assistant");
-    if (user.rol === "odontologist") navigate("/odontologist");
+
+    const roles = getRoles();
+    const firstRole = roles[0];
+
+    // Si no existe ningún rol guardado se manda al login.
+    if (!firstRole) {
+      navigate("/", { replace: true });
+      return;
+    }
+
+    // Redirige al home correspondiente según el rol.
+    navigate(ROLE_HOME_PATH[firstRole], { replace: true });
   };
 
   const logout = () => {
-    localStorage.removeItem("user");
-    navigate("/");
+    clearSession();
+    navigate("/", { replace: true });
   };
 
-  return { getUser, goHome, logout };
+  return {
+    goHome,
+    logout,
+    isAuthenticated,
+  };
 }

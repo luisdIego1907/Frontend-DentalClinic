@@ -11,14 +11,16 @@ import HomeDentist from "./features/home/homeDentist";
 import HomeRecepcionist from "./features/home/homeReceptionist";
 import HomeAdmin from "./features/home/homeAdmin";
 import ProtectedRoute from "./components/security/ProtectedRoute";
-import { patientsMock } from "./mocks/patient.mock";
 import "./App.css";
 
 function App() {
   return (
     <BrowserRouter>
+
       <div className="flex flex-col min-h-screen">
+
         <Routes>
+
           {/* Login — sin header ni footer */}
           <Route path="/" element={<Login />} />
 
@@ -28,14 +30,18 @@ function App() {
             element={
               <ProtectedRoute>
                 <div className="flex flex-col min-h-screen">
+
                   <Header />
+
                   <main className="flex-1 flex flex-col">
+
                     <Routes>
+
                       {/* Admin */}
                       <Route
                         path="/admin"
                         element={
-                          <ProtectedRoute rol="admin">
+                          <ProtectedRoute rol="ADMIN">
                             <HomeAdmin />
                           </ProtectedRoute>
                         }
@@ -45,7 +51,7 @@ function App() {
                       <Route
                         path="/assistant"
                         element={
-                          <ProtectedRoute rol="assistant">
+                          <ProtectedRoute rol="ASSIS">
                             <HomeRecepcionist />
                           </ProtectedRoute>
                         }
@@ -55,7 +61,7 @@ function App() {
                       <Route
                         path="/odontologist"
                         element={
-                          <ProtectedRoute rol="odontologist">
+                          <ProtectedRoute rol="ODO">
                             <HomeDentist />
                           </ProtectedRoute>
                         }
@@ -66,9 +72,10 @@ function App() {
                         path="/patients"
                         element={
                           <ProtectedRoute
-                            rol={["admin", "assistant", "odontologist"]}
+                            rol={["ADMIN", "ASSIS", "ODO"]}
                           >
-                            <PatientList patients={patientsMock} />
+                            <PatientList/> 
+
                           </ProtectedRoute>
                         }
                       />
@@ -77,7 +84,7 @@ function App() {
                         path="/patients/:id"
                         element={
                           <ProtectedRoute
-                            rol={["admin", "assistant", "odontologist"]}
+                            rol={["ADMIN", "ASSIS", "ODO"]}
                           >
                             <PatientDetail />
                           </ProtectedRoute>
@@ -87,7 +94,7 @@ function App() {
                       <Route
                         path="/patients/register"
                         element={
-                          <ProtectedRoute rol={["admin", "assistant"]}>
+                          <ProtectedRoute rol={["ADMIN", "ASSIS"]}>
                             <RegisterPatient />
                           </ProtectedRoute>
                         }
@@ -97,7 +104,7 @@ function App() {
                       <Route
                         path="/appointments/schedule"
                         element={
-                          <ProtectedRoute rol={["admin", "assistant"]}>
+                          <ProtectedRoute rol={["ADMIN", "ASSIS"]}>
                             <ScheduleAppointment />
                           </ProtectedRoute>
                         }
