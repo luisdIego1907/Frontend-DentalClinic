@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ConsultationFormData } from "../../../data/consultationData";
+import type { ConsultationFormData } from "../../../models/consultationData";
 import { validateConsultationForm, hasErrors } from "./ConsultationValidation";
 import type { ConsultationErrors } from "./ConsultationValidation";
 import GeneralTab from "./GeneralTab";

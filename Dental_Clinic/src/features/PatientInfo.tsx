@@ -1,4 +1,4 @@
-import type { PatientDetails } from "../data/patient";
+import type { PatientDetails } from "../models/patient";
 
 type Props = {
   patient: PatientDetails;
@@ -15,16 +15,12 @@ export default function PatientInfo({ patient }: Props) {
       </div>
 
       <div>
-        <p className="text-sm font-semibold text-slate-500">
-          Nombre completo
-        </p>
+        <p className="text-sm font-semibold text-slate-500">Nombre completo</p>
         <p className="text-lg text-slate-800">{fullName}</p>
       </div>
 
       <div>
-        <p className="text-sm font-semibold text-slate-500">
-          Identificación
-        </p>
+        <p className="text-sm font-semibold text-slate-500">Identificación</p>
         <p className="text-lg text-slate-800">{patient.identification}</p>
       </div>
 

@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
-import type { AppointmentData } from "../../data/appointment";
-import { Mockpacientes, mockCitas, mockDoctores } from "../../mocks/appointment.mock";
+import type { AppointmentData } from "../../models/appointment";
+import {
+  Mockpacientes,
+  mockCitas,
+  mockDoctores,
+} from "../../mocks/appointment.mock";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -31,7 +35,8 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
 export default function ScheduleAppointments() {
   const [searchParams, setSearchParams] = useSearchParams();
   const appointmentIdParam = searchParams.get("appointmentId");
-  const [appointments, setAppointments] = useState<AppointmentData[]>(mockCitas);
+  const [appointments, setAppointments] =
+    useState<AppointmentData[]>(mockCitas);
 
   const [appointmentToEdit, setAppointmentToEdit] =
     useState<AppointmentData | null>(null);
@@ -51,7 +56,7 @@ export default function ScheduleAppointments() {
     }
 
     const appointment = appointments.find(
-      (currentAppointment) => currentAppointment.id === appointmentId
+      (currentAppointment) => currentAppointment.id === appointmentId,
     );
 
     if (appointment) {
@@ -63,8 +68,13 @@ export default function ScheduleAppointments() {
     setSuccessMessage("");
     setErrorMessage("");
 
-    if (!appointmentData.patient || appointmentData.patient.status === "Inactivo") {
-      setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
+    if (
+      !appointmentData.patient ||
+      appointmentData.patient.status === "Inactivo"
+    ) {
+      setErrorMessage(
+        "No se puede agendar una cita para un paciente inactivo.",
+      );
       return false;
     }
 
@@ -91,7 +101,9 @@ export default function ScheduleAppointments() {
     });
 
     if (appointmentExists) {
-      setErrorMessage("El doctor seleccionado ya tiene una cita en ese horario.");
+      setErrorMessage(
+        "El doctor seleccionado ya tiene una cita en ese horario.",
+      );
       setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
       return false;
     }
@@ -100,12 +112,12 @@ export default function ScheduleAppointments() {
       const updatedAppointments = appointments.map((appointment) =>
         appointment.id === appointmentToEdit.id
           ? {
-            ...appointmentData,
-            id: appointmentToEdit.id,
-            patient: appointmentToEdit.patient,
-            status: appointmentToEdit.status,
-          }
-          : appointment
+              ...appointmentData,
+              id: appointmentToEdit.id,
+              patient: appointmentToEdit.patient,
+              status: appointmentToEdit.status,
+            }
+          : appointment,
       );
 
       setAppointments(updatedAppointments);
@@ -166,8 +178,8 @@ export default function ScheduleAppointments() {
           <h1 className="text-3xl font-bold text-gray-900">Agendar cita</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar o modificar una cita
-            odontológica.
+            Complete la información necesaria para registrar o modificar una
+            cita odontológica.
           </p>
         </div>
 
@@ -228,7 +240,7 @@ export default function ScheduleAppointments() {
                       Horario: {appointment.time} -{" "}
                       {getAppointmentEndTime(
                         appointment.time,
-                        appointment.durationMinutes
+                        appointment.durationMinutes,
                       )}
                     </p>
 

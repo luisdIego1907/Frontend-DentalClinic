@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Trash2 } from "lucide-react";
 import PatientCard from "./PatientCard";
-import type { PatientDetails } from "../data/patient";
+import type { PatientDetails } from "../models/patient";
 import { deletePatient, getPatients } from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
@@ -70,26 +70,22 @@ export default function PatientList() {
     if (selectedPatients.length === 0) return;
 
     try {
-
       setSuccessMessage("");
       setDeleteError("");
 
-
       await Promise.all(
-        selectedPatients.map((patientId) => deletePatient(patientId))
+        selectedPatients.map((patientId) => deletePatient(patientId)),
       );
       /* Elimina los pacientes seleccionados*/
       setPatientList((prevPatients) =>
         prevPatients.filter(
-          (patient) => !selectedPatients.includes(patient.patient_id)
-        )
+          (patient) => !selectedPatients.includes(patient.patient_id),
+        ),
       );
 
       setSelectedPatients([]);
       setSuccessMessage("Paciente(s) eliminado(s) correctamente.");
-
     } catch (error) {
-
       const errorMessage =
         error instanceof Error ? error.message : "Error desconocido";
 
@@ -99,9 +95,7 @@ export default function PatientList() {
       }
       setDeleteError("No se pudieron eliminar los pacientes seleccionados.");
     }
-
   };
-
 
   /* Mientras se cargan los datos desde el backend,
      se muestra un mensaje de carga. */
@@ -137,20 +131,19 @@ export default function PatientList() {
             Verifica que hayas iniciado sesión correctamente o intenta
             nuevamente
           </p>
-
         </div>
       </div>
     );
   }
 
   if (permissionDenied) {
-  return (
-    <PermissionDenied
-      title="No puede eliminar pacientes"
-      message="Su usuario puede consultar pacientes, pero no tiene permisos para eliminarlos."
-    />
-  );
-}
+    return (
+      <PermissionDenied
+        title="No puede eliminar pacientes"
+        message="Su usuario puede consultar pacientes, pero no tiene permisos para eliminarlos."
+      />
+    );
+  }
 
   return (
     <div className="container mx-auto px-6 py-8">
@@ -217,7 +210,6 @@ export default function PatientList() {
           </div>
         </div>
       ) : (
-
         // Contenedor que muestra las tarjetas de pacientes en forma de grid.
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {patientList.map((patient) => (

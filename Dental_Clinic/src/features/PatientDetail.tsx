@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import type { PatientDetails } from "../data/patient";
-import type { ConsultationFormData } from "../data/consultationData";
+import type { PatientDetails } from "../models/patient";
+import type { ConsultationFormData } from "../models/consultationData";
 import PatientEditForm from "../components/Forms/UpdatePatientForm/PatientEditForm";
 import ConsultationForm from "../components/Forms/ConsultationForm/ConsultationForm";
 import PatientInfo from "./PatientInfo";
 import { usePermissions } from "../hook/usePermissions";
-import {
-  getPatientById,
-  updatePatient,
-} from "../services/PatientService";
+import { getPatientById, updatePatient } from "../services/PatientService";
 
 type Tab = "info" | "consultas" | "nueva-consulta";
 
@@ -72,7 +69,6 @@ export default function PatientDetail() {
       setPatient(updatedPatient);
       setIsEditing(false);
       setSuccessMessage("Paciente actualizado correctamente");
-
     } catch (error) {
       console.error("Error al actualizar paciente:", error);
       setError("No se pudo actualizar el paciente");
@@ -158,22 +154,30 @@ export default function PatientDetail() {
 
         <div className="flex border-b border-slate-200 mb-6">
           <button
-            onClick={() => { setTabActivo("info"); setIsEditing(false); }}
-            className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${tabActivo === "info"
-              ? "border-teal-500 text-teal-600"
-              : "border-transparent text-slate-500 hover:text-slate-800"
-              }`}
+            onClick={() => {
+              setTabActivo("info");
+              setIsEditing(false);
+            }}
+            className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              tabActivo === "info"
+                ? "border-teal-500 text-teal-600"
+                : "border-transparent text-slate-500 hover:text-slate-800"
+            }`}
           >
             Información
           </button>
 
           {permisos.verConsultas && (
             <button
-              onClick={() => { setTabActivo("consultas"); setIsEditing(false); }}
-              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${tabActivo === "consultas"
-                ? "border-teal-500 text-teal-600"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
+              onClick={() => {
+                setTabActivo("consultas");
+                setIsEditing(false);
+              }}
+              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                tabActivo === "consultas"
+                  ? "border-teal-500 text-teal-600"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
             >
               Consultas
             </button>
@@ -181,19 +185,23 @@ export default function PatientDetail() {
 
           {permisos.registrarConsulta && (
             <button
-              onClick={() => { setTabActivo("nueva-consulta"); setIsEditing(false); }}
-              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${tabActivo === "nueva-consulta"
-                ? "border-teal-500 text-teal-600"
-                : "border-transparent text-slate-500 hover:text-slate-800"
-                }`}
+              onClick={() => {
+                setTabActivo("nueva-consulta");
+                setIsEditing(false);
+              }}
+              className={`px-5 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                tabActivo === "nueva-consulta"
+                  ? "border-teal-500 text-teal-600"
+                  : "border-transparent text-slate-500 hover:text-slate-800"
+              }`}
             >
               Registrar consulta
             </button>
           )}
         </div>
 
-        {tabActivo === "info" && (
-          isEditing ? (
+        {tabActivo === "info" &&
+          (isEditing ? (
             <PatientEditForm
               patient={patient}
               onSave={handleSavePatient}
@@ -201,8 +209,7 @@ export default function PatientDetail() {
             />
           ) : (
             <PatientInfo patient={patient} />
-          )
-        )}
+          ))}
 
         {tabActivo === "consultas" && permisos.verConsultas && (
           <div className="text-slate-500 text-sm py-4 text-center">

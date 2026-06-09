@@ -1,4 +1,4 @@
-import type { Diagnosis } from "../../../data/diagnosis";
+import type { Diagnosis } from "../../../models/diagnosis";
 
 type Props = {
   diagnoses: Diagnosis[];

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { AppointmentData } from "../../data/appointment";
-import type { PatientData } from "../../data/patient";
+import type { AppointmentData } from "../../models/appointment";
+import type { PatientData } from "../../models/patient";
 import {
   validateAppointmentForm,
   type AppointmentFormErrors,
@@ -25,14 +25,14 @@ export default function AppointmentForm({
   submitButtonErrorSignal = 0,
 }: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentData>(
-    initialAppointmentFormData
+    initialAppointmentFormData,
   );
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
   const [showSubmitErrorFeedback, setShowSubmitErrorFeedback] = useState(false);
 
   const activePatients = patients.filter(
-    (patient) => patient.status !== "Inactivo"
+    (patient) => patient.status !== "Inactivo",
   );
 
   const isEditing = appointmentToEdit !== null;
@@ -47,7 +47,6 @@ export default function AppointmentForm({
     setFormData(initialAppointmentFormData);
     setErrors({});
   }, [appointmentToEdit]);
-
 
   useEffect(() => {
     if (submitButtonErrorSignal === 0) return;
@@ -64,7 +63,7 @@ export default function AppointmentForm({
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -76,7 +75,7 @@ export default function AppointmentForm({
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPatient = activePatients.find(
-      (patient) => patient.identification === event.target.value
+      (patient) => patient.identification === event.target.value,
     );
 
     setFormData({
@@ -120,7 +119,7 @@ export default function AppointmentForm({
     : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
-    String(index).padStart(2, "0")
+    String(index).padStart(2, "0"),
   );
 
   const appointmentMinutes = ["00", "15", "30", "45"];
@@ -171,7 +170,10 @@ export default function AppointmentForm({
                 Seleccione un paciente
               </option>
               {activePatients.map((patient) => (
-                <option key={patient.identification} value={patient.identification}>
+                <option
+                  key={patient.identification}
+                  value={patient.identification}
+                >
                   {patient.first_name} {patient.last_name} -{" "}
                   {patient.identification}
                 </option>
@@ -179,7 +181,9 @@ export default function AppointmentForm({
             </select>
           )}
 
-          {errors.patient && <span className={errorClass}>{errors.patient}</span>}
+          {errors.patient && (
+            <span className={errorClass}>{errors.patient}</span>
+          )}
         </div>
 
         <div>
@@ -330,10 +334,7 @@ export default function AppointmentForm({
           </button>
         )}
 
-        <button
-          type="submit"
-          className={submitButtonClass}
-        >
+        <button type="submit" className={submitButtonClass}>
           {isEditing ? "Guardar cambios" : "Agendar cita"}
         </button>
       </div>

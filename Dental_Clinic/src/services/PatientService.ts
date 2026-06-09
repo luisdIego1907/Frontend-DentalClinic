@@ -1,4 +1,4 @@
-import type { PatientDetails, PatientData } from "../data/patient";
+import type { PatientDetails, PatientData } from "../models/patient";
 import { config } from "../config";
 import { apiClient } from "./apiClient";
 

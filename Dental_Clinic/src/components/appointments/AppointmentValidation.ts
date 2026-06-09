@@ -1,9 +1,11 @@
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 
-export type AppointmentFormErrors = Partial<Record<keyof AppointmentData, string>>;
+export type AppointmentFormErrors = Partial<
+  Record<keyof AppointmentData, string>
+>;
 
 export function validateAppointmentForm(
-  formData: AppointmentData
+  formData: AppointmentData,
 ): AppointmentFormErrors {
   const newErrors: AppointmentFormErrors = {};
 

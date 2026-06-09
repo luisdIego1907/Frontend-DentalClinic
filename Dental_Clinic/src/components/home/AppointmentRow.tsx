@@ -1,4 +1,4 @@
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 import { StatusBadge } from "./Statusbadge";
 
 interface AppointmentRowProps {

@@ -1,5 +1,5 @@
-import type { AppointmentData } from "../data/appointment";
-import type { PatientData } from "../data/patient";
+import type { AppointmentData } from "../models/appointment";
+import type { PatientData } from "../models/patient";
 
 export const Mockpacientes: PatientData[] = [
   {
