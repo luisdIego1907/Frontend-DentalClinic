@@ -6,6 +6,8 @@ import { deletePatient, getPatients } from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
 
+const PATIENTS_PER_PAGE = 15;
+
 export default function PatientList() {
   const navigate = useNavigate();
 
@@ -34,6 +36,9 @@ export default function PatientList() {
 
   /* Texto que escribe el usuario en la barra de búsqueda. */
   const [searchTerm, setSearchTerm] = useState("");
+
+  /* Página actual de la lista de pacientes. */
+  const [currentPage, setCurrentPage] = useState(1);
 
   /* Se ejecuta cuando el componente se carga por primera vez.
    Obtiene la lista de pacientes desde el backend usando el servicio getPatients. */
@@ -76,10 +81,32 @@ export default function PatientList() {
     );
   });
 
+  /* Cantidad total de páginas según la cantidad de pacientes filtrados. */
+  const totalPages = Math.ceil(filteredPatients.length / PATIENTS_PER_PAGE);
+
+  /* Índice inicial de los pacientes que se mostrarán en la página actual. */
+  const startIndex = (currentPage - 1) * PATIENTS_PER_PAGE;
+
+  /* Índice final de los pacientes que se mostrarán en la página actual. */
+  const endIndex = startIndex + PATIENTS_PER_PAGE;
+
+  /* Lista final de pacientes que se muestran en pantalla.
+     Aunque existan más pacientes, solo se muestran máximo 15 por página. */
+  const paginatedPatients = filteredPatients.slice(startIndex, endIndex);
+
+  /* Si se elimina un paciente y la página actual queda fuera del rango,
+     se ajusta la página para evitar que quede una pantalla vacía. */
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   /* Actualiza el valor de búsqueda.
-     También limpia selecciones y mensajes para evitar estados confusos. */
+     También limpia selecciones, mensajes y vuelve a la primera página. */
   const handleSearchChange = (value: string) => {
     setSearchTerm(value);
+    setCurrentPage(1);
     setSelectedPatients([]);
     setSuccessMessage("");
     setDeleteError("");
@@ -134,6 +161,16 @@ export default function PatientList() {
 
       setDeleteError("No se pudieron eliminar los pacientes seleccionados.");
     }
+  };
+
+  // Cambia a la página anterior si no está en la primera página.
+  const handlePreviousPage = () => {
+    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  // Cambia a la página siguiente si no está en la última página.
+  const handleNextPage = () => {
+    setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
   };
 
   /* Mientras se cargan los datos desde el backend,
@@ -288,18 +325,61 @@ export default function PatientList() {
           </div>
         </div>
       ) : (
-        // Contenedor que muestra las tarjetas de pacientes en forma de grid.
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredPatients.map((patient) => (
-            <PatientCard
-              key={patient.patient_id}
-              patient={patient}
-              selected={selectedPatients.includes(patient.patient_id)}
-              onSelect={() => handleSelectPatient(patient.patient_id)}
-              onClick={() => navigate(`/patients/${patient.patient_id}`)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mb-4 flex items-center justify-between text-sm text-slate-500">
+            <span>
+              Mostrando {startIndex + 1} -{" "}
+              {Math.min(endIndex, filteredPatients.length)} de{" "}
+              {filteredPatients.length} paciente(s).
+            </span>
+
+            {totalPages > 1 && (
+              <span>
+                Página {currentPage} de {totalPages}
+              </span>
+            )}
+          </div>
+
+          {/* Contenedor que muestra las tarjetas de pacientes en forma de grid.
+             Solo se muestran máximo 15 pacientes por página. */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {paginatedPatients.map((patient) => (
+              <PatientCard
+                key={patient.patient_id}
+                patient={patient}
+                selected={selectedPatients.includes(patient.patient_id)}
+                onSelect={() => handleSelectPatient(patient.patient_id)}
+                onClick={() => navigate(`/patients/${patient.patient_id}`)}
+              />
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Anterior
+              </button>
+
+              <span className="text-sm font-medium text-slate-600">
+                Página {currentPage} de {totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={handleNextPage}
+                disabled={currentPage === totalPages}
+                className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
