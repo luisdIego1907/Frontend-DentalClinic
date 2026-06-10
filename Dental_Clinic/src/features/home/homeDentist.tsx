@@ -168,7 +168,7 @@ export default function HomeDentist() {
         <QuickAccessButton
           label="Registrar consulta"
           description="Crear una nueva consulta médica"
-          to="/patients"
+          to="/consultations/patient/:id"
           icon={ClipboardPlus}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}

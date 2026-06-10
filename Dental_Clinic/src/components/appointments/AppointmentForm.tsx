@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { AppointmentData, DoctorData } from "../../data/appointment";
-import type { PatientDetails } from "../../data/patient";
+import type { AppointmentData, DoctorData } from "../../models/appointment";
+import type { PatientDetails } from "../../models/patient";
 import {
   validateAppointmentForm,
   type AppointmentFormErrors,
@@ -25,7 +25,7 @@ export default function AppointmentForm({
   submitButtonErrorSignal = 0,
 }: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentData>(
-    initialAppointmentFormData
+    initialAppointmentFormData,
   );
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
@@ -34,7 +34,7 @@ export default function AppointmentForm({
   const activePatients = patients.filter(
     (patient) =>
       patient.status !== "Inactivo" &&
-      patient.status.toLowerCase() !== "inactive"
+      patient.status.toLowerCase() !== "inactive",
   );
 
   const isEditing = appointmentToEdit !== null;
@@ -65,7 +65,7 @@ export default function AppointmentForm({
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     const { name, value } = event.target;
 
@@ -77,7 +77,7 @@ export default function AppointmentForm({
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPatient = activePatients.find(
-      (patient) => String(patient.patient_id) === event.target.value
+      (patient) => String(patient.patient_id) === event.target.value,
     );
 
     setFormData({
@@ -88,7 +88,7 @@ export default function AppointmentForm({
 
   const handleDoctorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDoctor = doctors.find(
-      (doctor) => doctor.user_resource_id === event.target.value
+      (doctor) => doctor.user_resource_id === event.target.value,
     );
 
     setFormData({
@@ -133,7 +133,7 @@ export default function AppointmentForm({
     : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
-    String(index).padStart(2, "0")
+    String(index).padStart(2, "0"),
   );
 
   const appointmentMinutes = ["00", "15", "30", "45"];
@@ -192,7 +192,9 @@ export default function AppointmentForm({
             </select>
           )}
 
-          {errors.patient && <span className={errorClass}>{errors.patient}</span>}
+          {errors.patient && (
+            <span className={errorClass}>{errors.patient}</span>
+          )}
         </div>
 
         <div>
@@ -210,7 +212,10 @@ export default function AppointmentForm({
               Seleccione un odontólogo
             </option>
             {doctors.map((doctor) => (
-              <option key={doctor.user_resource_id} value={doctor.user_resource_id}>
+              <option
+                key={doctor.user_resource_id}
+                value={doctor.user_resource_id}
+              >
                 {doctor.display_name}
               </option>
             ))}
@@ -343,10 +348,7 @@ export default function AppointmentForm({
           </button>
         )}
 
-        <button
-          type="submit"
-          className={submitButtonClass}
-        >
+        <button type="submit" className={submitButtonClass}>
           {isEditing ? "Guardar cambios" : "Agendar cita"}
         </button>
       </div>

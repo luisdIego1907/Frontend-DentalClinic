@@ -1,4 +1,4 @@
 export interface Diagnosis {
   description: string;
-  diagnosis_Date: string;
+  diagnosis_date: string;
 }

@@ -1,4 +1,4 @@
-import type { ConsultationFormData } from "../../../data/consultationData";
+import type { ConsultationFormData } from "../../../models/consultationData";
 import type { ConsultationErrors } from "./ConsultationValidation";
 
 type Props = {

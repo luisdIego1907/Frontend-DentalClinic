@@ -1,6 +1,6 @@
-import type { ConsultationFormData } from "../../../data/consultationData";
-import type { Diagnosis } from "../../../data/diagnosis";
-import type { Treatment } from "../../../data/treatment";
+import type { ConsultationFormData } from "../../../models/consultationData";
+import type { Diagnosis } from "../../../models/diagnosis";
+import type { Treatment } from "../../../models/treatment";
 
 export interface ConsultationErrors {
   consultation_date?: string;

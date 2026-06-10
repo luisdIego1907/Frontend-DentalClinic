@@ -2,10 +2,9 @@ import { getToken, clearSession } from "../auth/sessionAuth";
 
 // Función genérica para hacer peticiones HTTP al backend.
 export async function apiClient<T>(
-
   // url completo del endpoint al que se quiere llamar.
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   // Obtiene el token guardado en sessionStorage, guardado después del login.
   const token = getToken();
