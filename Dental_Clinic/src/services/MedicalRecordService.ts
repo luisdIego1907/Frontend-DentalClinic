@@ -1,5 +1,6 @@
 import { config } from "../config";
 import type { MedicalRecordData } from "../models/medicalRecordResponse";
+import { apiClient } from "./apiClient";
 
 const API_URL = `${config.api.url}/api`;
 
@@ -7,19 +8,11 @@ export async function getMedicalRecordByPatientId(
   patientId: number,
 ): Promise<MedicalRecordData> {
   try {
-    const response = await fetch(
+    return await apiClient<MedicalRecordData>(
       `${API_URL}/medical-records/patient/${patientId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      },
     );
-
-    if (!response.ok) throw new Error("Error al cargar el expediente médico");
-    return response.json();
   } catch (error) {
-    console.log("Error en obtener el expediente médico:", error);
+    console.error("Error en obtener el expediente médico:", error);
     throw error;
   }
 }

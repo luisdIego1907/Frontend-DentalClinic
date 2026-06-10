@@ -8,7 +8,7 @@ type Props = {
 
 const emptyDiagnosis = (): Diagnosis => ({
   description: "",
-  diagnosis_Date: "",
+  diagnosis_date: "",
 });
 
 export default function DiagnosesTab({ diagnoses, onChange, errors }: Props) {
@@ -80,9 +80,9 @@ export default function DiagnosesTab({ diagnoses, onChange, errors }: Props) {
               </label>
               <input
                 type="date"
-                value={diagnosis.diagnosis_Date}
+                value={diagnosis.diagnosis_date}
                 onChange={(e) =>
-                  handleChange(index, "diagnosis_Date", e.target.value)
+                  handleChange(index, "diagnosis_date", e.target.value)
                 }
                 className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
               />

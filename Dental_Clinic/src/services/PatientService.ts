@@ -61,3 +61,14 @@ export async function updatePatient(
     throw error;
   }
 }
+//Pacientes del odontologo, ya que este necesita ver solo los pacientes con los que tiene cita
+export async function getMyPatients(): Promise<PatientDetails[]> {
+  try {
+    return await apiClient<PatientDetails[]>(
+      `${config.api.url}/api/appointments/my-patients`,
+    );
+  } catch (error) {
+    console.error("Error en getMyPatients:", error);
+    throw error;
+  }
+}

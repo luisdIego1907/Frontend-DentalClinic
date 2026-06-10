@@ -25,14 +25,14 @@ const initialForm = (
   reason: "",
   observations: "",
   odontogram: "",
-  diagnoses: [{ description: "", diagnosis_Date: "" }],
+  diagnoses: [{ description: "", diagnosis_date: "" }],
   treatments: [
     {
       description: "",
       cost: 0,
       status: "pending",
       start_date: "",
-      end_date: "",
+      end_date: null,
     },
   ],
 });

@@ -136,7 +136,7 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
                 </label>
                 <input
                   type="date"
-                  value={treatment.end_date}
+                  value={treatment.end_date || ""}
                   onChange={(e) =>
                     handleChange(index, "end_date", e.target.value)
                   }
