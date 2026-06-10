@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
-import type { AppointmentData } from "../../models/appointment";
+import type {
+  AppointmentData,
+  DoctorData,
+  SaveAppointmentRequest,
+} from "../../models/appointment";
+import { getPatients } from "../../services/PatientService";
 import {
-  Mockpacientes,
-  mockCitas,
-  mockDoctores,
-} from "../../mocks/appointment.mock";
+  createAppointment,
+  getAppointmentDoctors,
+  getAppointments,
+  updateAppointment,
+} from "../../services/AppointmentService";
+import type { PatientDetails } from "../../models/patient";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -32,11 +39,25 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
   return convertMinutesToTime(endMinutes);
 };
 
+const mapAppointmentToRequest = (
+  appointmentData: AppointmentData,
+): SaveAppointmentRequest => ({
+  patient_id: appointmentData.patient?.patient_id ?? 0,
+  doctor_user_resource_id: appointmentData.doctorUserResourceId,
+  appointment_date: appointmentData.date,
+  appointment_time: appointmentData.time,
+  duration_minutes: appointmentData.durationMinutes,
+  reason: appointmentData.reason,
+  status: appointmentData.status || "Pendiente",
+});
+
 export default function ScheduleAppointments() {
   const [searchParams, setSearchParams] = useSearchParams();
   const appointmentIdParam = searchParams.get("appointmentId");
-  const [appointments, setAppointments] =
-    useState<AppointmentData[]>(mockCitas);
+
+  const [patients, setPatients] = useState<PatientDetails[]>([]);
+  const [doctors, setDoctors] = useState<DoctorData[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentData[]>([]);
 
   const [appointmentToEdit, setAppointmentToEdit] =
     useState<AppointmentData | null>(null);
@@ -44,8 +65,38 @@ export default function ScheduleAppointments() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [submitButtonErrorSignal, setSubmitButtonErrorSignal] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   const formSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const loadAppointmentData = async () => {
+    const [patientsResponse, doctorsResponse, appointmentsResponse] =
+      await Promise.all([
+        getPatients(),
+        getAppointmentDoctors(),
+        getAppointments(),
+      ]);
+
+    setPatients(patientsResponse);
+    setDoctors(doctorsResponse);
+    setAppointments(appointmentsResponse);
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        await loadAppointmentData();
+      } catch (error) {
+        console.error("Error al cargar datos de citas:", error);
+        setErrorMessage("No se pudieron cargar los datos de citas.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   useEffect(() => {
     const appointmentId = Number(appointmentIdParam);
@@ -64,17 +115,25 @@ export default function ScheduleAppointments() {
     }
   }, [appointments, appointmentIdParam]);
 
-  const handleSaveAppointment = (appointmentData: AppointmentData): boolean => {
+  const handleSaveAppointment = async (
+    appointmentData: AppointmentData,
+  ): Promise<boolean> => {
     setSuccessMessage("");
     setErrorMessage("");
 
     if (
       !appointmentData.patient ||
-      appointmentData.patient.status === "Inactivo"
+      appointmentData.patient.status === "Inactivo" ||
+      appointmentData.patient.status.toLowerCase() === "inactive"
     ) {
       setErrorMessage(
         "No se puede agendar una cita para un paciente inactivo.",
       );
+      return false;
+    }
+
+    if (!appointmentData.doctorUserResourceId) {
+      setErrorMessage("Debe seleccionar un odontólogo.");
       return false;
     }
 
@@ -90,7 +149,10 @@ export default function ScheduleAppointments() {
         return false;
       }
 
-      if (appointment.doctor !== appointmentData.doctor) {
+      if (
+        appointment.doctorUserResourceId !==
+        appointmentData.doctorUserResourceId
+      ) {
         return false;
       }
 
@@ -102,41 +164,37 @@ export default function ScheduleAppointments() {
 
     if (appointmentExists) {
       setErrorMessage(
-        "El doctor seleccionado ya tiene una cita en ese horario.",
+        "El odontólogo seleccionado ya tiene una cita en ese horario.",
       );
       setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
       return false;
     }
 
-    if (appointmentToEdit) {
-      const updatedAppointments = appointments.map((appointment) =>
-        appointment.id === appointmentToEdit.id
-          ? {
-              ...appointmentData,
-              id: appointmentToEdit.id,
-              patient: appointmentToEdit.patient,
-              status: appointmentToEdit.status,
-            }
-          : appointment,
-      );
+    try {
+      const request = mapAppointmentToRequest(appointmentData);
 
-      setAppointments(updatedAppointments);
-      setAppointmentToEdit(null);
-      setSearchParams({});
-      setSuccessMessage("Cita modificada correctamente.");
+      if (appointmentToEdit) {
+        await updateAppointment(appointmentToEdit.id, request);
+        await loadAppointmentData();
+        setAppointmentToEdit(null);
+        setSearchParams({});
+        setSuccessMessage("Cita modificada correctamente.");
+        return true;
+      }
+
+      const newAppointment = await createAppointment(request);
+      setAppointments((currentAppointments) => [
+        ...currentAppointments,
+        newAppointment,
+      ]);
+      setSuccessMessage("Cita agendada correctamente.");
       return true;
+    } catch (error) {
+      console.error("Error al guardar la cita:", error);
+      setErrorMessage("No se pudo guardar la cita.");
+      setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
+      return false;
     }
-
-    const newAppointment: AppointmentData = {
-      ...appointmentData,
-      id: appointments.length + 1,
-      doctor: appointmentData.doctor,
-      status: appointmentData.status || "Pendiente",
-    };
-
-    setAppointments([...appointments, newAppointment]);
-    setSuccessMessage("Cita agendada correctamente.");
-    return true;
   };
 
   const handleEditAppointment = (appointment: AppointmentData) => {
@@ -195,80 +253,90 @@ export default function ScheduleAppointments() {
           </div>
         )}
 
-        <div ref={formSectionRef}>
-          <AppointmentForm
-            patients={Mockpacientes}
-            doctors={mockDoctores}
-            onSubmit={handleSaveAppointment}
-            appointmentToEdit={appointmentToEdit}
-            onCancelEdit={handleCancelEdit}
-            submitButtonErrorSignal={submitButtonErrorSignal}
-          />
-        </div>
-
-        <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
-          <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Vista simulada del calendario y del tab “Citas” del paciente.
-          </p>
-
-          <div className="mt-6 space-y-4">
-            {sortedAppointments.map((appointment) => (
-              <div
-                key={appointment.id}
-                className="rounded-xl border border-gray-200 bg-gray-50 p-4"
-              >
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-900">
-                      {appointment.patient
-                        ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
-                        : "Paciente no seleccionado"}
-                    </p>
-
-                    {appointment.patient && (
-                      <p className="text-sm text-gray-600">
-                        Identificación: {appointment.patient.identification}
-                      </p>
-                    )}
-
-                    <p className="text-sm text-gray-600">
-                      Fecha: {formatDateToDayMonthYear(appointment.date)}
-                    </p>
-
-                    <p className="text-sm text-gray-600">
-                      Horario: {appointment.time} -{" "}
-                      {getAppointmentEndTime(
-                        appointment.time,
-                        appointment.durationMinutes,
-                      )}
-                    </p>
-
-                    <p className="text-sm text-gray-600">
-                      Doctor: {appointment.doctor}
-                    </p>
-
-                    <p className="text-sm text-gray-600">
-                      Estado: {appointment.status}
-                    </p>
-
-                    <p className="text-sm text-gray-600">
-                      Motivo: {appointment.reason}
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleEditAppointment(appointment)}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                  >
-                    Editar
-                  </button>
-                </div>
-              </div>
-            ))}
+        {isLoading ? (
+          <div className="rounded-2xl bg-white p-8 text-sm text-gray-600 shadow-lg">
+            Cargando datos de citas...
           </div>
-        </div>
+        ) : (
+          <>
+            <div ref={formSectionRef}>
+              <AppointmentForm
+                patients={patients}
+                doctors={doctors}
+                onSubmit={handleSaveAppointment}
+                appointmentToEdit={appointmentToEdit}
+                onCancelEdit={handleCancelEdit}
+                submitButtonErrorSignal={submitButtonErrorSignal}
+              />
+            </div>
+
+            <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
+              <h2 className="text-2xl font-bold text-gray-900">
+                Citas agendadas
+              </h2>
+              <p className="mt-1 text-sm text-gray-500">
+                Vista de las citas registradas en la base de datos.
+              </p>
+
+              <div className="mt-6 space-y-4">
+                {sortedAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="rounded-xl border border-gray-200 bg-gray-50 p-4"
+                  >
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          {appointment.patient
+                            ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
+                            : "Paciente no seleccionado"}
+                        </p>
+
+                        {appointment.patient && (
+                          <p className="text-sm text-gray-600">
+                            Identificación: {appointment.patient.identification}
+                          </p>
+                        )}
+
+                        <p className="text-sm text-gray-600">
+                          Fecha: {formatDateToDayMonthYear(appointment.date)}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Horario: {appointment.time} -{" "}
+                          {getAppointmentEndTime(
+                            appointment.time,
+                            appointment.durationMinutes,
+                          )}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Odontólogo: {appointment.doctor || "Sin asignar"}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Estado: {appointment.status}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Motivo: {appointment.reason}
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleEditAppointment(appointment)}
+                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+                      >
+                        Editar
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </section>
     </main>
   );

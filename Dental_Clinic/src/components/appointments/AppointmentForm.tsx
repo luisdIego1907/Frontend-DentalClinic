@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { AppointmentData } from "../../models/appointment";
-import type { PatientData } from "../../models/patient";
+import type { AppointmentData, DoctorData } from "../../models/appointment";
+import type { PatientDetails } from "../../models/patient";
 import {
   validateAppointmentForm,
   type AppointmentFormErrors,
@@ -8,9 +8,9 @@ import {
 import { initialAppointmentFormData } from "./AppointmentInitialData";
 
 interface AppointmentFormProps {
-  patients: PatientData[];
-  doctors: readonly string[];
-  onSubmit: (appointmentData: AppointmentData) => boolean;
+  patients: PatientDetails[];
+  doctors: DoctorData[];
+  onSubmit: (appointmentData: AppointmentData) => boolean | Promise<boolean>;
   appointmentToEdit?: AppointmentData | null;
   onCancelEdit?: () => void;
   submitButtonErrorSignal?: number;
@@ -32,7 +32,9 @@ export default function AppointmentForm({
   const [showSubmitErrorFeedback, setShowSubmitErrorFeedback] = useState(false);
 
   const activePatients = patients.filter(
-    (patient) => patient.status !== "Inactivo",
+    (patient) =>
+      patient.status !== "Inactivo" &&
+      patient.status.toLowerCase() !== "inactive",
   );
 
   const isEditing = appointmentToEdit !== null;
@@ -75,7 +77,7 @@ export default function AppointmentForm({
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPatient = activePatients.find(
-      (patient) => patient.identification === event.target.value,
+      (patient) => String(patient.patient_id) === event.target.value,
     );
 
     setFormData({
@@ -84,7 +86,19 @@ export default function AppointmentForm({
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleDoctorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDoctor = doctors.find(
+      (doctor) => doctor.user_resource_id === event.target.value,
+    );
+
+    setFormData({
+      ...formData,
+      doctor: selectedDoctor?.display_name ?? "",
+      doctorUserResourceId: selectedDoctor?.user_resource_id ?? "",
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateAppointmentForm(formData);
@@ -95,7 +109,7 @@ export default function AppointmentForm({
     }
 
     setErrors({});
-    const wasSaved = onSubmit(formData);
+    const wasSaved = await onSubmit(formData);
 
     if (!isEditing && wasSaved) {
       setFormData(initialAppointmentFormData);
@@ -162,7 +176,7 @@ export default function AppointmentForm({
             <select
               id="patient"
               name="patient"
-              value={formData.patient?.identification ?? ""}
+              value={formData.patient?.patient_id ?? ""}
               onChange={handlePatientChange}
               className={inputClass}
             >
@@ -170,10 +184,7 @@ export default function AppointmentForm({
                 Seleccione un paciente
               </option>
               {activePatients.map((patient) => (
-                <option
-                  key={patient.identification}
-                  value={patient.identification}
-                >
+                <option key={patient.patient_id} value={patient.patient_id}>
                   {patient.first_name} {patient.last_name} -{" "}
                   {patient.identification}
                 </option>
@@ -188,21 +199,24 @@ export default function AppointmentForm({
 
         <div>
           <label htmlFor="doctor" className={labelClass}>
-            Doctor
+            Odontólogo
           </label>
           <select
             id="doctor"
             name="doctor"
-            value={formData.doctor}
-            onChange={handleChange}
+            value={formData.doctorUserResourceId}
+            onChange={handleDoctorChange}
             className={inputClass}
           >
             <option value="" disabled>
-              Seleccione un doctor
+              Seleccione un odontólogo
             </option>
             {doctors.map((doctor) => (
-              <option key={doctor} value={doctor}>
-                {doctor}
+              <option
+                key={doctor.user_resource_id}
+                value={doctor.user_resource_id}
+              >
+                {doctor.display_name}
               </option>
             ))}
           </select>
