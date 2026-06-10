@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ConsultationFormData } from "../../../data/consultationData";
+import type { ConsultationFormData } from "../../../models/consultationData";
 import { validateConsultationForm, hasErrors } from "./ConsultationValidation";
 import type { ConsultationErrors } from "./ConsultationValidation";
 import GeneralTab from "./GeneralTab";
@@ -25,14 +25,14 @@ const initialForm = (
   reason: "",
   observations: "",
   odontogram: "",
-  diagnoses: [{ description: "", diagnosis_Date: "" }],
+  diagnoses: [{ description: "", diagnosis_date: "" }],
   treatments: [
     {
       description: "",
       cost: 0,
       status: "pending",
       start_date: "",
-      end_date: "",
+      end_date: null,
     },
   ],
 });

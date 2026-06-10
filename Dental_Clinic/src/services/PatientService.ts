@@ -1,4 +1,4 @@
-import type { PatientDetails, PatientData } from "../data/patient";
+import type { PatientDetails, PatientData } from "../models/patient";
 import { config } from "../config";
 import { apiClient } from "./apiClient";
 
@@ -58,6 +58,17 @@ export async function updatePatient(
     });
   } catch (error) {
     console.error("Error en updatePatient:", error);
+    throw error;
+  }
+}
+//Pacientes del odontologo, ya que este necesita ver solo los pacientes con los que tiene cita
+export async function getMyPatients(): Promise<PatientDetails[]> {
+  try {
+    return await apiClient<PatientDetails[]>(
+      `${config.api.url}/api/appointments/my-patients`,
+    );
+  } catch (error) {
+    console.error("Error en getMyPatients:", error);
     throw error;
   }
 }

@@ -3,5 +3,5 @@ export interface Treatment {
   cost: number;
   status: string;
   start_date: string;
-  end_date: string;
+  end_date?: string | null;
 }

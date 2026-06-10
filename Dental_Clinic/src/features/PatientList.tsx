@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PatientCard from "./PatientCard";
-import type { PatientDetails } from "../data/patient";
-import { deletePatient, getPatients } from "../services/PatientService";
+import type { PatientDetails } from "../models/patient";
+import {
+  deletePatient,
+  getPatients,
+  getMyPatients,
+} from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
+import { usePermissions } from "../hook/usePermissions";
 
 const PATIENTS_PER_PAGE = 15;
 
 export default function PatientList() {
   const navigate = useNavigate();
+
+  const permisos = usePermissions();
 
   const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -45,7 +52,10 @@ export default function PatientList() {
   useEffect(() => {
     async function loadPatients() {
       try {
-        const data = await getPatients();
+        const data = permisos.registrarConsulta
+          ? await getMyPatients()
+          : await getPatients();
+
         setPatientList(data);
       } catch (error) {
         console.error("Error al cargar pacientes:", error);
@@ -56,7 +66,7 @@ export default function PatientList() {
     }
 
     loadPatients();
-  }, []);
+  }, [permisos.registrarConsulta]);
 
   /* Normaliza el texto para que la búsqueda no falle por mayúsculas,
      minúsculas o tildes. */
@@ -137,15 +147,15 @@ export default function PatientList() {
       setDeleteError("");
 
       await Promise.all(
-        selectedPatients.map((patientId) => deletePatient(patientId))
+        selectedPatients.map((patientId) => deletePatient(patientId)),
       );
 
       /* Elimina los pacientes seleccionados de la lista local
          después de que fueron eliminados correctamente en el backend. */
       setPatientList((prevPatients) =>
         prevPatients.filter(
-          (patient) => !selectedPatients.includes(patient.patient_id)
-        )
+          (patient) => !selectedPatients.includes(patient.patient_id),
+        ),
       );
 
       setSelectedPatients([]);
@@ -380,6 +390,22 @@ export default function PatientList() {
             </div>
           )}
         </>
+        // Contenedor que muestra las tarjetas de pacientes en forma de grid.
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPatients.map((patient) => (
+            <PatientCard
+              key={patient.patient_id}
+              patient={patient}
+              selected={selectedPatients.includes(patient.patient_id)}
+              onSelect={() => handleSelectPatient(patient.patient_id)}
+              onClick={() =>
+                permisos.registrarConsulta
+                  ? navigate(`/consultations/patient/${patient.patient_id}`)
+                  : navigate(`/patients/${patient.patient_id}`)
+              }
+            />
+          ))}
+        </div>
       )}
     </div>
   );

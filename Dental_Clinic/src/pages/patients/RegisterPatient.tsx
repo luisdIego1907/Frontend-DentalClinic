@@ -1,12 +1,10 @@
-
 import PatientForm from "../../components/Forms/RegisterPatientForm/PatientForm";
 import { useState } from "react"; //hook que permite guardar y modificar datos dentro del componente. Se usa para guardar mensaje de exito cuando el paciente se registra.
-import type { PatientData } from "../../data/patient";
+import type { PatientData } from "../../models/patient";
 import { createPatient } from "../../services/PatientService";
 //El import type significa que se esta importando una definicion de tip TypeScript
 
 export default function RegisterPatient() {
-
   /*
     Crea un estado llamado successMessage
     Su funcion es cambiar el valor del mensaje.
@@ -21,7 +19,6 @@ export default function RegisterPatient() {
   */
   const handleSavePatient = async (patientData: PatientData) => {
     try {
-
       setSuccessMessage("");
       setErrorMessage("");
 

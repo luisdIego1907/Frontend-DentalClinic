@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
-import type { AppointmentData, DoctorData, SaveAppointmentRequest } from "../../data/appointment";
-import type { PatientDetails } from "../../data/patient";
+import type {
+  AppointmentData,
+  DoctorData,
+  SaveAppointmentRequest,
+} from "../../models/appointment";
 import { getPatients } from "../../services/PatientService";
 import {
   createAppointment,
@@ -10,6 +13,7 @@ import {
   getAppointments,
   updateAppointment,
 } from "../../services/AppointmentService";
+import type { PatientDetails } from "../../models/patient";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -36,7 +40,7 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
 };
 
 const mapAppointmentToRequest = (
-  appointmentData: AppointmentData
+  appointmentData: AppointmentData,
 ): SaveAppointmentRequest => ({
   patient_id: appointmentData.patient?.patient_id ?? 0,
   doctor_user_resource_id: appointmentData.doctorUserResourceId,
@@ -103,7 +107,7 @@ export default function ScheduleAppointments() {
     }
 
     const appointment = appointments.find(
-      (currentAppointment) => currentAppointment.id === appointmentId
+      (currentAppointment) => currentAppointment.id === appointmentId,
     );
 
     if (appointment) {
@@ -112,7 +116,7 @@ export default function ScheduleAppointments() {
   }, [appointments, appointmentIdParam]);
 
   const handleSaveAppointment = async (
-    appointmentData: AppointmentData
+    appointmentData: AppointmentData,
   ): Promise<boolean> => {
     setSuccessMessage("");
     setErrorMessage("");
@@ -122,7 +126,9 @@ export default function ScheduleAppointments() {
       appointmentData.patient.status === "Inactivo" ||
       appointmentData.patient.status.toLowerCase() === "inactive"
     ) {
-      setErrorMessage("No se puede agendar una cita para un paciente inactivo.");
+      setErrorMessage(
+        "No se puede agendar una cita para un paciente inactivo.",
+      );
       return false;
     }
 
@@ -157,7 +163,9 @@ export default function ScheduleAppointments() {
     });
 
     if (appointmentExists) {
-      setErrorMessage("El odontólogo seleccionado ya tiene una cita en ese horario.");
+      setErrorMessage(
+        "El odontólogo seleccionado ya tiene una cita en ese horario.",
+      );
       setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
       return false;
     }
@@ -228,8 +236,8 @@ export default function ScheduleAppointments() {
           <h1 className="text-3xl font-bold text-gray-900">Agendar cita</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar o modificar una cita
-            odontológica.
+            Complete la información necesaria para registrar o modificar una
+            cita odontológica.
           </p>
         </div>
 
@@ -263,7 +271,9 @@ export default function ScheduleAppointments() {
             </div>
 
             <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900">Citas agendadas</h2>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Citas agendadas
+              </h2>
               <p className="mt-1 text-sm text-gray-500">
                 Vista de las citas registradas en la base de datos.
               </p>
@@ -296,7 +306,7 @@ export default function ScheduleAppointments() {
                           Horario: {appointment.time} -{" "}
                           {getAppointmentEndTime(
                             appointment.time,
-                            appointment.durationMinutes
+                            appointment.durationMinutes,
                           )}
                         </p>
 
