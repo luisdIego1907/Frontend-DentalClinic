@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import type {
   AppointmentData,
@@ -10,8 +11,15 @@ import {
   createAppointment,
   getAppointmentDoctors,
   getAppointments,
+  updateAppointment,
 } from "../../services/AppointmentService";
 import type { PatientDetails } from "../../models/patient";
+
+interface ScheduleAppointmentsLocationState {
+  appointmentToEdit?: AppointmentData | null;
+}
+
+const getDateOnly = (date: string) => date.split("T")[0];
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -31,6 +39,13 @@ const mapAppointmentToRequest = (
 });
 
 export default function ScheduleAppointments() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const appointmentToEdit =
+    (location.state as ScheduleAppointmentsLocationState | null)
+      ?.appointmentToEdit ?? null;
+  const isEditing = appointmentToEdit !== null;
+
   const [patients, setPatients] = useState<PatientDetails[]>([]);
   const [doctors, setDoctors] = useState<DoctorData[]>([]);
   const [appointments, setAppointments] = useState<AppointmentData[]>([]);
@@ -69,6 +84,10 @@ export default function ScheduleAppointments() {
     loadData();
   }, []);
 
+  const handleCancelEdit = () => {
+    navigate("/appointments");
+  };
+
   const handleSaveAppointment = async (
     appointmentData: AppointmentData,
   ): Promise<boolean> => {
@@ -95,7 +114,11 @@ export default function ScheduleAppointments() {
     const newEnd = newStart + appointmentData.durationMinutes;
 
     const appointmentExists = appointments.some((appointment) => {
-      if (appointment.date !== appointmentData.date) {
+      if (isEditing && appointment.id === appointmentData.id) {
+        return false;
+      }
+
+      if (getDateOnly(appointment.date) !== getDateOnly(appointmentData.date)) {
         return false;
       }
 
@@ -122,6 +145,13 @@ export default function ScheduleAppointments() {
 
     try {
       const request = mapAppointmentToRequest(appointmentData);
+
+      if (isEditing) {
+        await updateAppointment(appointmentData.id, request);
+        navigate("/appointments");
+        return true;
+      }
+
       const newAppointment = await createAppointment(request);
 
       setAppointments((currentAppointments) => [
@@ -131,8 +161,13 @@ export default function ScheduleAppointments() {
       setSuccessMessage("Cita agendada correctamente.");
       return true;
     } catch (error) {
-      console.error("Error al registrar la cita:", error);
-      setErrorMessage("No se pudo registrar la cita.");
+      console.error(
+        isEditing ? "Error al modificar la cita:" : "Error al registrar la cita:",
+        error,
+      );
+      setErrorMessage(
+        isEditing ? "No se pudo modificar la cita." : "No se pudo registrar la cita.",
+      );
       setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
       return false;
     }
@@ -146,11 +181,14 @@ export default function ScheduleAppointments() {
             Citas
           </span>
 
-          <h1 className="text-3xl font-bold text-gray-900">Registrar cita</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {isEditing ? "Modificar cita" : "Registrar cita"}
+          </h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar una cita
-            odontológica.
+            {isEditing
+              ? "Actualice la información de la cita seleccionada."
+              : "Complete la información necesaria para registrar una cita odontológica."}
           </p>
         </div>
 
@@ -175,6 +213,8 @@ export default function ScheduleAppointments() {
             patients={patients}
             doctors={doctors}
             onSubmit={handleSaveAppointment}
+            appointmentToEdit={appointmentToEdit}
+            onCancelEdit={handleCancelEdit}
             submitButtonErrorSignal={submitButtonErrorSignal}
           />
         )}

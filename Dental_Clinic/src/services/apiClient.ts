@@ -37,10 +37,12 @@ export async function apiClient<T>(
     throw new Error("Error en la petición");
   }
 
-  if (response.status === 204) {
+  const responseText = await response.text();
+
+  if (!responseText.trim()) {
     return null as T;
   }
 
   // Si la respuesta sí tiene contenido, se convierte el JSON recibido al tipo esperado T.
-  return (await response.json()) as T;
+  return JSON.parse(responseText) as T;
 }
