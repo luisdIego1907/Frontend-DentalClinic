@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Search, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { CalendarDays, Pencil, Search, X } from "lucide-react";
 import { StatusBadge } from "../../components/home/Statusbadge";
 import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
 
 const getDateOnly = (date: string) => date.split("T")[0];
+
+const getTimeOnly = (time: string) => time.split(":").slice(0, 2).join(":");
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
@@ -32,6 +35,7 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
 };
 
 export default function ViewAppointments() {
+  const navigate = useNavigate();
   const [appointments, setAppointments] = useState<AppointmentData[]>([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -58,6 +62,18 @@ export default function ViewAppointments() {
   const clearFilters = () => {
     setStartDate("");
     setEndDate("");
+  };
+
+  const handleEditAppointment = (appointment: AppointmentData) => {
+    navigate("/appointments/schedule", {
+      state: {
+        appointmentToEdit: {
+          ...appointment,
+          date: getDateOnly(appointment.date),
+          time: getTimeOnly(appointment.time),
+        },
+      },
+    });
   };
 
   const filteredAppointments = appointments
@@ -202,7 +218,7 @@ export default function ViewAppointments() {
                       </p>
 
                       <p className="text-sm text-gray-600">
-                        Horario: {appointment.time} -{" "}
+                        Horario: {getTimeOnly(appointment.time)} -{" "}
                         {getAppointmentEndTime(
                           appointment.time,
                           appointment.durationMinutes,
@@ -218,11 +234,22 @@ export default function ViewAppointments() {
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-gray-400">
-                        {appointment.durationMinutes} min
-                      </span>
-                      <StatusBadge estado={appointment.status} />
+                    <div className="flex flex-col items-start gap-3 md:items-end">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs text-gray-400">
+                          {appointment.durationMinutes} min
+                        </span>
+                        <StatusBadge estado={appointment.status} />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleEditAppointment(appointment)}
+                        className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Editar
+                      </button>
                     </div>
                   </div>
                 </div>
