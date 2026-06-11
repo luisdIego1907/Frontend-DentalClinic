@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { Calendar, Users, Clock, CalendarPlus, Pencil } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Calendar, Users, Clock, CalendarPlus } from "lucide-react";
 import { PageGreeting } from "../../components/home/PageGreeting";
 import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
 
 const BLUE = { bg: "#E6F1FB", dark: "#0C447C", mid: "#185FA5" };
@@ -26,7 +25,6 @@ const sortByTime = (appointments: AppointmentData[]) =>
   [...appointments].sort((a, b) => a.time.localeCompare(b.time));
 
 export default function HomeRecepcionist() {
-  const navigate = useNavigate();
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -96,12 +94,21 @@ export default function HomeRecepcionist() {
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Acceso Rápido
       </h2>
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-4 mb-8">
         <QuickAccessButton
           label="Registrar cita"
           description="Nueva reserva de cita"
           to="/appointments/schedule"
           icon={CalendarPlus}
+          iconBg={BLUE.bg}
+          iconColor={BLUE.dark}
+          accentBorder={BLUE.mid}
+        />
+        <QuickAccessButton
+          label="Ver citas"
+          description="Lista de citas registradas"
+          to="/appointments"
+          icon={Calendar}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
           accentBorder={BLUE.mid}
@@ -116,8 +123,8 @@ export default function HomeRecepcionist() {
           accentBorder={BLUE.mid}
         />
         <QuickAccessButton
-          label="Ver Pacientes"
-          description="Agenda completa del día"
+          label="Ver pacientes"
+          description="Lista de pacientes"
           to="/patients"
           icon={Users}
           iconBg={BLUE.bg}
@@ -158,14 +165,6 @@ export default function HomeRecepcionist() {
               <span className="text-xs text-gray-400">
                 {cita.durationMinutes} min
               </span>
-              <button
-                type="button"
-                onClick={() => navigate(`/appointments/schedule?appointmentId=${cita.id}`)}
-                className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:scale-95"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-                Editar
-              </button>
               <StatusBadge estado={cita.status} />
             </div>
           ))

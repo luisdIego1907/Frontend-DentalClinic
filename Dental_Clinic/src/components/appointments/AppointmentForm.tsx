@@ -25,16 +25,14 @@ export default function AppointmentForm({
   submitButtonErrorSignal = 0,
 }: AppointmentFormProps) {
   const [formData, setFormData] = useState<AppointmentData>(
-    initialAppointmentFormData,
+    initialAppointmentFormData
   );
 
   const [errors, setErrors] = useState<AppointmentFormErrors>({});
   const [showSubmitErrorFeedback, setShowSubmitErrorFeedback] = useState(false);
 
   const activePatients = patients.filter(
-    (patient) =>
-      patient.status !== "Inactivo" &&
-      patient.status.toLowerCase() !== "inactive",
+    (patient) => patient.status !== "Inactivo"
   );
 
   const isEditing = appointmentToEdit !== null;
@@ -65,7 +63,7 @@ export default function AppointmentForm({
   const handleChange = (
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
+    >
   ) => {
     const { name, value } = event.target;
 
@@ -77,7 +75,7 @@ export default function AppointmentForm({
 
   const handlePatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedPatient = activePatients.find(
-      (patient) => String(patient.patient_id) === event.target.value,
+      (patient) => patient.identification === event.target.value
     );
 
     setFormData({
@@ -88,7 +86,7 @@ export default function AppointmentForm({
 
   const handleDoctorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedDoctor = doctors.find(
-      (doctor) => doctor.user_resource_id === event.target.value,
+      (doctor) => doctor.user_resource_id === event.target.value
     );
 
     setFormData({
@@ -133,10 +131,35 @@ export default function AppointmentForm({
     : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
-    String(index).padStart(2, "0"),
+    String(index).padStart(2, "0")
   );
 
   const appointmentMinutes = ["00", "15", "30", "45"];
+
+  const getAppointmentSchedule = () => {
+    const [hour, minutes] = formData.time.split(":");
+
+    if (!hour || !minutes) {
+      return "Seleccione hora y minutos";
+    }
+
+    const startMinutes = Number(hour) * 60 + Number(minutes);
+    const endMinutes = startMinutes + formData.durationMinutes;
+
+    const formatTime = (totalMinutes: number) => {
+      const normalizedMinutes = totalMinutes % (24 * 60);
+      const formattedHour = Math.floor(normalizedMinutes / 60);
+      const formattedMinutes = normalizedMinutes % 60;
+
+      return `${String(formattedHour).padStart(2, "0")}:${String(
+        formattedMinutes
+      ).padStart(2, "0")}`;
+    };
+
+    return `${formatTime(startMinutes)} - ${formatTime(endMinutes)}`;
+  };
+
+  const appointmentSchedule = getAppointmentSchedule();
 
   return (
     <form
@@ -176,7 +199,7 @@ export default function AppointmentForm({
             <select
               id="patient"
               name="patient"
-              value={formData.patient?.patient_id ?? ""}
+              value={formData.patient?.identification ?? ""}
               onChange={handlePatientChange}
               className={inputClass}
             >
@@ -184,7 +207,10 @@ export default function AppointmentForm({
                 Seleccione un paciente
               </option>
               {activePatients.map((patient) => (
-                <option key={patient.patient_id} value={patient.patient_id}>
+                <option
+                  key={patient.identification}
+                  value={patient.identification}
+                >
                   {patient.first_name} {patient.last_name} -{" "}
                   {patient.identification}
                 </option>
@@ -192,9 +218,7 @@ export default function AppointmentForm({
             </select>
           )}
 
-          {errors.patient && (
-            <span className={errorClass}>{errors.patient}</span>
-          )}
+          {errors.patient && <span className={errorClass}>{errors.patient}</span>}
         </div>
 
         <div>
@@ -241,10 +265,10 @@ export default function AppointmentForm({
         <div>
           <label className={labelClass}>Hora de la cita</label>
 
-          <div className="mt-1 grid grid-cols-2 gap-3">
-            <div>
+          <div className="mt-1 flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <label htmlFor="hour" className={labelClass}>
-                Hora
+                Hora:
               </label>
               <select
                 id="hour"
@@ -257,7 +281,7 @@ export default function AppointmentForm({
                     time: `${event.target.value}:${minutes}`,
                   });
                 }}
-                className={inputClass}
+                className="w-32 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               >
                 <option value="" disabled>
                   Seleccione
@@ -270,9 +294,9 @@ export default function AppointmentForm({
               </select>
             </div>
 
-            <div>
+            <div className="flex items-center gap-2">
               <label htmlFor="minutes" className={labelClass}>
-                Minutos
+                Minutos:
               </label>
               <select
                 id="minutes"
@@ -285,7 +309,7 @@ export default function AppointmentForm({
                     time: `${hour}:${event.target.value}`,
                   });
                 }}
-                className={inputClass}
+                className="w-32 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
               >
                 <option value="" disabled>
                   Seleccione
@@ -318,6 +342,14 @@ export default function AppointmentForm({
             <option value={45}>45 minutos</option>
             <option value={60}>60 minutos</option>
           </select>
+        </div>
+
+        <div>
+          <label className={labelClass}>Horario</label>
+
+          <div className="mt-1 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 shadow-sm">
+            {appointmentSchedule}
+          </div>
         </div>
 
         <div className="md:col-span-2">

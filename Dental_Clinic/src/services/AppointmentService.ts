@@ -3,7 +3,7 @@ import type {
   AppointmentData,
   DoctorData,
   SaveAppointmentRequest,
-} from "../data/appointment";
+} from "../models/appointment";
 import { apiClient } from "./apiClient";
 
 const API_URL = `${config.api.url}/api/appointments`;
