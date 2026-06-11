@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 import type { PatientDetails } from "../../models/patient";
 import type { MedicalRecordData } from "../../models/medicalRecordResponse";
@@ -15,6 +20,9 @@ import ConsultationForm from "../../components/Forms/ConsultationForm/Consultati
 
 export default function ConsultationPage() {
   const { patientId } = useParams();
+
+  const [searchParams] = useSearchParams();
+  const appointmentId = searchParams.get("appointmentId");
 
   const navigate = useNavigate();
 
@@ -175,6 +183,7 @@ export default function ConsultationPage() {
 
             <ConsultationForm
               recordId={medicalRecord.record_id}
+              appointmentId={appointmentId ? Number(appointmentId) : undefined}
               onSave={handleSaveConsultation}
               onCancel={() => navigate(-1)}
             />

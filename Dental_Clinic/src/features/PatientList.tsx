@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import PatientCard from "./PatientCard";
 import type { PatientDetails } from "../models/patient";
 import {
@@ -15,6 +15,10 @@ const PATIENTS_PER_PAGE = 15;
 
 export default function PatientList() {
   const navigate = useNavigate();
+  /*Se encarga de que se pueda atender a pacientes sin cita puesto que appointment segun la
+  base de datos puede ser null, entonces el odontologo puede verlos a todos*/
+  const [searchParams] = useSearchParams();
+  const emergencyMode = searchParams.get("emergency") === "true";
   const permisos = usePermissions();
 
   const [permissionDenied, setPermissionDenied] = useState(false);
@@ -51,9 +55,11 @@ export default function PatientList() {
   useEffect(() => {
     async function loadPatients() {
       try {
-        const data = permisos.registrarConsulta
-          ? await getMyPatients()
-          : await getPatients();
+        const data = emergencyMode
+          ? await getPatients()
+          : permisos.registrarConsulta
+            ? await getMyPatients()
+            : await getPatients();
 
         setPatientList(data);
       } catch (error) {
@@ -65,7 +71,7 @@ export default function PatientList() {
     }
 
     loadPatients();
-  }, [permisos.registrarConsulta]);
+  }, [permisos.registrarConsulta, emergencyMode]);
 
   /* Normaliza el texto para que la búsqueda no falle por mayúsculas,
      minúsculas o tildes. */
@@ -245,11 +251,15 @@ export default function PatientList() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-800">
-            Lista de Pacientes
+            {emergencyMode
+              ? "Pacientes para atención de emergencia"
+              : "Lista de Pacientes"}
           </h1>
 
           <p className="text-slate-500 mt-1">
-            Gestiona los pacientes registrados en el sistema
+            {emergencyMode
+              ? "Seleccione un paciente para registrar una consulta de emergencia."
+              : "Gestiona los pacientes registrados en el sistema"}
           </p>
         </div>
 

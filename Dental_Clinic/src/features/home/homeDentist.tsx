@@ -11,6 +11,7 @@ import {
   getAppointments,
 } from "../../services/AppointmentService";
 import type { AppointmentData, DoctorData } from "../../models/appointment";
+import { useNavigate } from "react-router-dom";
 
 const TEAL = { bg: "#E1F5EE", dark: "#0C447C", mid: "#185FA5" };
 
@@ -72,7 +73,7 @@ export default function HomeDentist() {
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [currentDoctor, setCurrentDoctor] = useState<DoctorData | undefined>();
   const [errorMessage, setErrorMessage] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const loadDentistData = async () => {
       try {
@@ -166,9 +167,9 @@ export default function HomeDentist() {
       </h2>
       <div className="grid grid-cols-2 gap-4 mb-8">
         <QuickAccessButton
-          label="Registrar consulta"
-          description="Crear una nueva consulta médica"
-          to="/consultations/patient/:patient_Id"
+          label="Atención de emergencia"
+          description="Seleccionar un paciente de la lista sin cita"
+          to="/patients?emergency=true"
           icon={ClipboardPlus}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
@@ -197,6 +198,18 @@ export default function HomeDentist() {
               cita={cita}
               timeBg={TEAL.bg}
               timeColor={TEAL.dark}
+              actions={
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/consultations/patient/${cita.patient?.patient_id}?appointmentId=${cita.id}`,
+                    )
+                  }
+                  className="px-3 py-1.5 rounded-lg bg-[#185FA5] text-white text-sm font-medium hover:bg-[#0C447C] transition"
+                >
+                  Atender
+                </button>
+              }
             />
           ))
         )}
