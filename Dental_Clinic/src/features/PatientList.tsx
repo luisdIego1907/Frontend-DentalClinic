@@ -2,14 +2,20 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import PatientCard from "./PatientCard";
 import type { PatientDetails } from "../models/patient";
-import { deletePatient, getPatients } from "../services/PatientService";
+import {
+  deletePatient,
+  getPatients,
+  getMyPatients,
+} from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
+import { usePermissions } from "../hook/usePermissions";
 
 const PATIENTS_PER_PAGE = 15;
 
 export default function PatientList() {
   const navigate = useNavigate();
+  const permisos = usePermissions();
 
   const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -45,7 +51,10 @@ export default function PatientList() {
   useEffect(() => {
     async function loadPatients() {
       try {
-        const data = await getPatients();
+        const data = permisos.registrarConsulta
+          ? await getMyPatients()
+          : await getPatients();
+
         setPatientList(data);
       } catch (error) {
         console.error("Error al cargar pacientes:", error);
@@ -56,7 +65,7 @@ export default function PatientList() {
     }
 
     loadPatients();
-  }, []);
+  }, [permisos.registrarConsulta]);
 
   /* Normaliza el texto para que la búsqueda no falle por mayúsculas,
      minúsculas o tildes. */
@@ -137,15 +146,15 @@ export default function PatientList() {
       setDeleteError("");
 
       await Promise.all(
-        selectedPatients.map((patientId) => deletePatient(patientId))
+        selectedPatients.map((patientId) => deletePatient(patientId)),
       );
 
       /* Elimina los pacientes seleccionados de la lista local
          después de que fueron eliminados correctamente en el backend. */
       setPatientList((prevPatients) =>
         prevPatients.filter(
-          (patient) => !selectedPatients.includes(patient.patient_id)
-        )
+          (patient) => !selectedPatients.includes(patient.patient_id),
+        ),
       );
 
       setSelectedPatients([]);
@@ -171,6 +180,16 @@ export default function PatientList() {
   // Cambia a la página siguiente si no está en la última página.
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  // Sirve para que cuando el odontologo seleccione a un paciente vaya directo a las consultas
+  const handlePatientClick = (patientId: number) => {
+    if (permisos.registrarConsulta) {
+      navigate(`/consultations/patient/${patientId}`);
+      return;
+    }
+
+    navigate(`/patients/${patientId}`);
   };
 
   /* Mientras se cargan los datos desde el backend,
@@ -349,7 +368,7 @@ export default function PatientList() {
                 patient={patient}
                 selected={selectedPatients.includes(patient.patient_id)}
                 onSelect={() => handleSelectPatient(patient.patient_id)}
-                onClick={() => navigate(`/patients/${patient.patient_id}`)}
+                onClick={() => handlePatientClick(patient.patient_id)}
               />
             ))}
           </div>

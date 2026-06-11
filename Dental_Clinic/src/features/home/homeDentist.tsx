@@ -5,14 +5,14 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { AppointmentRow } from "../../components/home/AppointmentRow";
 import { SectionHeader } from "../../components/home/SectionHeader";
-import type { AppointmentData, DoctorData } from "../../data/appointment";
 import { getToken } from "../../auth/sessionAuth";
 import {
   getAppointmentDoctors,
   getAppointments,
 } from "../../services/AppointmentService";
+import type { AppointmentData, DoctorData } from "../../models/appointment";
 
-const TEAL = { bg: "#E1F5EE", dark: "#0F6E56", mid: "#1D9E75" };
+const TEAL = { bg: "#E1F5EE", dark: "#0C447C", mid: "#185FA5" };
 
 interface JwtPayload {
   externalId?: string;
@@ -39,7 +39,7 @@ function decodeJwtPayload(token: string): JwtPayload {
   const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
   const paddedBase64 = base64.padEnd(
     base64.length + ((4 - (base64.length % 4)) % 4),
-    "="
+    "=",
   );
 
   return JSON.parse(atob(paddedBase64)) as JwtPayload;
@@ -86,15 +86,15 @@ export default function HomeDentist() {
           appointmentsResponse.filter(
             (appointment) =>
               appointment.doctorUserResourceId.toLowerCase() ===
-              currentUserResourceId.toLowerCase()
-          )
+              currentUserResourceId.toLowerCase(),
+          ),
         );
         setCurrentDoctor(
           doctorsResponse.find(
             (doctor) =>
               doctor.user_resource_id.toLowerCase() ===
-              currentUserResourceId.toLowerCase()
-          )
+              currentUserResourceId.toLowerCase(),
+          ),
         );
       } catch (error) {
         console.error("Error al cargar datos del odontólogo:", error);
@@ -108,15 +108,15 @@ export default function HomeDentist() {
   const today = getToday();
   const currentMonth = getCurrentMonth();
   const citasHoy = sortByTime(
-    citas.filter((cita) => getDateOnly(cita.date) === today)
+    citas.filter((cita) => getDateOnly(cita.date) === today),
   );
   const consultasMes = citas.filter(
-    (cita) => getMonthOnly(cita.date) === currentMonth
+    (cita) => getMonthOnly(cita.date) === currentMonth,
   ).length;
   const pacientesAsignados = new Set(
     citas
       .map((cita) => cita.patient?.patient_id)
-      .filter((patientId): patientId is number => Boolean(patientId))
+      .filter((patientId): patientId is number => Boolean(patientId)),
   ).size;
 
   return (
@@ -168,7 +168,7 @@ export default function HomeDentist() {
         <QuickAccessButton
           label="Registrar consulta"
           description="Crear una nueva consulta médica"
-          to="/consultations/patient/:id"
+          to="/consultations/patient/:patient_Id"
           icon={ClipboardPlus}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}

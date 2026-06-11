@@ -13,6 +13,7 @@ import HomeAdmin from "./features/home/homeAdmin";
 import ProtectedRoute from "./components/security/ProtectedRoute";
 import "./App.css";
 import ConsultationPage from "./pages/consultations/ConsultationPage";
+import ConsultationListPage from "./pages/consultations/ConsultationListPage";
 
 function App() {
   return (
@@ -104,6 +105,15 @@ function App() {
                         element={
                           <ProtectedRoute rol={["ADMIN", "ASSIS"]}>
                             <ScheduleAppointment />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route
+                        path="/consultations"
+                        element={
+                          <ProtectedRoute rol="ADMIN">
+                            <ConsultationListPage />
                           </ProtectedRoute>
                         }
                       />

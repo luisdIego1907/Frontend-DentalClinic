@@ -6,7 +6,7 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
 
 const BLUE = { bg: "#E6F1FB", dark: "#0C447C", mid: "#185FA5" };
@@ -47,10 +47,14 @@ export default function HomeRecepcionist() {
   const today = getToday();
   const tomorrow = getTomorrow();
   const citasHoy = sortByTime(
-    citas.filter((cita) => getDateOnly(cita.date) === today)
+    citas.filter((cita) => getDateOnly(cita.date) === today),
   );
-  const citasManana = citas.filter((cita) => getDateOnly(cita.date) === tomorrow);
-  const citasPendientes = citasHoy.filter((cita) => cita.status === "Pendiente");
+  const citasManana = citas.filter(
+    (cita) => getDateOnly(cita.date) === tomorrow,
+  );
+  const citasPendientes = citasHoy.filter(
+    (cita) => cita.status === "Pendiente",
+  );
   const citasEnEspera = citasHoy.filter((cita) => cita.status === "En espera");
   const proximoTurno = citasEnEspera[0]?.time ?? "Sin turnos";
 
@@ -160,7 +164,9 @@ export default function HomeRecepcionist() {
               </span>
               <button
                 type="button"
-                onClick={() => navigate(`/appointments/schedule?appointmentId=${cita.id}`)}
+                onClick={() =>
+                  navigate(`/appointments/schedule?appointmentId=${cita.id}`)
+                }
                 className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:scale-95"
               >
                 <Pencil className="w-3.5 h-3.5" />

@@ -13,10 +13,12 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
-import type { AppointmentData } from "../../data/appointment";
-import type { PatientDetails } from "../../data/patient";
+import type { AppointmentData } from "../../models/appointment";
+import type { PatientDetails } from "../../models/patient";
 import { getAppointments } from "../../services/AppointmentService";
 import { getPatients } from "../../services/PatientService";
+import type { ConsultationSummaryResponse } from "../../models/consultationResponse";
+import { getAllConsultations } from "../../services/ConsultationService";
 
 const PURPLE = { bg: "#EEEDFE", dark: "#3C3489", mid: "#534AB7" };
 
@@ -35,17 +37,23 @@ export default function HomeAdmin() {
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [pacientes, setPacientes] = useState<PatientDetails[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [consultations, setConsultations] = useState<
+    ConsultationSummaryResponse[]
+  >([]);
 
   useEffect(() => {
     const loadHomeData = async () => {
       try {
-        const [appointmentsResponse, patientsResponse] = await Promise.all([
-          getAppointments(),
-          getPatients(),
-        ]);
+        const [appointmentsResponse, patientsResponse, consultationResponse] =
+          await Promise.all([
+            getAppointments(),
+            getPatients(),
+            getAllConsultations(),
+          ]);
 
         setCitas(appointmentsResponse);
         setPacientes(patientsResponse);
+        setConsultations(consultationResponse);
       } catch (error) {
         console.error("Error al cargar datos del administrador:", error);
         setErrorMessage("No se pudieron cargar los datos del panel.");
@@ -57,7 +65,7 @@ export default function HomeAdmin() {
 
   const today = getToday();
   const citasHoy = sortByTime(
-    citas.filter((cita) => getDateOnly(cita.date) === today)
+    citas.filter((cita) => getDateOnly(cita.date) === today),
   );
 
   return (
@@ -91,8 +99,8 @@ export default function HomeAdmin() {
         />
         <StatCard
           label="Consultas del Mes"
-          value={312}
-          sub="+5% vs mes anterior"
+          value={consultations.length}
+          sub="Total Consultas Registradas"
           icon={ClipboardPlus}
           iconBg={PURPLE.bg}
           iconColor={PURPLE.dark}
