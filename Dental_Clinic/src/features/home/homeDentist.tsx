@@ -5,7 +5,7 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { AppointmentRow } from "../../components/home/AppointmentRow";
 import { SectionHeader } from "../../components/home/SectionHeader";
-import type { AppointmentData, DoctorData } from "../../data/appointment";
+import type { AppointmentData, DoctorData } from "../../models/appointment";
 import { getToken } from "../../auth/sessionAuth";
 import {
   getAppointmentDoctors,
@@ -164,12 +164,21 @@ export default function HomeDentist() {
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Acceso Rápido
       </h2>
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-8">
         <QuickAccessButton
-          label="Registrar consulta"
-          description="Crear una nueva consulta médica"
-          to="/consultations/patient/:id"
+          label="Registrar cita"
+          description="Crear nueva cita"
+          to="/appointments/schedule"
           icon={ClipboardPlus}
+          iconBg={TEAL.bg}
+          iconColor={TEAL.dark}
+          accentBorder={TEAL.mid}
+        />
+        <QuickAccessButton
+          label="Ver citas"
+          description="Lista de citas registradas"
+          to="/appointments"
+          icon={Calendar}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
           accentBorder={TEAL.mid}

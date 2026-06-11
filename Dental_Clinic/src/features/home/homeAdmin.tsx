@@ -13,8 +13,8 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
-import type { AppointmentData } from "../../data/appointment";
-import type { PatientDetails } from "../../data/patient";
+import type { AppointmentData } from "../../models/appointment";
+import type { PatientDetails } from "../../models/patient";
 import { getAppointments } from "../../services/AppointmentService";
 import { getPatients } from "../../services/PatientService";
 
@@ -113,19 +113,19 @@ export default function HomeAdmin() {
           accentBorder={PURPLE.mid}
         />
         <QuickAccessButton
-          label="Ver citas"
-          description="Agenda global de hoy"
+          label="Registrar cita"
+          description="Crear nueva cita"
           to="/appointments/schedule"
-          icon={Calendar}
+          icon={ClipboardPlus}
           iconBg={PURPLE.bg}
           iconColor={PURPLE.dark}
           accentBorder={PURPLE.mid}
         />
         <QuickAccessButton
-          label="Consultas"
-          description="Historial clínico completo"
-          to="/consultations"
-          icon={ClipboardPlus}
+          label="Ver citas"
+          description="Agenda global"
+          to="/appointments"
+          icon={Calendar}
           iconBg={PURPLE.bg}
           iconColor={PURPLE.dark}
           accentBorder={PURPLE.mid}

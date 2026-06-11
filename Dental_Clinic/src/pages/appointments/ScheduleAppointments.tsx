@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import AppointmentForm from "../../components/appointments/AppointmentForm";
 import type {
   AppointmentData,
@@ -11,32 +10,12 @@ import {
   createAppointment,
   getAppointmentDoctors,
   getAppointments,
-  updateAppointment,
 } from "../../services/AppointmentService";
 import type { PatientDetails } from "../../models/patient";
 
 const convertTimeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
-};
-
-const convertMinutesToTime = (totalMinutes: number) => {
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-
-  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
-};
-
-const formatDateToDayMonthYear = (date: string) => {
-  const [year, month, day] = date.split("-");
-  return `${day}/${month}/${year}`;
-};
-
-const getAppointmentEndTime = (time: string, durationMinutes: number) => {
-  const startMinutes = convertTimeToMinutes(time);
-  const endMinutes = startMinutes + durationMinutes;
-
-  return convertMinutesToTime(endMinutes);
 };
 
 const mapAppointmentToRequest = (
@@ -52,22 +31,14 @@ const mapAppointmentToRequest = (
 });
 
 export default function ScheduleAppointments() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const appointmentIdParam = searchParams.get("appointmentId");
-
   const [patients, setPatients] = useState<PatientDetails[]>([]);
   const [doctors, setDoctors] = useState<DoctorData[]>([]);
   const [appointments, setAppointments] = useState<AppointmentData[]>([]);
-
-  const [appointmentToEdit, setAppointmentToEdit] =
-    useState<AppointmentData | null>(null);
 
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [submitButtonErrorSignal, setSubmitButtonErrorSignal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
-  const formSectionRef = useRef<HTMLDivElement | null>(null);
 
   const loadAppointmentData = async () => {
     const [patientsResponse, doctorsResponse, appointmentsResponse] =
@@ -88,8 +59,8 @@ export default function ScheduleAppointments() {
         setIsLoading(true);
         await loadAppointmentData();
       } catch (error) {
-        console.error("Error al cargar datos de citas:", error);
-        setErrorMessage("No se pudieron cargar los datos de citas.");
+        console.error("Error al cargar datos para registrar citas:", error);
+        setErrorMessage("No se pudieron cargar los datos para registrar citas.");
       } finally {
         setIsLoading(false);
       }
@@ -97,23 +68,6 @@ export default function ScheduleAppointments() {
 
     loadData();
   }, []);
-
-  useEffect(() => {
-    const appointmentId = Number(appointmentIdParam);
-
-    if (!appointmentId) {
-      setAppointmentToEdit(null);
-      return;
-    }
-
-    const appointment = appointments.find(
-      (currentAppointment) => currentAppointment.id === appointmentId,
-    );
-
-    if (appointment) {
-      setAppointmentToEdit(appointment);
-    }
-  }, [appointments, appointmentIdParam]);
 
   const handleSaveAppointment = async (
     appointmentData: AppointmentData,
@@ -141,10 +95,6 @@ export default function ScheduleAppointments() {
     const newEnd = newStart + appointmentData.durationMinutes;
 
     const appointmentExists = appointments.some((appointment) => {
-      if (appointmentToEdit && appointment.id === appointmentToEdit.id) {
-        return false;
-      }
-
       if (appointment.date !== appointmentData.date) {
         return false;
       }
@@ -172,17 +122,8 @@ export default function ScheduleAppointments() {
 
     try {
       const request = mapAppointmentToRequest(appointmentData);
-
-      if (appointmentToEdit) {
-        await updateAppointment(appointmentToEdit.id, request);
-        await loadAppointmentData();
-        setAppointmentToEdit(null);
-        setSearchParams({});
-        setSuccessMessage("Cita modificada correctamente.");
-        return true;
-      }
-
       const newAppointment = await createAppointment(request);
+
       setAppointments((currentAppointments) => [
         ...currentAppointments,
         newAppointment,
@@ -190,40 +131,12 @@ export default function ScheduleAppointments() {
       setSuccessMessage("Cita agendada correctamente.");
       return true;
     } catch (error) {
-      console.error("Error al guardar la cita:", error);
-      setErrorMessage("No se pudo guardar la cita.");
+      console.error("Error al registrar la cita:", error);
+      setErrorMessage("No se pudo registrar la cita.");
       setSubmitButtonErrorSignal((currentValue) => currentValue + 1);
       return false;
     }
   };
-
-  const handleEditAppointment = (appointment: AppointmentData) => {
-    setSuccessMessage("");
-    setErrorMessage("");
-    setAppointmentToEdit(appointment);
-
-    setTimeout(() => {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }, 0);
-  };
-
-  const handleCancelEdit = () => {
-    setAppointmentToEdit(null);
-    setSuccessMessage("");
-    setErrorMessage("");
-    setSearchParams({});
-  };
-
-  const sortedAppointments = [...appointments].sort((a, b) => {
-    if (a.date !== b.date) {
-      return a.date.localeCompare(b.date);
-    }
-
-    return a.time.localeCompare(b.time);
-  });
 
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-10">
@@ -233,11 +146,11 @@ export default function ScheduleAppointments() {
             Citas
           </span>
 
-          <h1 className="text-3xl font-bold text-gray-900">Agendar cita</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Registrar cita</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
-            Complete la información necesaria para registrar o modificar una
-            cita odontológica.
+            Complete la información necesaria para registrar una cita
+            odontológica.
           </p>
         </div>
 
@@ -255,87 +168,15 @@ export default function ScheduleAppointments() {
 
         {isLoading ? (
           <div className="rounded-2xl bg-white p-8 text-sm text-gray-600 shadow-lg">
-            Cargando datos de citas...
+            Cargando datos para registrar citas...
           </div>
         ) : (
-          <>
-            <div ref={formSectionRef}>
-              <AppointmentForm
-                patients={patients}
-                doctors={doctors}
-                onSubmit={handleSaveAppointment}
-                appointmentToEdit={appointmentToEdit}
-                onCancelEdit={handleCancelEdit}
-                submitButtonErrorSignal={submitButtonErrorSignal}
-              />
-            </div>
-
-            <div className="mx-auto mt-8 max-w-4xl rounded-2xl bg-white p-8 shadow-lg">
-              <h2 className="text-2xl font-bold text-gray-900">
-                Citas agendadas
-              </h2>
-              <p className="mt-1 text-sm text-gray-500">
-                Vista de las citas registradas en la base de datos.
-              </p>
-
-              <div className="mt-6 space-y-4">
-                {sortedAppointments.map((appointment) => (
-                  <div
-                    key={appointment.id}
-                    className="rounded-xl border border-gray-200 bg-gray-50 p-4"
-                  >
-                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                      <div>
-                        <p className="font-semibold text-gray-900">
-                          {appointment.patient
-                            ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
-                            : "Paciente no seleccionado"}
-                        </p>
-
-                        {appointment.patient && (
-                          <p className="text-sm text-gray-600">
-                            Identificación: {appointment.patient.identification}
-                          </p>
-                        )}
-
-                        <p className="text-sm text-gray-600">
-                          Fecha: {formatDateToDayMonthYear(appointment.date)}
-                        </p>
-
-                        <p className="text-sm text-gray-600">
-                          Horario: {appointment.time} -{" "}
-                          {getAppointmentEndTime(
-                            appointment.time,
-                            appointment.durationMinutes,
-                          )}
-                        </p>
-
-                        <p className="text-sm text-gray-600">
-                          Odontólogo: {appointment.doctor || "Sin asignar"}
-                        </p>
-
-                        <p className="text-sm text-gray-600">
-                          Estado: {appointment.status}
-                        </p>
-
-                        <p className="text-sm text-gray-600">
-                          Motivo: {appointment.reason}
-                        </p>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handleEditAppointment(appointment)}
-                        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
-                      >
-                        Editar
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
+          <AppointmentForm
+            patients={patients}
+            doctors={doctors}
+            onSubmit={handleSaveAppointment}
+            submitButtonErrorSignal={submitButtonErrorSignal}
+          />
         )}
       </section>
     </main>
