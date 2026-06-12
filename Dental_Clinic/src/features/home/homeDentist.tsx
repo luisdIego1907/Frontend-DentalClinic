@@ -181,7 +181,7 @@ export default function HomeDentist() {
         <QuickAccessButton
           label="Ver mis pacientes"
           description="Lista de pacientes asignados"
-          to="/patients"
+          to="/clinical-patients"
           icon={Users}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}

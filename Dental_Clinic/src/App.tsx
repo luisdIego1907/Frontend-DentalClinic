@@ -14,6 +14,7 @@ import ProtectedRoute from "./components/security/ProtectedRoute";
 import "./App.css";
 import ConsultationPage from "./pages/consultations/ConsultationPage";
 import ConsultationListPage from "./pages/consultations/ConsultationListPage";
+import ClinicalPatientsPage from "./components/Consultation/ClinicalPatientsPage";
 
 function App() {
   return (
@@ -114,6 +115,15 @@ function App() {
                         element={
                           <ProtectedRoute rol="ADMIN">
                             <ConsultationListPage />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route
+                        path="/clinical-patients"
+                        element={
+                          <ProtectedRoute rol="ODO">
+                            <ClinicalPatientsPage />
                           </ProtectedRoute>
                         }
                       />
