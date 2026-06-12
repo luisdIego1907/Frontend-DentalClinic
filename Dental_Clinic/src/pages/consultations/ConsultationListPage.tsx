@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getAllConsultations } from "../../services/ConsultationService";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { ConsultationSummaryResponse } from "../../models/consultationResponse";
+import { BackButton } from "../../shared/BackButton";
 
 export default function ConsultationListPage() {
   const [consultations, setConsultations] = useState<
@@ -157,7 +158,7 @@ export default function ConsultationListPage() {
                           >
                             <span className="text-purple-500 mt-0.5">•</span>
                             <span>
-                              {t.description} — ₡{t.cost.toLocaleString()} —{" "}
+                              {t.description} — ${t.cost.toLocaleString()} —{" "}
                               <span className="text-slate-400 capitalize">
                                 {t.status}
                               </span>

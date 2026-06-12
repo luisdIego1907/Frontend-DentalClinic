@@ -109,10 +109,13 @@ export default function HomeDentist() {
   const today = getToday();
   const currentMonth = getCurrentMonth();
   const citasHoy = sortByTime(
-    citas.filter((cita) => getDateOnly(cita.date) === today),
+    citas.filter(
+      (cita) => getDateOnly(cita.date) === today && cita.status !== "Atendida",
+    ),
   );
   const consultasMes = citas.filter(
-    (cita) => getMonthOnly(cita.date) === currentMonth,
+    (cita) =>
+      getMonthOnly(cita.date) === currentMonth && cita.status !== "Atendida",
   ).length;
   const pacientesAsignados = new Set(
     citas

@@ -14,6 +14,12 @@ const emptyTreatment = (): Treatment => ({
   end_date: "",
 });
 
+const TEAL = {
+  bg: "#E1F5EE",
+  dark: "#0C447C",
+  mid: "#185FA5",
+};
+
 export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
   const handleAdd = () => onChange([...treatments, emptyTreatment()]);
 
@@ -151,9 +157,21 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
       <button
         type="button"
         onClick={handleAdd}
-        className="w-full border-2 border-dashed border-teal-400 text-teal-600 rounded-lg py-2.5 text-sm font-medium hover:bg-teal-50 transition"
+        className="w-full border-2 border-dashed rounded-lg py-2.5 text-sm font-medium transition"
+        style={{
+          borderColor: TEAL.mid,
+          color: TEAL.mid,
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            TEAL.bg;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "transparent";
+        }}
       >
-        + Agregar tratamiento
+        + Agregar Tratamiento
       </button>
     </div>
   );

@@ -6,6 +6,12 @@ import GeneralTab from "./GeneralTab";
 import DiagnosesTab from "./DiagnosesTab";
 import TreatmentsTab from "./TreatmentTab";
 
+const TEAL = {
+  bg: "#E1F5EE",
+  dark: "#0C447C",
+  mid: "#185FA5",
+};
+
 type SubTab = "general" | "diagnoses" | "treatments";
 
 type Props = {
@@ -71,13 +77,14 @@ export default function ConsultationForm({
 
     if (hasErrors(validationErrors)) {
       setErrors(validationErrors);
-      // Ir al primer tab con error
+
       if (validationErrors.consultation_date || validationErrors.reason)
         setActiveTab("general");
       else if (validationErrors.diagnoses.some((e) => e))
         setActiveTab("diagnoses");
       else if (validationErrors.treatments.some((e) => e))
         setActiveTab("treatments");
+
       return;
     }
 
@@ -86,7 +93,7 @@ export default function ConsultationForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Sub-tabs */}
+      {/* Tabs */}
       <div className="flex border-b border-slate-200">
         {subTabs.map((tab) => (
           <button
@@ -95,7 +102,7 @@ export default function ConsultationForm({
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.key
-                ? "border-teal-500 text-teal-600"
+                ? `border-[${TEAL.mid}] text-[${TEAL.mid}]`
                 : "border-transparent text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -104,7 +111,7 @@ export default function ConsultationForm({
         ))}
       </div>
 
-      {/* Contenido del sub-tab */}
+      {/* Content */}
       <div className="py-2">
         {activeTab === "general" && (
           <GeneralTab
@@ -113,6 +120,7 @@ export default function ConsultationForm({
             errors={errors}
           />
         )}
+
         {activeTab === "diagnoses" && (
           <DiagnosesTab
             diagnoses={formData.diagnoses}
@@ -122,6 +130,7 @@ export default function ConsultationForm({
             errors={errors.diagnoses}
           />
         )}
+
         {activeTab === "treatments" && (
           <TreatmentsTab
             treatments={formData.treatments}
@@ -133,7 +142,7 @@ export default function ConsultationForm({
         )}
       </div>
 
-      {/* Acciones */}
+      {/* Actions */}
       <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
         <button
           type="button"
@@ -142,9 +151,11 @@ export default function ConsultationForm({
         >
           Cancelar
         </button>
+
         <button
           type="submit"
-          className="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition"
+          style={{ backgroundColor: TEAL.dark }}
+          className="px-5 py-2.5 rounded-lg text-white text-sm font-medium transition"
         >
           Guardar consulta
         </button>

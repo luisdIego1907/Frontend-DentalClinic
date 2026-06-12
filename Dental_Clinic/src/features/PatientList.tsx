@@ -10,6 +10,7 @@ import {
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
 import { usePermissions } from "../hook/usePermissions";
+import { getRoles } from "../auth/sessionAuth";
 
 const PATIENTS_PER_PAGE = 15;
 
@@ -55,11 +56,17 @@ export default function PatientList() {
   useEffect(() => {
     async function loadPatients() {
       try {
-        const data = emergencyMode
-          ? await getPatients()
-          : permisos.registrarConsulta
-            ? await getMyPatients()
-            : await getPatients();
+        const role = getRoles()[0]; // ADMIN | ODO | ASSIS
+
+        let data: PatientDetails[];
+
+        if (emergencyMode) {
+          data = await getPatients();
+        } else if (role === "ODO") {
+          data = await getMyPatients();
+        } else {
+          data = await getPatients();
+        }
 
         setPatientList(data);
       } catch (error) {
@@ -71,7 +78,7 @@ export default function PatientList() {
     }
 
     loadPatients();
-  }, [permisos.registrarConsulta, emergencyMode]);
+  }, [emergencyMode]);
 
   /* Normaliza el texto para que la búsqueda no falle por mayúsculas,
      minúsculas o tildes. */
@@ -190,11 +197,15 @@ export default function PatientList() {
 
   // Sirve para que cuando el odontologo seleccione a un paciente vaya directo a las consultas
   const handlePatientClick = (patientId: number) => {
-    if (permisos.registrarConsulta) {
-      navigate(`/consultations/patient/${patientId}`);
+    const role = getRoles()[0];
+
+    // Emergencia SOLO para odontólogo
+    if (role === "ODO" && emergencyMode) {
+      navigate(`/consultations/patient/${patientId}?emergency=true`);
       return;
     }
 
+    // Todos los demás casos → detalle paciente
     navigate(`/patients/${patientId}`);
   };
 
@@ -374,7 +385,6 @@ export default function PatientList() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedPatients.map((patient) => (
               <PatientCard
-                key={patient.patient_id}
                 patient={patient}
                 selected={selectedPatients.includes(patient.patient_id)}
                 onSelect={() => handleSelectPatient(patient.patient_id)}
