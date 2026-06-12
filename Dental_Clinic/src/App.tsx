@@ -5,6 +5,7 @@ import PatientList from "./features/PatientList";
 import RegisterPatient from "./pages/patients/RegisterPatient";
 import Login from "./pages/login/Login";
 import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
+import ViewAppointments from "./pages/appointments/ViewAppointments";
 import NotFound from "./shared/NotFound";
 import PatientDetail from "./features/PatientDetail";
 import HomeDentist from "./features/home/homeDentist";
@@ -102,9 +103,18 @@ function App() {
 
                       {/* Citas */}
                       <Route
+                        path="/appointments"
+                        element={
+                          <ProtectedRoute rol={["ADMIN", "ASSIS", "ODO"]}>
+                            <ViewAppointments />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route
                         path="/appointments/schedule"
                         element={
-                          <ProtectedRoute rol={["ADMIN", "ASSIS"]}>
+                          <ProtectedRoute rol={["ADMIN", "ASSIS", "ODO"]}>
                             <ScheduleAppointment />
                           </ProtectedRoute>
                         }

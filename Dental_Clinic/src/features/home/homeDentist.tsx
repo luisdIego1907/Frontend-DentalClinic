@@ -168,12 +168,21 @@ export default function HomeDentist() {
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Acceso Rápido
       </h2>
-      <div className="grid grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-3 gap-4 mb-8">
         <QuickAccessButton
           label="Atención de emergencia"
           description="Seleccionar un paciente de la lista sin cita"
           to="/patients?emergency=true"
           icon={ClipboardPlus}
+          iconBg={TEAL.bg}
+          iconColor={TEAL.dark}
+          accentBorder={TEAL.mid}
+        />
+        <QuickAccessButton
+          label="Ver citas"
+          description="Lista de citas registradas"
+          to="/appointments"
+          icon={Calendar}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
           accentBorder={TEAL.mid}

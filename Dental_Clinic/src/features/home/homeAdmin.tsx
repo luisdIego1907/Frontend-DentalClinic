@@ -10,6 +10,9 @@ import type { AppointmentData } from "../../models/appointment";
 import type { PatientDetails } from "../../models/patient";
 import type { ConsultationSummaryResponse } from "../../models/consultationResponse";
 
+import { SectionHeader } from "../../components/home/SectionHeader";
+import { StatusBadge } from "../../components/home/Statusbadge";
+
 import { getAppointments } from "../../services/AppointmentService";
 import { getPatients } from "../../services/PatientService";
 import { getAllConsultations } from "../../services/ConsultationService";
@@ -121,8 +124,8 @@ export default function HomeAdmin() {
 
         <QuickAccessButton
           label="Ver citas"
-          description="Agenda global de hoy"
-          to="/appointments/schedule"
+          description="Agenda global"
+          to="/appointments"
           icon={Calendar}
           iconBg={PURPLE.bg}
           iconColor={PURPLE.dark}

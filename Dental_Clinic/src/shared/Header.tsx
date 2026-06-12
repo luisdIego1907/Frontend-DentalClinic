@@ -49,7 +49,7 @@ export default function Header() {
         {
           name: "Citas",
           icon: <CalendarDays size={20} />,
-          to: "/appointments/schedule",
+          to: "/appointments",
         },
       ];
     }
@@ -61,7 +61,7 @@ export default function Header() {
         {
           name: "Citas",
           icon: <CalendarDays size={20} />,
-          to: "/appointments/schedule",
+          to: "/appointments",
         },
       ];
     }
@@ -72,12 +72,6 @@ export default function Header() {
   const getInitials = () => {
     const roleLabel = getRoleLabel();
     return roleLabel.charAt(0).toUpperCase();
-  };
-
-  const handleLogout = () => {
-    logout();
-    setDropdownOpen(false);
-    setIsOpen(false);
   };
 
   const links = navLinks();

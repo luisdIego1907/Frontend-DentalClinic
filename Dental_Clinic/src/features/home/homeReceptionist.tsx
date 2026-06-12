@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { Calendar, Users, Clock, CalendarPlus, Pencil } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Calendar, Users, Clock, CalendarPlus } from "lucide-react";
 import { PageGreeting } from "../../components/home/PageGreeting";
 import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
@@ -26,7 +25,6 @@ const sortByTime = (appointments: AppointmentData[]) =>
   [...appointments].sort((a, b) => a.time.localeCompare(b.time));
 
 export default function HomeRecepcionist() {
-  const navigate = useNavigate();
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -100,12 +98,21 @@ export default function HomeRecepcionist() {
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Acceso Rápido
       </h2>
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-4 mb-8">
         <QuickAccessButton
           label="Registrar cita"
           description="Nueva reserva de cita"
           to="/appointments/schedule"
           icon={CalendarPlus}
+          iconBg={BLUE.bg}
+          iconColor={BLUE.dark}
+          accentBorder={BLUE.mid}
+        />
+        <QuickAccessButton
+          label="Ver citas"
+          description="Lista de citas registradas"
+          to="/appointments"
+          icon={Calendar}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
           accentBorder={BLUE.mid}
@@ -120,8 +127,8 @@ export default function HomeRecepcionist() {
           accentBorder={BLUE.mid}
         />
         <QuickAccessButton
-          label="Ver Pacientes"
-          description="Agenda completa del día"
+          label="Ver pacientes"
+          description="Lista de pacientes"
           to="/patients"
           icon={Users}
           iconBg={BLUE.bg}
