@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Calendar, Users, Clock, CalendarPlus } from "lucide-react";
+import { Calendar, Users, Clock, CalendarPlus, Pencil } from "lucide-react";
 import { PageGreeting } from "../../components/home/PageGreeting";
 import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
@@ -7,6 +7,7 @@ import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
 import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
+import { useNavigate } from "react-router-dom";
 
 const BLUE = { bg: "#E6F1FB", dark: "#0C447C", mid: "#185FA5" };
 
@@ -27,6 +28,7 @@ const sortByTime = (appointments: AppointmentData[]) =>
 export default function HomeRecepcionist() {
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadAppointments = async () => {
