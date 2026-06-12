@@ -1,6 +1,10 @@
 import type { PatientDetails } from "./patient";
 
-export type StatusAppointment = "Confirmada" | "Pendiente" | "En espera";
+export type StatusAppointment =
+  | "Confirmada"
+  | "Pendiente"
+  | "En espera"
+  | "Atendida";
 
 export interface DoctorData {
   user_resource_id: string;

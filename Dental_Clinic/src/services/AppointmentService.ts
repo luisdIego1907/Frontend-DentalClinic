@@ -27,7 +27,7 @@ export async function getAppointmentDoctors(): Promise<DoctorData[]> {
 }
 
 export async function createAppointment(
-  appointmentData: SaveAppointmentRequest
+  appointmentData: SaveAppointmentRequest,
 ): Promise<AppointmentData> {
   try {
     return await apiClient<AppointmentData>(API_URL, {
@@ -42,7 +42,7 @@ export async function createAppointment(
 
 export async function updateAppointment(
   id: number,
-  appointmentData: SaveAppointmentRequest
+  appointmentData: SaveAppointmentRequest,
 ): Promise<void> {
   try {
     await apiClient<void>(`${API_URL}/${id}`, {

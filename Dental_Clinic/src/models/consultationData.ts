@@ -1,5 +1,7 @@
 import type { Diagnosis } from "./diagnosis";
+import type { DiagnosisResponse } from "./diagnosisResponse";
 import type { Treatment } from "./treatment";
+import type { TreatmentResponse } from "./treatmentResponse";
 
 export interface ConsultationFormData {
   record_id: number;
@@ -11,5 +13,3 @@ export interface ConsultationFormData {
   diagnoses: Diagnosis[];
   treatments: Treatment[];
 }
-
-//Datos para la consulta

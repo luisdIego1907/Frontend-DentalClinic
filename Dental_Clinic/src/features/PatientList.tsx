@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import PatientCard from "./PatientCard";
 import type { PatientDetails } from "../models/patient";
-import { deletePatient, getPatients } from "../services/PatientService";
+import {
+  deletePatient,
+  getPatients,
+  getMyPatients,
+} from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
+import { usePermissions } from "../hook/usePermissions";
+import { getRoles } from "../auth/sessionAuth";
 
 const PATIENTS_PER_PAGE = 15;
 
 export default function PatientList() {
   const navigate = useNavigate();
+  /*Se encarga de que se pueda atender a pacientes sin cita puesto que appointment segun la
+  base de datos puede ser null, entonces el odontologo puede verlos a todos*/
+  const [searchParams] = useSearchParams();
+  const emergencyMode = searchParams.get("emergency") === "true";
+  const permisos = usePermissions();
 
   const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -45,7 +56,18 @@ export default function PatientList() {
   useEffect(() => {
     async function loadPatients() {
       try {
-        const data = await getPatients();
+        const role = getRoles()[0]; // ADMIN | ODO | ASSIS
+
+        let data: PatientDetails[];
+
+        if (emergencyMode) {
+          data = await getPatients();
+        } else if (role === "ODO") {
+          data = await getMyPatients();
+        } else {
+          data = await getPatients();
+        }
+
         setPatientList(data);
       } catch (error) {
         console.error("Error al cargar pacientes:", error);
@@ -56,7 +78,7 @@ export default function PatientList() {
     }
 
     loadPatients();
-  }, []);
+  }, [emergencyMode]);
 
   /* Normaliza el texto para que la búsqueda no falle por mayúsculas,
      minúsculas o tildes. */
@@ -137,15 +159,15 @@ export default function PatientList() {
       setDeleteError("");
 
       await Promise.all(
-        selectedPatients.map((patientId) => deletePatient(patientId))
+        selectedPatients.map((patientId) => deletePatient(patientId)),
       );
 
       /* Elimina los pacientes seleccionados de la lista local
          después de que fueron eliminados correctamente en el backend. */
       setPatientList((prevPatients) =>
         prevPatients.filter(
-          (patient) => !selectedPatients.includes(patient.patient_id)
-        )
+          (patient) => !selectedPatients.includes(patient.patient_id),
+        ),
       );
 
       setSelectedPatients([]);
@@ -171,6 +193,20 @@ export default function PatientList() {
   // Cambia a la página siguiente si no está en la última página.
   const handleNextPage = () => {
     setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
+
+  // Sirve para que cuando el odontologo seleccione a un paciente vaya directo a las consultas
+  const handlePatientClick = (patientId: number) => {
+    const role = getRoles()[0];
+
+    // Emergencia SOLO para odontólogo
+    if (role === "ODO" && emergencyMode) {
+      navigate(`/consultations/patient/${patientId}?emergency=true`);
+      return;
+    }
+
+    // Todos los demás casos → detalle paciente
+    navigate(`/patients/${patientId}`);
   };
 
   /* Mientras se cargan los datos desde el backend,
@@ -226,11 +262,15 @@ export default function PatientList() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-slate-800">
-            Lista de Pacientes
+            {emergencyMode
+              ? "Pacientes para atención de emergencia"
+              : "Lista de Pacientes"}
           </h1>
 
           <p className="text-slate-500 mt-1">
-            Gestiona los pacientes registrados en el sistema
+            {emergencyMode
+              ? "Seleccione un paciente para registrar una consulta de emergencia."
+              : "Gestiona los pacientes registrados en el sistema"}
           </p>
         </div>
 
@@ -345,11 +385,10 @@ export default function PatientList() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedPatients.map((patient) => (
               <PatientCard
-                key={patient.patient_id}
                 patient={patient}
                 selected={selectedPatients.includes(patient.patient_id)}
                 onSelect={() => handleSelectPatient(patient.patient_id)}
-                onClick={() => navigate(`/patients/${patient.patient_id}`)}
+                onClick={() => handlePatientClick(patient.patient_id)}
               />
             ))}
           </div>

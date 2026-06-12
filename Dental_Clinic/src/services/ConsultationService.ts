@@ -1,7 +1,10 @@
-import type { ConsultationFormData } from "../models/consultationData";
-import type { ConsultationResponse } from "../models/consultationResponse";
+import type {
+  ConsultationResponse,
+  ConsultationSummaryResponse,
+} from "../models/consultationResponse";
 import { config } from "../config";
 import { apiClient } from "./apiClient";
+import type { ConsultationFormData } from "../models/consultationData";
 
 const API_URL = `${config.api.url}/api`;
 
@@ -20,4 +23,10 @@ export async function getConsultationByRecordId(
   return apiClient<ConsultationResponse[]>(
     `${API_URL}/consultations/record/${recordId}`,
   );
+}
+
+export async function getAllConsultations(): Promise<
+  ConsultationSummaryResponse[]
+> {
+  return apiClient<ConsultationSummaryResponse[]>(`${API_URL}/consultations`);
 }

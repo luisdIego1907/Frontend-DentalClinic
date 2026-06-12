@@ -5,14 +5,15 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { AppointmentRow } from "../../components/home/AppointmentRow";
 import { SectionHeader } from "../../components/home/SectionHeader";
-import type { AppointmentData, DoctorData } from "../../models/appointment";
 import { getToken } from "../../auth/sessionAuth";
 import {
   getAppointmentDoctors,
   getAppointments,
 } from "../../services/AppointmentService";
+import type { AppointmentData, DoctorData } from "../../models/appointment";
+import { useNavigate } from "react-router-dom";
 
-const TEAL = { bg: "#E1F5EE", dark: "#0F6E56", mid: "#1D9E75" };
+const TEAL = { bg: "#E1F5EE", dark: "#0C447C", mid: "#185FA5" };
 
 interface JwtPayload {
   externalId?: string;
@@ -39,7 +40,7 @@ function decodeJwtPayload(token: string): JwtPayload {
   const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
   const paddedBase64 = base64.padEnd(
     base64.length + ((4 - (base64.length % 4)) % 4),
-    "="
+    "=",
   );
 
   return JSON.parse(atob(paddedBase64)) as JwtPayload;
@@ -72,7 +73,7 @@ export default function HomeDentist() {
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [currentDoctor, setCurrentDoctor] = useState<DoctorData | undefined>();
   const [errorMessage, setErrorMessage] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const loadDentistData = async () => {
       try {
@@ -86,15 +87,15 @@ export default function HomeDentist() {
           appointmentsResponse.filter(
             (appointment) =>
               appointment.doctorUserResourceId.toLowerCase() ===
-              currentUserResourceId.toLowerCase()
-          )
+              currentUserResourceId.toLowerCase(),
+          ),
         );
         setCurrentDoctor(
           doctorsResponse.find(
             (doctor) =>
               doctor.user_resource_id.toLowerCase() ===
-              currentUserResourceId.toLowerCase()
-          )
+              currentUserResourceId.toLowerCase(),
+          ),
         );
       } catch (error) {
         console.error("Error al cargar datos del odontólogo:", error);
@@ -108,15 +109,18 @@ export default function HomeDentist() {
   const today = getToday();
   const currentMonth = getCurrentMonth();
   const citasHoy = sortByTime(
-    citas.filter((cita) => getDateOnly(cita.date) === today)
+    citas.filter(
+      (cita) => getDateOnly(cita.date) === today && cita.status !== "Atendida",
+    ),
   );
   const consultasMes = citas.filter(
-    (cita) => getMonthOnly(cita.date) === currentMonth
+    (cita) =>
+      getMonthOnly(cita.date) === currentMonth && cita.status !== "Atendida",
   ).length;
   const pacientesAsignados = new Set(
     citas
       .map((cita) => cita.patient?.patient_id)
-      .filter((patientId): patientId is number => Boolean(patientId))
+      .filter((patientId): patientId is number => Boolean(patientId)),
   ).size;
 
   return (
@@ -166,9 +170,9 @@ export default function HomeDentist() {
       </h2>
       <div className="grid grid-cols-3 gap-4 mb-8">
         <QuickAccessButton
-          label="Registrar cita"
-          description="Crear nueva cita"
-          to="/appointments/schedule"
+          label="Atención de emergencia"
+          description="Seleccionar un paciente de la lista sin cita"
+          to="/patients?emergency=true"
           icon={ClipboardPlus}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
@@ -186,7 +190,7 @@ export default function HomeDentist() {
         <QuickAccessButton
           label="Ver mis pacientes"
           description="Lista de pacientes asignados"
-          to="/patients"
+          to="/clinical-patients"
           icon={Users}
           iconBg={TEAL.bg}
           iconColor={TEAL.dark}
@@ -206,6 +210,18 @@ export default function HomeDentist() {
               cita={cita}
               timeBg={TEAL.bg}
               timeColor={TEAL.dark}
+              actions={
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/consultations/patient/${cita.patient?.patient_id}?appointmentId=${cita.id}`,
+                    )
+                  }
+                  className="px-3 py-1.5 rounded-lg bg-[#185FA5] text-white text-sm font-medium hover:bg-[#0C447C] transition"
+                >
+                  Atender
+                </button>
+              }
             />
           ))
         )}

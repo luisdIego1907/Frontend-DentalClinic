@@ -42,7 +42,6 @@ export default function Login() {
       } else {
         setErrorMessage("No se pudo iniciar sesión");
       }
-
     } finally {
       setIsSubmitting(false);
     }
@@ -51,7 +50,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image with overlay */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#1D9E75] to-[#158f68] items-center justify-center overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#185FA5] to-[#0C447C] items-center justify-center overflow-hidden">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -61,7 +60,7 @@ export default function Login() {
         />
 
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1D9E75]/85 to-[#0f5d47]/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#185FA5]/85 to-[#0C447C]/90" />
 
         {/* Logo on Image */}
         <div className="relative z-10 text-center px-12">
@@ -110,7 +109,7 @@ export default function Login() {
             >
               <path
                 d="M32 8C24 8 18 12 18 20C18 24 16 28 16 32C16 40 18 56 24 56C28 56 28 48 28 44C28 42 28 40 30 40H34C36 40 36 42 36 44C36 48 36 56 40 56C46 56 48 40 48 32C48 28 46 24 46 20C46 12 40 8 32 8Z"
-                fill="#1D9E75"
+                fill="#0C447C"
               />
             </svg>
 
@@ -130,7 +129,7 @@ export default function Login() {
             >
               <path
                 d="M32 8C24 8 18 12 18 20C18 24 16 28 16 32C16 40 18 56 24 56C28 56 28 48 28 44C28 42 28 40 30 40H34C36 40 36 42 36 44C36 48 36 56 40 56C46 56 48 40 48 32C48 28 46 24 46 20C46 12 40 8 32 8Z"
-                fill="#1D9E75"
+                fill="#0C447C"
               />
             </svg>
 
@@ -215,7 +214,25 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-primary text-primary-foreground py-3.5 px-4 rounded-lg font-medium hover:bg-[#188968] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                className="
+w-full
+bg-[#185FA5]
+text-white
+py-3.5
+px-4
+rounded-lg
+font-medium
+hover:bg-[#0C447C]
+focus:outline-none
+focus:ring-2
+focus:ring-[#185FA5]
+focus:ring-offset-2
+transition-all
+shadow-sm
+hover:shadow-md
+disabled:opacity-60
+disabled:cursor-not-allowed
+"
               >
                 {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
               </button>

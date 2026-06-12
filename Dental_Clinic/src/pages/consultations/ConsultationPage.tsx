@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 import type { PatientDetails } from "../../models/patient";
 import type { MedicalRecordData } from "../../models/medicalRecordResponse";
@@ -15,17 +20,18 @@ import ConsultationForm from "../../components/Forms/ConsultationForm/Consultati
 
 export default function ConsultationPage() {
   const { patientId } = useParams();
+  const [searchParams] = useSearchParams();
+  const appointmentId = searchParams.get("appointmentId");
 
   const navigate = useNavigate();
-
+  // States para obtener los datos
   const [patient, setPatient] = useState<PatientDetails>();
   const [medicalRecord, setMedicalRecord] = useState<MedicalRecordData>();
 
   const [loading, setLoading] = useState(true);
-
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-
+  //Obtener los datos
   useEffect(() => {
     async function loadData() {
       if (!patientId) {
@@ -45,7 +51,6 @@ export default function ConsultationPage() {
         setMedicalRecord(medicalRecordData);
       } catch (error) {
         console.error(error);
-
         setError("No se pudo cargar la información del paciente.");
       } finally {
         setLoading(false);
@@ -60,21 +65,16 @@ export default function ConsultationPage() {
       setError("");
       setSuccessMessage("");
 
-      console.log("CONSULTATION DATA:", JSON.stringify(data, null, 2));
-
       await createConsultation(data);
 
+      //  MOSTRAR MENSAJES
       setSuccessMessage("Consulta registrada correctamente.");
-
-      setTimeout(() => {
-        navigate("/odontologist");
-      }, 1500);
     } catch (error) {
       console.error(error);
-
       setError("No se pudo registrar la consulta.");
     }
   };
+
   if (loading) {
     return (
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -84,10 +84,6 @@ export default function ConsultationPage() {
           <h2 className="mt-6 text-xl font-semibold text-slate-700">
             Cargando consulta
           </h2>
-
-          <p className="mt-2 text-center text-slate-500">
-            Obteniendo información del paciente y expediente médico.
-          </p>
         </div>
       </main>
     );
@@ -98,7 +94,6 @@ export default function ConsultationPage() {
       <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <h2 className="text-lg font-semibold text-red-700">Error</h2>
-
           <p className="mt-2 text-red-600">{error}</p>
         </div>
       </main>
@@ -130,9 +125,17 @@ export default function ConsultationPage() {
         </Link>
       </div>
 
+      {/* SUCCESS / ERROR FEEDBACK */}
       {successMessage && (
-        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div className="mb-6 flex items-center justify-between rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
           {successMessage}
+
+          <button
+            onClick={() => navigate("/odontologist")}
+            className="font-medium text-green-700 hover:underline"
+          >
+            Volver
+          </button>
         </div>
       )}
 
@@ -147,34 +150,28 @@ export default function ConsultationPage() {
           <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
             Consulta odontológica
           </h1>
-
-          <p className="mt-2 break-words text-slate-500">{fullName}</p>
+          <p className="mt-2 text-slate-500">{fullName}</p>
         </div>
 
         <div className="space-y-8 p-6 sm:p-8">
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
-            <h2 className="mb-5 text-lg font-semibold text-slate-800 sm:text-xl">
+            <h2 className="mb-5 text-lg font-semibold">
               Información del paciente
             </h2>
-
             <PatientInfo patient={patient} />
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
-            <h2 className="mb-5 text-lg font-semibold text-slate-800 sm:text-xl">
-              Expediente médico
-            </h2>
-
+            <h2 className="mb-5 text-lg font-semibold">Expediente médico</h2>
             <MedicalRecordInfo medicalRecord={medicalRecord} />
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
-            <h2 className="mb-5 text-lg font-semibold text-slate-800 sm:text-xl">
-              Nueva consulta
-            </h2>
+            <h2 className="mb-5 text-lg font-semibold">Nueva consulta</h2>
 
             <ConsultationForm
               recordId={medicalRecord.record_id}
+              appointmentId={appointmentId ? Number(appointmentId) : undefined}
               onSave={handleSaveConsultation}
               onCancel={() => navigate(-1)}
             />
