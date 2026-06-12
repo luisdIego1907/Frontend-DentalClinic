@@ -4,6 +4,7 @@ import { CalendarDays, Pencil, Search, X } from "lucide-react";
 import { StatusBadge } from "../../components/home/Statusbadge";
 import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
+import { getRoles, getToken } from "../../auth/sessionAuth";
 
 const getDateOnly = (date: string) => date.split("T")[0];
 
@@ -34,6 +35,60 @@ const getAppointmentEndTime = (time: string, durationMinutes: number) => {
   return convertMinutesToTime(endMinutes);
 };
 
+interface JwtPayload {
+  externalId?: string;
+}
+
+function decodeJwtPayload(token: string): JwtPayload {
+  const payload = token.split(".")[1];
+
+  if (!payload) {
+    return {};
+  }
+
+  const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+  const paddedBase64 = base64.padEnd(
+    base64.length + ((4 - (base64.length % 4)) % 4),
+    "=",
+  );
+
+  return JSON.parse(atob(paddedBase64)) as JwtPayload;
+}
+
+function getCurrentUserResourceId() {
+  const token = getToken();
+
+  if (!token) {
+    return "";
+  }
+
+  try {
+    const payload = decodeJwtPayload(token);
+    return payload.externalId ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function filterAppointmentsByCurrentRole(
+  appointments: AppointmentData[],
+): AppointmentData[] {
+  const roles = getRoles();
+  const isOdontologist = roles.includes("ODO");
+
+  if (!isOdontologist) {
+    return appointments;
+  }
+
+  const currentUserResourceId = getCurrentUserResourceId();
+
+  return appointments.filter(
+    (appointment) =>
+      appointment.doctorUserResourceId.toLowerCase() ===
+      currentUserResourceId.toLowerCase(),
+  );
+}
+
 export default function ViewAppointments() {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState<AppointmentData[]>([]);
@@ -47,7 +102,7 @@ export default function ViewAppointments() {
       try {
         setIsLoading(true);
         const appointmentsResponse = await getAppointments();
-        setAppointments(appointmentsResponse);
+        setAppointments(filterAppointmentsByCurrentRole(appointmentsResponse));
       } catch (error) {
         console.error("Error al cargar citas:", error);
         setErrorMessage("No se pudieron cargar las citas.");
