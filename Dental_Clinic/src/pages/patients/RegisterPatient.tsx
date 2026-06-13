@@ -12,7 +12,7 @@ export default function RegisterPatient() {
   */
   const [successMessage, setSuccessMessage] = useState("");
 
-  const [, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   /*
     Funcion handleSavePatient
     Se ejecuta cuando el formulario envie los datos del paciente
@@ -37,14 +37,17 @@ export default function RegisterPatient() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10">
+    <main 
+      className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10"
+      data-cy="register-patient-page">
       <section className="mx-auto w-full max-w-5xl">
         <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm sm:mb-8 sm:p-6">
           <span className="mb-2 inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             Pacientes
           </span>
 
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl" 
+            data-cy="register-patient-title">
             Registrar paciente
           </h1>
 
@@ -59,11 +62,21 @@ export default function RegisterPatient() {
           Si successMessage != de "" muestre lo de dentro.
         */}
         {successMessage && (
-          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-4 text-sm font-medium text-green-700 shadow-sm sm:px-5">
+          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-4 text-sm font-medium text-green-700 shadow-sm sm:px-5"
+            data-cy="register-patient-success-message">
             {/*Se muestra el contenido de successMessage*/}
             {successMessage}
           </div>
         )}
+
+        {errorMessage && (
+        <div
+          className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm font-medium text-red-700 shadow-sm sm:px-5"
+          data-cy="register-patient-error-message"
+        >
+          {errorMessage}
+        </div>
+      )}
 
         {/*
           Renderiza el componente PatientForm
