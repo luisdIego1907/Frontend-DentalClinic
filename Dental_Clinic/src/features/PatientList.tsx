@@ -273,6 +273,7 @@ export default function PatientList() {
 
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <DeleteButton
+            data-cy="delete-selected-patients-button"
             label="Eliminar pacientes"
             loadingLabel="Eliminando pacientes..."
             disabled={selectedPatients.length === 0}
@@ -282,6 +283,7 @@ export default function PatientList() {
 
           <Link
             to="/patients/register"
+             data-cy="register-patient-button"
             className="w-full rounded-xl bg-cyan-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
           >
             Registrar Paciente
