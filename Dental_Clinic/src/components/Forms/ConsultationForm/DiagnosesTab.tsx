@@ -1,4 +1,4 @@
-import type { Diagnosis } from "../../../data/diagnosis";
+import type { Diagnosis } from "../../../models/diagnosis";
 
 type Props = {
   diagnoses: Diagnosis[];
@@ -8,8 +8,14 @@ type Props = {
 
 const emptyDiagnosis = (): Diagnosis => ({
   description: "",
-  diagnosis_Date: "",
+  diagnosis_date: "",
 });
+
+const TEAL = {
+  bg: "#E1F5EE",
+  dark: "#0C447C",
+  mid: "#185FA5",
+};
 
 export default function DiagnosesTab({ diagnoses, onChange, errors }: Props) {
   const handleAdd = () => onChange([...diagnoses, emptyDiagnosis()]);
@@ -80,9 +86,9 @@ export default function DiagnosesTab({ diagnoses, onChange, errors }: Props) {
               </label>
               <input
                 type="date"
-                value={diagnosis.diagnosis_Date}
+                value={diagnosis.diagnosis_date}
                 onChange={(e) =>
-                  handleChange(index, "diagnosis_Date", e.target.value)
+                  handleChange(index, "diagnosis_date", e.target.value)
                 }
                 className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-teal-200 focus:border-teal-500"
               />
@@ -94,7 +100,19 @@ export default function DiagnosesTab({ diagnoses, onChange, errors }: Props) {
       <button
         type="button"
         onClick={handleAdd}
-        className="w-full border-2 border-dashed border-teal-400 text-teal-600 rounded-lg py-2.5 text-sm font-medium hover:bg-teal-50 transition"
+        className="w-full border-2 border-dashed rounded-lg py-2.5 text-sm font-medium transition"
+        style={{
+          borderColor: TEAL.mid,
+          color: TEAL.mid,
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            TEAL.bg;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "transparent";
+        }}
       >
         + Agregar diagnóstico
       </button>

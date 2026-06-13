@@ -1,4 +1,4 @@
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 
 export const initialAppointmentFormData: AppointmentData = {
   id: 0,
@@ -8,5 +8,6 @@ export const initialAppointmentFormData: AppointmentData = {
   durationMinutes: 15,
   reason: "",
   doctor: "",
+  doctorUserResourceId: "",
   status: "Pendiente",
 };

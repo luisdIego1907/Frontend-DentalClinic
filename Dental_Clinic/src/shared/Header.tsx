@@ -10,57 +10,79 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useAuth } from "../hook/useAuth";
+import { getRoles } from "../auth/sessionAuth";
+
+type RoleCode = "ADMIN" | "ODO" | "ASSIS";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { getUser, goHome, logout } = useAuth();
-  const user = getUser();
+
+  const { goHome, logout } = useAuth();
+
+  const roles = getRoles();
+
+  const mainRole = roles[0] as RoleCode | undefined;
+
+  const getRoleLabel = () => {
+    if (mainRole === "ADMIN") return "Administrador";
+    if (mainRole === "ODO") return "Odontólogo";
+    if (mainRole === "ASSIS") return "Recepcionista";
+
+    return "Usuario";
+  };
 
   const navLinks = () => {
-    if (!user) return [];
+    if (!mainRole) return [];
 
-    if (user.rol === "odontologist")
+    if (mainRole === "ODO") {
       return [
         { name: "Inicio", icon: <House size={20} />, to: "/odontologist" },
+        { name: "Pacientes", icon: <Users size={20} />, to: "/patients" },
       ];
+    }
 
-    if (user.rol === "assistant")
+    if (mainRole === "ASSIS") {
       return [
         { name: "Inicio", icon: <House size={20} />, to: "/assistant" },
         { name: "Pacientes", icon: <Users size={20} />, to: "/patients" },
         {
           name: "Citas",
           icon: <CalendarDays size={20} />,
-          to: "/appointments/schedule",
+          to: "/appointments",
         },
       ];
+    }
 
-    if (user.rol === "admin")
+    if (mainRole === "ADMIN") {
       return [
         { name: "Inicio", icon: <House size={20} />, to: "/admin" },
         { name: "Pacientes", icon: <Users size={20} />, to: "/patients" },
         {
           name: "Citas",
           icon: <CalendarDays size={20} />,
-          to: "/appointments/schedule",
+          to: "/appointments",
         },
       ];
+    }
 
     return [];
   };
 
   const getInitials = () => {
-    if (!user) return "";
-    return `${user.nombre?.charAt(0) ?? ""}`.toUpperCase();
+    const roleLabel = getRoleLabel();
+    return roleLabel.charAt(0).toUpperCase();
   };
 
   const links = navLinks();
+
+  const roleLabel = getRoleLabel();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-sky-100 shadow-sm">
       <div className="container mx-auto px-6 h-20 flex items-center justify-between">
         <button
+          type="button"
           onClick={goHome}
           className="flex items-center gap-4 text-slate-800 hover:opacity-90 transition"
         >
@@ -108,17 +130,19 @@ export default function Header() {
 
           <div className="relative">
             <button
+            type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 hover:bg-slate-50 px-3 py-2 rounded-xl transition"
             >
               <div className="w-9 h-9 rounded-full bg-sky-100 flex items-center justify-center text-sky-600 font-semibold text-sm">
                 {getInitials()}
               </div>
+
               <div className="text-left">
                 <p className="text-sm font-semibold text-slate-700">
-                  {user?.nombre}
+                  {roleLabel}
                 </p>
-                <p className="text-xs text-slate-400 capitalize">{user?.rol}</p>
+                <p className="text-xs text-slate-400 capitalize">{mainRole ?? "Sin rol"}</p>
               </div>
               <ChevronDown size={16} className="text-slate-400" />
             </button>
@@ -126,6 +150,7 @@ export default function Header() {
             {dropdownOpen && (
               <div className="absolute top-14 right-0 bg-white border border-slate-100 rounded-xl shadow-lg py-2 w-44">
                 <button
+                type="button"
                   onClick={() => {
                     logout();
                     setDropdownOpen(false);
@@ -141,6 +166,7 @@ export default function Header() {
         </div>
 
         <button
+        type="button"
           className="md:hidden p-2.5 rounded-xl text-slate-600 hover:bg-sky-50 hover:text-sky-500 transition-all active:scale-90"
           onClick={() => setIsOpen(!isOpen)}
         >

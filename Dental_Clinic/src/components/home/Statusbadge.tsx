@@ -1,4 +1,4 @@
-import type { StatusAppointment } from "../../data/appointment";
+import type { StatusAppointment } from "../../models/appointment";
 
 export const getBadgeStyle = (estado: StatusAppointment): string => {
   switch (estado) {

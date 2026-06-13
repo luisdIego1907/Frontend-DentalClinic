@@ -1,16 +1,15 @@
 import { UserRound, Phone, IdCard } from "lucide-react";
-import type {PatientDetails} from "../data/patient";
+import type { PatientDetails } from "../models/patient";
 
 type Props = {
-  
   patient: PatientDetails;
   /*Indica si la tarjeta esta seleccionada o no.
-    Opcional porque la tarjeta en si puede usarse sin seleccion*/ 
+    Opcional porque la tarjeta en si puede usarse sin seleccion*/
   selected?: boolean;
 
   onClick?: () => void;
 
-  /*Funcion opcional que se ejecuta cuando se marca o desmarca el checkbox*/ 
+  /*Funcion opcional que se ejecuta cuando se marca o desmarca el checkbox*/
   onSelect?: () => void;
 };
 
@@ -20,11 +19,9 @@ export default function PatientCard({
   onClick,
   onSelect,
 }: Props) {
-
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
-    
     /*Al hacer click ejecuta onClick, navega al detalle del paciente*/
     <div
       onClick={onClick}
@@ -38,8 +35,8 @@ export default function PatientCard({
           //Si la tarjeta esta seleccionada, cambia el borde y la sombra
           selected
             ? "border-sky-500 shadow-lg"
-            //sino, se mantiente normal
-            : "border-slate-200 hover:border-sky-300"
+            : //sino, se mantiente normal
+              "border-slate-200 hover:border-sky-300"
         }
       `}
     >
@@ -64,7 +61,7 @@ export default function PatientCard({
           "
         />
       </div>
-      
+
       {/*Contenedor de la informacion visible de la tarjeta*/}
       <div className="flex items-start gap-4">
         <div

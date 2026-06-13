@@ -1,4 +1,4 @@
-import type { PatientData, PatientDetails} from "../../data/patient";
+import type { PatientData, PatientDetails } from "../../models/patient";
 
 /*
   Se crea un tipo llamado PatientFormErrors
@@ -8,7 +8,7 @@ import type { PatientData, PatientDetails} from "../../data/patient";
   keyof PatientData: este obtiene el nombre de las propiedades de PatientData.
   Record<keyof PatientData, string> : Crea un objeto donde todas las propiedades de PatientData deberian existir y tener un string
   Partial<> : Hace que propiedades sean opcionales. Puede que no todos los campos tengan error.
-*/ 
+*/
 export type PatientFormErrors = Partial<Record<keyof PatientData, string>>;
 
 export type PatientEditFormErrors = Partial<
@@ -16,7 +16,6 @@ export type PatientEditFormErrors = Partial<
 >;
 
 export function validatePatientForm(formData: PatientData): PatientFormErrors {
-
   /*
     Se crea un objeto vacio llmado newErrors
     Donde se guardan los errorres
@@ -25,6 +24,9 @@ export function validatePatientForm(formData: PatientData): PatientFormErrors {
 
   if (!formData.identification.trim()) {
     newErrors.identification = "La identificación es obligatoria.";
+  } else if (!/^\d{9}$/.test(formData.identification)) {
+    newErrors.identification =
+      "La identificación debe contener exactamente 9 dígitos.";
   }
 
   if (!formData.first_name.trim()) {
@@ -62,12 +64,12 @@ export function validatePatientForm(formData: PatientData): PatientFormErrors {
   /*
     Devuelve el objeto con todos los errores
     Si no hubo, devuelve vacio
-  */ 
+  */
   return newErrors;
 }
 
 export function validatePatientEditForm(
-  formData: PatientDetails
+  formData: PatientDetails,
 ): PatientEditFormErrors {
   const newErrors: PatientEditFormErrors = {};
 
@@ -81,10 +83,15 @@ export function validatePatientEditForm(
 
   if (!formData.identification.trim()) {
     newErrors.identification = "La identificación es obligatoria.";
+  } else if (!/^\d{9}$/.test(formData.identification)) {
+    newErrors.identification =
+      "La identificación debe contener exactamente 9 dígitos.";
   }
 
   if (!formData.phone.trim()) {
     newErrors.phone = "El teléfono es obligatorio.";
+  } else if (!/^\d{8}$/.test(formData.phone)) {
+    newErrors.phone = "El teléfono debe contener exactamente 8 dígitos.";
   }
 
   if (!formData.address.trim()) {
@@ -92,5 +99,4 @@ export function validatePatientEditForm(
   }
 
   return newErrors;
-  
 }
