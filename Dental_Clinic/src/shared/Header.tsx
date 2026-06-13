@@ -83,6 +83,7 @@ export default function Header() {
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6">
         <button
           type="button"
+          data-cy="header-logo-home"
           onClick={goHome}
           className="flex min-w-0 items-center gap-3 text-slate-800 transition hover:opacity-90 sm:gap-4"
         >
@@ -113,6 +114,13 @@ export default function Header() {
               <Link
                 key={link.name}
                 to={link.to}
+                data-cy={
+                  link.name === "Pacientes"
+                    ? "nav-patients"
+                    : link.name === "Citas"
+                      ? "nav-appointments"
+                      : "nav-home"
+                }
                 className="group relative flex items-center gap-2 text-[15px] font-semibold text-slate-600 transition-colors hover:text-sky-500"
               >
                 <span className="text-slate-400 transition-all group-hover:text-sky-500">
@@ -128,7 +136,7 @@ export default function Header() {
 
           <div className="relative">
             <button
-            type="button"
+              type="button"
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 hover:bg-slate-50 px-3 py-2 rounded-xl transition"
             >
@@ -148,7 +156,7 @@ export default function Header() {
             {dropdownOpen && (
               <div className="absolute top-14 right-0 bg-white border border-slate-100 rounded-xl shadow-lg py-2 w-44">
                 <button
-                type="button"
+                  type="button"
                   onClick={() => {
                     logout();
                     setDropdownOpen(false);
@@ -164,7 +172,7 @@ export default function Header() {
         </div>
 
         <button
-        type="button"
+          type="button"
           className="rounded-xl p-2.5 text-slate-600 transition-all hover:bg-sky-50 hover:text-sky-500 active:scale-90 md:hidden"
           onClick={() => setIsOpen(!isOpen)}
         >
@@ -179,6 +187,13 @@ export default function Header() {
               <Link
                 key={link.name}
                 to={link.to}
+                data-cy={
+                  link.name === "Pacientes"
+                    ? "mobile-nav-patients"
+                    : link.name === "Citas"
+                      ? "mobile-nav-appointments"
+                      : "mobile-nav-home"
+                }
                 onClick={() => setIsOpen(false)}
                 className="flex items-center gap-4 rounded-2xl p-3.5 text-base font-bold text-slate-700 transition-all hover:bg-sky-50 hover:text-sky-500 sm:text-lg"
               >
