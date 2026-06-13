@@ -77,7 +77,7 @@ export default function ConsultationPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="flex flex-col items-center justify-center py-24">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-600 border-t-transparent"></div>
 
@@ -91,7 +91,7 @@ export default function ConsultationPage() {
 
   if (error && !patient) {
     return (
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <h2 className="text-lg font-semibold text-red-700">Error</h2>
           <p className="mt-2 text-red-600">{error}</p>
@@ -102,7 +102,7 @@ export default function ConsultationPage() {
 
   if (!patient || !medicalRecord) {
     return (
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <p className="text-red-700">
             No se encontró la información requerida.
@@ -115,7 +115,7 @@ export default function ConsultationPage() {
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
-    <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <div className="mb-6">
         <Link
           to="/odontologist"
@@ -127,7 +127,7 @@ export default function ConsultationPage() {
 
       {/* SUCCESS / ERROR FEEDBACK */}
       {successMessage && (
-        <div className="mb-6 flex items-center justify-between rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div className="mb-6 flex flex-col gap-3 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 sm:flex-row sm:items-center sm:justify-between">
           {successMessage}
 
           <button
@@ -146,27 +146,27 @@ export default function ConsultationPage() {
       )}
 
       <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 p-6 sm:p-8">
+        <div className="border-b border-slate-200 p-5 sm:p-8">
           <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
             Consulta odontológica
           </h1>
           <p className="mt-2 text-slate-500">{fullName}</p>
         </div>
 
-        <div className="space-y-8 p-6 sm:p-8">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+        <div className="space-y-6 p-4 sm:space-y-8 sm:p-8">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
             <h2 className="mb-5 text-lg font-semibold">
               Información del paciente
             </h2>
             <PatientInfo patient={patient} />
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
             <h2 className="mb-5 text-lg font-semibold">Expediente médico</h2>
             <MedicalRecordInfo medicalRecord={medicalRecord} />
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:p-6">
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-6">
             <h2 className="mb-5 text-lg font-semibold">Nueva consulta</h2>
 
             <ConsultationForm

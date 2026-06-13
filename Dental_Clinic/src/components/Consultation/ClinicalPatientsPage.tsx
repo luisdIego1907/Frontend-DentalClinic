@@ -19,9 +19,9 @@ export default function ClinicalPatientsPage() {
   }, []);
 
   return (
-    <div className="grid grid-cols-3 gap-6 p-6">
+    <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-3 lg:gap-6 lg:p-6">
       {/* LISTA */}
-      <div className="col-span-1 space-y-2">
+      <div className="space-y-3 lg:col-span-1">
         {patients.map((p) => (
           <PatientCard
             key={p.patient_id}
@@ -33,7 +33,7 @@ export default function ClinicalPatientsPage() {
       </div>
 
       {/* DETALLE CLÍNICO */}
-      <div className="col-span-2">
+      <div className="lg:col-span-2">
         {!selectedPatient ? (
           <p className="text-slate-500">Selecciona un paciente</p>
         ) : (

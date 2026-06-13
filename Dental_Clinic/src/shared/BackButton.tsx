@@ -7,7 +7,7 @@ export function BackButton() {
   return (
     <button
       onClick={goHome}
-      className="inline-flex rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+      className="inline-flex w-full justify-center rounded-lg bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700 sm:w-auto"
     >
       Volver al Inicio
     </button>

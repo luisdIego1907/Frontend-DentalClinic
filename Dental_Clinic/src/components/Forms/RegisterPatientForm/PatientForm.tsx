@@ -75,10 +75,10 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
+      className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-5 shadow-lg sm:p-8"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Registrar paciente</h2>
+        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Registrar paciente</h2>
         <p className="mt-1 text-sm text-gray-500">
           Complete la información del paciente para guardarlo en el sistema.
         </p>
@@ -243,10 +243,10 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-stretch sm:justify-end">
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+          className="w-full rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95 sm:w-auto"
         >
           Guardar paciente
         </button>

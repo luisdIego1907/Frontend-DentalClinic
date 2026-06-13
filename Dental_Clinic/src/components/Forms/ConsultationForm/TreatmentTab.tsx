@@ -44,7 +44,7 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
           key={index}
           className="bg-slate-50 border border-slate-200 rounded-lg p-4"
         >
-          <div className="flex justify-between items-center mb-3">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-slate-500">
               Tratamiento #{index + 1}
             </span>
@@ -83,7 +83,7 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Costo

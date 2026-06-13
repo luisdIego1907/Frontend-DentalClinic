@@ -9,7 +9,6 @@ import {
 } from "../services/PatientService";
 import DeleteButton from "../shared/DeleteButton";
 import { PermissionDenied } from "../shared/PermissionDenied";
-import { usePermissions } from "../hook/usePermissions";
 import { getRoles } from "../auth/sessionAuth";
 
 const PATIENTS_PER_PAGE = 15;
@@ -20,8 +19,6 @@ export default function PatientList() {
   base de datos puede ser null, entonces el odontologo puede verlos a todos*/
   const [searchParams] = useSearchParams();
   const emergencyMode = searchParams.get("emergency") === "true";
-  const permisos = usePermissions();
-
   const [permissionDenied, setPermissionDenied] = useState(false);
 
   /* Lista de pacientes que se obtiene desde el backend.
@@ -213,7 +210,7 @@ export default function PatientList() {
      se muestra un mensaje de carga. */
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-24">
+      <div className="flex flex-col items-center justify-center px-4 py-20 text-center sm:py-24">
         <div className="h-12 w-12 animate-spin rounded-full border-4 border-cyan-600 border-t-transparent"></div>
 
         <h2 className="mt-6 text-xl font-semibold text-slate-700">
@@ -231,8 +228,8 @@ export default function PatientList() {
      se muestra el mensaje de error correspondiente. */
   if (error) {
     return (
-      <div className="flex justify-center py-24">
-        <div className="max-w-md rounded-2xl border border-red-200 bg-red-50 p-8 text-center shadow-sm">
+      <div className="flex justify-center px-4 py-20 sm:py-24">
+        <div className="w-full max-w-md rounded-2xl border border-red-200 bg-red-50 p-6 text-center shadow-sm sm:p-8">
           <div className="mb-4 text-5xl">⚠️</div>
 
           <h2 className="text-xl font-semibold text-red-700">
@@ -258,10 +255,10 @@ export default function PatientList() {
   }
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">
+          <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
             {emergencyMode
               ? "Pacientes para atención de emergencia"
               : "Lista de Pacientes"}
@@ -274,7 +271,7 @@ export default function PatientList() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <DeleteButton
             label="Eliminar pacientes"
             loadingLabel="Eliminando pacientes..."
@@ -285,7 +282,7 @@ export default function PatientList() {
 
           <Link
             to="/patients/register"
-            className="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-3 rounded-xl font-medium transition-colors"
+            className="w-full rounded-xl bg-cyan-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
           >
             Registrar Paciente
           </Link>
@@ -331,7 +328,7 @@ export default function PatientList() {
 
       {patientList.length === 0 ? (
         <div className="flex items-center justify-center py-20">
-          <div className="bg-white border border-slate-200 rounded-3xl px-10 py-12 shadow-sm text-center max-w-lg">
+          <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm sm:px-10 sm:py-12">
             <div className="mb-4 text-6xl">🦷</div>
 
             <h2 className="text-2xl font-bold text-slate-700">
@@ -352,7 +349,7 @@ export default function PatientList() {
         </div>
       ) : filteredPatients.length === 0 ? (
         <div className="flex items-center justify-center py-20">
-          <div className="max-w-lg rounded-3xl border border-slate-200 bg-white px-10 py-12 text-center shadow-sm">
+          <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm sm:px-10 sm:py-12">
             <div className="mb-4 text-6xl">🔎</div>
 
             <h2 className="text-2xl font-bold text-slate-700">
@@ -366,7 +363,7 @@ export default function PatientList() {
         </div>
       ) : (
         <>
-          <div className="mb-4 flex items-center justify-between text-sm text-slate-500">
+          <div className="mb-4 flex flex-col gap-1 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
             <span>
               Mostrando {startIndex + 1} -{" "}
               {Math.min(endIndex, filteredPatients.length)} de{" "}
@@ -382,7 +379,7 @@ export default function PatientList() {
 
           {/* Contenedor que muestra las tarjetas de pacientes en forma de grid.
              Solo se muestran máximo 15 pacientes por página. */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {paginatedPatients.map((patient) => (
               <PatientCard
                 patient={patient}
@@ -394,7 +391,7 @@ export default function PatientList() {
           </div>
 
           {totalPages > 1 && (
-            <div className="mt-8 flex items-center justify-center gap-3">
+            <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
               <button
                 type="button"
                 onClick={handlePreviousPage}

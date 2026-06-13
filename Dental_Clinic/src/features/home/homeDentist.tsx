@@ -124,7 +124,7 @@ export default function HomeDentist() {
   ).size;
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <PageGreeting
         nombre={getDoctorDisplayName(currentDoctor)}
         colorClass="text-[#1D9E75]"
@@ -136,7 +136,7 @@ export default function HomeDentist() {
         </div>
       )}
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Pacientes Asignados"
           value={pacientesAsignados}
@@ -168,7 +168,7 @@ export default function HomeDentist() {
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Acceso Rápido
       </h2>
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <QuickAccessButton
           label="Atención de emergencia"
           description="Seleccionar un paciente de la lista sin cita"
@@ -197,7 +197,7 @@ export default function HomeDentist() {
           accentBorder={TEAL.mid}
         />
       </div>
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
         <SectionHeader label="Citas de Hoy" icon={Clock} iconColor={TEAL.mid} />
         {citasHoy.length === 0 ? (
           <p className="px-5 py-4 text-sm text-gray-500">
@@ -217,7 +217,7 @@ export default function HomeDentist() {
                       `/consultations/patient/${cita.patient?.patient_id}?appointmentId=${cita.id}`,
                     )
                   }
-                  className="px-3 py-1.5 rounded-lg bg-[#185FA5] text-white text-sm font-medium hover:bg-[#0C447C] transition"
+                  className="w-full rounded-lg bg-[#185FA5] px-3 py-1.5 text-center text-sm font-medium text-white transition hover:bg-[#0C447C] sm:w-auto"
                 >
                   Atender
                 </button>

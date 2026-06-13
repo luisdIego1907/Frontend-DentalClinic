@@ -94,13 +94,13 @@ export default function ConsultationForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Tabs */}
-      <div className="flex border-b border-slate-200">
+      <div className="flex overflow-x-auto border-b border-slate-200">
         {subTabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`shrink-0 px-3 py-2.5 text-sm font-medium border-b-2 transition-colors sm:px-4 ${
               activeTab === tab.key
                 ? `border-[${TEAL.mid}] text-[${TEAL.mid}]`
                 : "border-transparent text-slate-500 hover:text-slate-800"
@@ -143,11 +143,11 @@ export default function ConsultationForm({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+      <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-50 transition"
+          className="w-full rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 sm:w-auto"
         >
           Cancelar
         </button>
@@ -155,7 +155,7 @@ export default function ConsultationForm({
         <button
           type="submit"
           style={{ backgroundColor: TEAL.dark }}
-          className="px-5 py-2.5 rounded-lg text-white text-sm font-medium transition"
+          className="w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white transition sm:w-auto"
         >
           Guardar consulta
         </button>
