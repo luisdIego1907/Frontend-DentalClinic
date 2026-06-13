@@ -3,11 +3,11 @@ import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 export default function Footer() {
   return (
     <footer className="w-full bg-white border-t border-sky-100 mt-auto">
-      <div className="max-w-7xl mx-auto px-6 py-5">
+      <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6">
 
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col items-center justify-between gap-5 text-center md:flex-row md:text-left">
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center gap-3">
 
             <svg
               width="24"
@@ -34,7 +34,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center gap-4">
 
             <a
               href="https://www.instagram.com/" target='_blank'
@@ -77,7 +77,7 @@ export default function Footer() {
 
           </div>
 
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 md:text-right">
             © 2026 Clínica Dental. Todos los derechos reservados
           </p>
 

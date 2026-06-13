@@ -10,7 +10,6 @@ type Props = {
 };
 
 export default function PatientClinicalView({ patient }: Props) {
-  const [recordId, setRecordId] = useState<number | null>(null);
   const [consultations, setConsultations] = useState<ConsultationResponse[]>(
     [],
   );
@@ -23,8 +22,6 @@ export default function PatientClinicalView({ patient }: Props) {
 
       try {
         const record = await getMedicalRecordByPatientId(patient.patient_id);
-        setRecordId(record.record_id);
-
         const history = await getConsultationByRecordId(record.record_id);
         setConsultations(history);
       } catch (error) {

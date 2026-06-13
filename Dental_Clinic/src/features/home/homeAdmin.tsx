@@ -59,7 +59,7 @@ export default function HomeAdmin() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       {/* Header */}
       <PageGreeting nombre="Administración" colorClass="text-[#534AB7]" />
 
@@ -71,7 +71,7 @@ export default function HomeAdmin() {
       )}
 
       {/* STATS */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Total Pacientes"
           value={pacientes.length}
@@ -108,7 +108,7 @@ export default function HomeAdmin() {
         Acceso Rápido
       </h2>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <QuickAccessButton
           label="Ver Pacientes"
           description="Lista de Pacientes"

@@ -127,8 +127,8 @@ export default function AppointmentForm({
   const errorClass = "mt-1 block text-sm text-red-600";
 
   const submitButtonClass = showSubmitErrorFeedback
-    ? "rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 active:scale-95"
-    : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
+    ? "w-full rounded-lg bg-red-600 px-6 py-2.5 sm:w-auto text-sm font-semibold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 active:scale-95"
+    : "w-full rounded-lg bg-blue-600 px-6 py-2.5 sm:w-auto text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
     String(index).padStart(2, "0")
@@ -164,10 +164,10 @@ export default function AppointmentForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
+      className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-5 shadow-lg sm:p-8"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
           {isEditing ? "Modificar cita" : "Registrar cita"}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
@@ -265,8 +265,8 @@ export default function AppointmentForm({
         <div>
           <label className={labelClass}>Hora de la cita</label>
 
-          <div className="mt-1 flex items-center gap-3">
-            <div className="flex items-center gap-2">
+          <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex w-full items-center gap-2 sm:w-auto">
               <label htmlFor="hour" className={labelClass}>
                 Hora:
               </label>
@@ -281,7 +281,7 @@ export default function AppointmentForm({
                     time: `${event.target.value}:${minutes}`,
                   });
                 }}
-                className="w-32 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 sm:w-32"
               >
                 <option value="" disabled>
                   Seleccione
@@ -294,7 +294,7 @@ export default function AppointmentForm({
               </select>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center gap-2 sm:w-auto">
               <label htmlFor="minutes" className={labelClass}>
                 Minutos:
               </label>
@@ -309,7 +309,7 @@ export default function AppointmentForm({
                     time: `${hour}:${event.target.value}`,
                   });
                 }}
-                className="w-32 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                className="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 sm:w-32"
               >
                 <option value="" disabled>
                   Seleccione
@@ -369,12 +369,12 @@ export default function AppointmentForm({
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end gap-3">
+      <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {isEditing && (
           <button
             type="button"
             onClick={onCancelEdit}
-            className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 active:scale-95"
+            className="w-full rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 active:scale-95 sm:w-auto"
           >
             Cancelar
           </button>

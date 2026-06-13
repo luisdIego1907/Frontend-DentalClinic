@@ -154,14 +154,14 @@ export default function ViewAppointments() {
   const hasFilters = Boolean(startDate || endDate);
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-10">
-      <section className="mx-auto max-w-6xl">
-        <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+    <main className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10">
+      <section className="mx-auto w-full max-w-6xl">
+        <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm sm:mb-8 sm:p-6">
           <span className="mb-2 inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             Citas
           </span>
 
-          <h1 className="text-3xl font-bold text-gray-900">Ver citas</h1>
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Ver citas</h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
             Consulte las citas registradas y filtre la agenda por rango de
@@ -170,12 +170,12 @@ export default function ViewAppointments() {
         </div>
 
         {errorMessage && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700 shadow-sm">
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm font-medium text-red-700 shadow-sm sm:px-5">
             {errorMessage}
           </div>
         )}
 
-        <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+        <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm sm:p-6">
           <div className="mb-4 flex items-center gap-2 text-gray-900">
             <Search className="h-5 w-5 text-blue-600" />
             <h2 className="text-lg font-semibold">Filtrar citas</h2>
@@ -219,7 +219,7 @@ export default function ViewAppointments() {
               onClick={clearFilters}
               disabled={!hasFilters}
               title="Limpiar filtros"
-              className="flex h-[42px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-[42px] w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
             >
               <X className="h-4 w-4" />
               Limpiar
@@ -227,7 +227,7 @@ export default function ViewAppointments() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
           <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2 text-gray-900">
               <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -289,8 +289,8 @@ export default function ViewAppointments() {
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-start gap-3 md:items-end">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col items-stretch gap-3 sm:items-start md:items-end">
+                      <div className="flex flex-wrap items-center gap-3">
                         <span className="text-xs text-gray-400">
                           {appointment.durationMinutes} min
                         </span>
@@ -300,7 +300,7 @@ export default function ViewAppointments() {
                       <button
                         type="button"
                         onClick={() => handleEditAppointment(appointment)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95 sm:w-auto"
                       >
                         <Pencil className="h-4 w-4" />
                         Editar

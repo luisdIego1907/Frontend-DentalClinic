@@ -12,7 +12,7 @@ export default function MedicalRecordInfo({ medicalRecord }: Props) {
       <div>
         <p className="text-sm font-semibold text-slate-500">Historial médico</p>
 
-        <p className="mt-1 whitespace-pre-wrap break-words text-lg text-slate-800">
+        <p className="mt-1 whitespace-pre-wrap break-words text-base text-slate-800 sm:text-lg">
           {medicalRecord.medical_history || "No registrado"}
         </p>
       </div>
@@ -20,7 +20,7 @@ export default function MedicalRecordInfo({ medicalRecord }: Props) {
       <div>
         <p className="text-sm font-semibold text-slate-500">Alergias</p>
 
-        <p className="mt-1 whitespace-pre-wrap break-words text-lg text-slate-800">
+        <p className="mt-1 whitespace-pre-wrap break-words text-base text-slate-800 sm:text-lg">
           {medicalRecord.allergies || "No registradas"}
         </p>
       </div>
@@ -28,7 +28,7 @@ export default function MedicalRecordInfo({ medicalRecord }: Props) {
       <div>
         <p className="text-sm font-semibold text-slate-500">Notas generales</p>
 
-        <p className="mt-1 whitespace-pre-wrap break-words text-lg text-slate-800">
+        <p className="mt-1 whitespace-pre-wrap break-words text-base text-slate-800 sm:text-lg">
           {medicalRecord.general_notes || "Sin notas"}
         </p>
       </div>

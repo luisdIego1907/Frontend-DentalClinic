@@ -20,7 +20,7 @@ export function StatCard({
   subColor,
 }: StatCardProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 p-5">
+    <div className="rounded-xl border border-gray-100 bg-white p-4 sm:p-5">
       <div className="flex items-start justify-between mb-3">
         <p className="text-sm text-gray-500">{label}</p>
         <div
@@ -30,7 +30,7 @@ export function StatCard({
           <Icon className="w-4 h-4" style={{ color: iconColor }} />
         </div>
       </div>
-      <p className="text-3xl font-semibold text-gray-900">{value}</p>
+      <p className="text-2xl font-semibold text-gray-900 sm:text-3xl">{value}</p>
       <p className="text-xs mt-1" style={{ color: subColor }}>
         {sub}
       </p>

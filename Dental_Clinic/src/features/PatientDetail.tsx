@@ -75,8 +75,8 @@ export default function PatientDetail() {
 
   if (loading) {
     return (
-      <main className="container mx-auto px-6 py-12">
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
           <p className="text-slate-500">Cargando información del paciente...</p>
         </div>
       </main>
@@ -85,8 +85,8 @@ export default function PatientDetail() {
 
   if (error || !patient) {
     return (
-      <main className="container mx-auto px-6 py-12">
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
           <h1 className="text-2xl font-bold text-slate-800">
             Paciente no encontrado
           </h1>
@@ -109,7 +109,7 @@ export default function PatientDetail() {
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
-    <main className="container mx-auto px-6 py-10">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="mb-6">
         <Link
           to="/patients"
@@ -125,10 +125,10 @@ export default function PatientDetail() {
         </div>
       )}
 
-      <section className="bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
-        <div className="border-b border-slate-200 pb-6 mb-6 flex items-start justify-between gap-4">
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+        <div className="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">{fullName}</h1>
+            <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">{fullName}</h1>
 
             <p className="text-slate-500 mt-1">
               Información detallada del paciente
@@ -139,7 +139,7 @@ export default function PatientDetail() {
             <button
               type="button"
               onClick={handleEdit}
-              className="bg-cyan-600 hover:bg-cyan-700 text-white px-5 py-3 rounded-xl font-medium transition-colors"
+              className="w-full rounded-xl bg-cyan-600 px-5 py-3 font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
             >
               Editar
             </button>

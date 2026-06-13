@@ -174,14 +174,14 @@ export default function ScheduleAppointments() {
   };
 
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-10">
-      <section className="mx-auto max-w-5xl">
-        <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+    <main className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10">
+      <section className="mx-auto w-full max-w-5xl">
+        <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm sm:mb-8 sm:p-6">
           <span className="mb-2 inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             Citas
           </span>
 
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
             {isEditing ? "Modificar cita" : "Registrar cita"}
           </h1>
 
@@ -193,19 +193,19 @@ export default function ScheduleAppointments() {
         </div>
 
         {successMessage && (
-          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-5 py-4 text-sm font-medium text-green-700 shadow-sm">
+          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-4 text-sm font-medium text-green-700 shadow-sm sm:px-5">
             {successMessage}
           </div>
         )}
 
         {errorMessage && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700 shadow-sm">
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm font-medium text-red-700 shadow-sm sm:px-5">
             {errorMessage}
           </div>
         )}
 
         {isLoading ? (
-          <div className="rounded-2xl bg-white p-8 text-sm text-gray-600 shadow-lg">
+          <div className="rounded-2xl bg-white p-5 text-sm text-gray-600 shadow-lg sm:p-8">
             Cargando datos para registrar citas...
           </div>
         ) : (

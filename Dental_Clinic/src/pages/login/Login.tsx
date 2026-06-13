@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hook/useAuth";
 import { loginUser } from "../../services/authService";
 import { isAuthenticated } from "../../auth/sessionAuth";
@@ -48,9 +47,9 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Left Side - Image with overlay */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#185FA5] to-[#0C447C] items-center justify-center overflow-hidden">
+      <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#185FA5] to-[#0C447C] lg:flex lg:w-1/2 lg:items-center lg:justify-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -85,7 +84,7 @@ export default function Login() {
             </svg>
           </div>
 
-          <h1 className="text-5xl font-semibold text-white mb-4 tracking-tight">
+          <h1 className="mb-4 text-5xl font-semibold tracking-tight text-white">
             DentalCare
           </h1>
 
@@ -96,10 +95,10 @@ export default function Login() {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 lg:px-12 bg-white">
+      <div className="flex flex-1 items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-12 lg:px-12">
         <div className="w-full max-w-md">
           {/* Logo for mobile */}
-          <div className="lg:hidden flex items-center justify-center mb-8">
+          <div className="mb-8 flex items-center justify-center lg:hidden">
             <svg
               width="32"
               height="32"
@@ -113,13 +112,13 @@ export default function Login() {
               />
             </svg>
 
-            <span className="ml-2 text-xl font-semibold text-foreground">
+            <span className="ml-2 text-xl font-semibold text-gray-900">
               DentalCare
             </span>
           </div>
 
           {/* Desktop Logo */}
-          <div className="hidden lg:flex items-center mb-12">
+          <div className="mb-12 hidden items-center lg:flex">
             <svg
               width="28"
               height="28"
@@ -133,18 +132,18 @@ export default function Login() {
               />
             </svg>
 
-            <span className="ml-2 text-lg font-medium text-foreground">
+            <span className="ml-2 text-lg font-medium text-gray-900">
               DentalCare
             </span>
           </div>
 
           {/* Form Content */}
           <div>
-            <h2 className="text-3xl font-medium text-foreground mb-3">
+            <h2 className="mb-3 text-2xl font-medium text-gray-900 sm:text-3xl">
               Bienvenido
             </h2>
 
-            <p className="text-muted-foreground text-sm mb-8">
+            <p className="mb-8 text-sm text-gray-500">
               Ingresa tus credenciales para continuar
             </p>
 
@@ -153,7 +152,7 @@ export default function Login() {
               <div>
                 <label
                   htmlFor="username"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="mb-2 block text-sm font-medium text-gray-900"
                 >
                   Usuario
                 </label>
@@ -163,7 +162,7 @@ export default function Login() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#185FA5]"
                   placeholder="Nombre de usuario"
                   required
                 />
@@ -173,7 +172,7 @@ export default function Login() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="mb-2 block text-sm font-medium text-gray-900"
                 >
                   Contraseña
                 </label>
@@ -184,7 +183,7 @@ export default function Login() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-white border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all pr-12"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#185FA5]"
                     placeholder="••••••••"
                     required
                   />
@@ -192,7 +191,7 @@ export default function Login() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 transition-colors hover:text-gray-900"
                     aria-label={
                       showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                     }
@@ -240,7 +239,7 @@ disabled:cursor-not-allowed
 
             {/* Footer text */}
             <div className="mt-8 text-center">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-500">
                 Sistema interno de Clinica Dental © 2026
               </p>
             </div>

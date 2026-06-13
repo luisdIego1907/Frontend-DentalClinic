@@ -207,18 +207,18 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
         )}
       </div>
 
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-3 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-100 transition-colors"
+          className="w-full rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-600 transition-colors hover:bg-slate-100 sm:w-auto"
         >
           Cancelar
         </button>
 
         <button
           type="submit"
-          className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium transition-colors"
+          className="w-full rounded-xl bg-cyan-600 px-5 py-3 font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
         >
           Guardar
         </button>

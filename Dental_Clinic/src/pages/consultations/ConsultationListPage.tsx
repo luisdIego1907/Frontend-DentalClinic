@@ -3,7 +3,6 @@ import { ChevronDown, ChevronUp, Search } from "lucide-react";
 
 import { getAllConsultations } from "../../services/ConsultationService";
 import type { ConsultationSummaryResponse } from "../../models/consultationResponse";
-import { BackButton } from "../../shared/BackButton";
 
 export default function ConsultationListPage() {
   const [consultations, setConsultations] = useState<
@@ -56,7 +55,7 @@ export default function ConsultationListPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto px-6 py-12">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div className="flex flex-col items-center justify-center py-24">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-purple-600 border-t-transparent" />
           <p className="mt-6 text-slate-500">Cargando consultas...</p>
@@ -67,7 +66,7 @@ export default function ConsultationListPage() {
 
   if (error) {
     return (
-      <main className="container mx-auto px-6 py-12">
+      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
           <p className="text-red-700">{error}</p>
         </div>
@@ -76,22 +75,22 @@ export default function ConsultationListPage() {
   }
 
   return (
-    <main className="container mx-auto px-6 py-10">
+    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-800">Consultas</h1>
+        <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">Consultas</h1>
 
         <p className="text-slate-500 mt-1">Historial clínico completo</p>
       </div>
 
       {/* FILTROS */}
 
-      <section className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-6">
+      <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
         <div className="flex items-center gap-2 mb-4">
           <Search size={18} className="text-purple-500" />
           <h2 className="font-semibold text-slate-700">Filtrar consultas</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
           <input
             type="text"
             placeholder="Paciente..."
@@ -150,8 +149,8 @@ export default function ConsultationListPage() {
 
       {/* TABLA */}
 
-      <section className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-        <div className="grid grid-cols-5 px-5 py-3 bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="hidden grid-cols-5 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid">
           <span>Fecha</span>
           <span>Paciente</span>
           <span>Odontólogo</span>
@@ -169,26 +168,38 @@ export default function ConsultationListPage() {
               key={consultation.consultation_id}
               className="border-b border-slate-100 last:border-none"
             >
-              <div className="grid grid-cols-5 px-5 py-4 items-center hover:bg-slate-50 transition">
+              <div className="grid grid-cols-1 gap-3 px-4 py-4 transition hover:bg-slate-50 md:grid-cols-5 md:items-center md:px-5">
                 <span className="text-sm text-slate-700">
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                    Fecha
+                  </span>
                   {consultation.consultation_date}
                 </span>
 
                 <span className="text-sm text-slate-700">
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                    Paciente
+                  </span>
                   {consultation.patient_first_name}{" "}
                   {consultation.patient_last_name}
                 </span>
 
                 <span className="text-sm text-slate-700">
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                    Odontólogo
+                  </span>
                   {consultation.odontologist_first_name}{" "}
                   {consultation.odontologist_last_name}
                 </span>
 
-                <span className="text-sm text-slate-700">
+                <span className="break-words text-sm text-slate-700">
+                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                    Motivo
+                  </span>
                   {consultation.reason}
                 </span>
 
-                <div className="flex justify-end">
+                <div className="flex justify-start md:justify-end">
                   <button
                     onClick={() => toggleExpand(consultation.consultation_id)}
                     className="
@@ -217,7 +228,7 @@ export default function ConsultationListPage() {
               </div>
 
               {expandedId === consultation.consultation_id && (
-                <div className="bg-slate-50 px-6 pb-5 space-y-5">
+                <div className="space-y-5 bg-slate-50 px-4 pb-5 md:px-6">
                   <div>
                     <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">
                       Diagnósticos

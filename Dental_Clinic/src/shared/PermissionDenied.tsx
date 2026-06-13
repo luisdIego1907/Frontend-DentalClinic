@@ -22,10 +22,10 @@ export function PermissionDenied({
       className={
         compact
           ? "flex items-center justify-center"
-          : "flex min-h-screen items-center justify-center bg-gray-100 px-6"
+          : "flex min-h-screen items-center justify-center bg-gray-100 px-4 sm:px-6"
       }
     >
-      <div className="w-full max-w-md rounded-2xl border border-red-200 bg-white px-8 py-8 text-center shadow-sm">
+      <div className="w-full max-w-md rounded-2xl border border-red-200 bg-white px-5 py-8 text-center shadow-sm sm:px-8">
         <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-2xl font-extrabold text-red-700">
           403
         </div>
