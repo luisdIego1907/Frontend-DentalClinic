@@ -2,10 +2,9 @@ import { getToken, clearSession } from "../auth/sessionAuth";
 
 // Función genérica para hacer peticiones HTTP al backend.
 export async function apiClient<T>(
-
   // url completo del endpoint al que se quiere llamar.
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   // Obtiene el token guardado en sessionStorage, guardado después del login.
   const token = getToken();
@@ -38,10 +37,12 @@ export async function apiClient<T>(
     throw new Error("Error en la petición");
   }
 
-  if (response.status === 204) {
+  const responseText = await response.text();
+
+  if (!responseText.trim()) {
     return null as T;
   }
 
   // Si la respuesta sí tiene contenido, se convierte el JSON recibido al tipo esperado T.
-  return (await response.json()) as T;
+  return JSON.parse(responseText) as T;
 }

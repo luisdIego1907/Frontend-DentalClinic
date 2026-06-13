@@ -1,10 +1,16 @@
 import { useState } from "react";
-import type { ConsultationFormData } from "../../../data/consultationData";
+import type { ConsultationFormData } from "../../../models/consultationData";
 import { validateConsultationForm, hasErrors } from "./ConsultationValidation";
 import type { ConsultationErrors } from "./ConsultationValidation";
 import GeneralTab from "./GeneralTab";
 import DiagnosesTab from "./DiagnosesTab";
 import TreatmentsTab from "./TreatmentTab";
+
+const TEAL = {
+  bg: "#E1F5EE",
+  dark: "#0C447C",
+  mid: "#185FA5",
+};
 
 type SubTab = "general" | "diagnoses" | "treatments";
 
@@ -25,14 +31,14 @@ const initialForm = (
   reason: "",
   observations: "",
   odontogram: "",
-  diagnoses: [{ description: "", diagnosis_Date: "" }],
+  diagnoses: [{ description: "", diagnosis_date: "" }],
   treatments: [
     {
       description: "",
       cost: 0,
       status: "pending",
       start_date: "",
-      end_date: "",
+      end_date: null,
     },
   ],
 });
@@ -71,13 +77,14 @@ export default function ConsultationForm({
 
     if (hasErrors(validationErrors)) {
       setErrors(validationErrors);
-      // Ir al primer tab con error
+
       if (validationErrors.consultation_date || validationErrors.reason)
         setActiveTab("general");
       else if (validationErrors.diagnoses.some((e) => e))
         setActiveTab("diagnoses");
       else if (validationErrors.treatments.some((e) => e))
         setActiveTab("treatments");
+
       return;
     }
 
@@ -86,16 +93,16 @@ export default function ConsultationForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Sub-tabs */}
-      <div className="flex border-b border-slate-200">
+      {/* Tabs */}
+      <div className="flex overflow-x-auto border-b border-slate-200">
         {subTabs.map((tab) => (
           <button
             key={tab.key}
             type="button"
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            className={`shrink-0 px-3 py-2.5 text-sm font-medium border-b-2 transition-colors sm:px-4 ${
               activeTab === tab.key
-                ? "border-teal-500 text-teal-600"
+                ? `border-[${TEAL.mid}] text-[${TEAL.mid}]`
                 : "border-transparent text-slate-500 hover:text-slate-800"
             }`}
           >
@@ -104,7 +111,7 @@ export default function ConsultationForm({
         ))}
       </div>
 
-      {/* Contenido del sub-tab */}
+      {/* Content */}
       <div className="py-2">
         {activeTab === "general" && (
           <GeneralTab
@@ -113,6 +120,7 @@ export default function ConsultationForm({
             errors={errors}
           />
         )}
+
         {activeTab === "diagnoses" && (
           <DiagnosesTab
             diagnoses={formData.diagnoses}
@@ -122,6 +130,7 @@ export default function ConsultationForm({
             errors={errors.diagnoses}
           />
         )}
+
         {activeTab === "treatments" && (
           <TreatmentsTab
             treatments={formData.treatments}
@@ -133,18 +142,20 @@ export default function ConsultationForm({
         )}
       </div>
 
-      {/* Acciones */}
-      <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+      {/* Actions */}
+      <div className="flex flex-col-reverse gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-600 text-sm font-medium hover:bg-slate-50 transition"
+          className="w-full rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 sm:w-auto"
         >
           Cancelar
         </button>
+
         <button
           type="submit"
-          className="px-5 py-2.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium transition"
+          style={{ backgroundColor: TEAL.dark }}
+          className="w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white transition sm:w-auto"
         >
           Guardar consulta
         </button>

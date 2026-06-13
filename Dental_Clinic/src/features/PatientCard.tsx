@@ -1,16 +1,15 @@
 import { UserRound, Phone, IdCard } from "lucide-react";
-import type {PatientDetails} from "../data/patient";
+import type { PatientDetails } from "../models/patient";
 
 type Props = {
-  
   patient: PatientDetails;
   /*Indica si la tarjeta esta seleccionada o no.
-    Opcional porque la tarjeta en si puede usarse sin seleccion*/ 
+    Opcional porque la tarjeta en si puede usarse sin seleccion*/
   selected?: boolean;
 
   onClick?: () => void;
 
-  /*Funcion opcional que se ejecuta cuando se marca o desmarca el checkbox*/ 
+  /*Funcion opcional que se ejecuta cuando se marca o desmarca el checkbox*/
   onSelect?: () => void;
 };
 
@@ -20,26 +19,24 @@ export default function PatientCard({
   onClick,
   onSelect,
 }: Props) {
-
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
-    
     /*Al hacer click ejecuta onClick, navega al detalle del paciente*/
     <div
       onClick={onClick}
       className={`
         group relative cursor-pointer
         bg-white rounded-2xl border
-        p-6 transition-all duration-300
+        p-5 transition-all duration-300 sm:p-6
         shadow-sm overflow-hidden
         hover:shadow-xl hover:-translate-y-1
         ${
           //Si la tarjeta esta seleccionada, cambia el borde y la sombra
           selected
             ? "border-sky-500 shadow-lg"
-            //sino, se mantiente normal
-            : "border-slate-200 hover:border-sky-300"
+            : //sino, se mantiente normal
+              "border-slate-200 hover:border-sky-300"
         }
       `}
     >
@@ -64,12 +61,12 @@ export default function PatientCard({
           "
         />
       </div>
-      
+
       {/*Contenedor de la informacion visible de la tarjeta*/}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3 sm:gap-4">
         <div
           className="
-            w-14 h-14 rounded-2xl
+            w-12 h-12 rounded-2xl sm:h-14 sm:w-14
             bg-sky-50
             flex items-center justify-center
             text-sky-500
@@ -82,7 +79,7 @@ export default function PatientCard({
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-lg font-semibold text-slate-800 truncate">
+          <h3 className="truncate pr-6 text-base font-semibold text-slate-800 sm:text-lg">
             {fullName}
           </h3>
 

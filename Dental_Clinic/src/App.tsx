@@ -5,6 +5,7 @@ import PatientList from "./features/PatientList";
 import RegisterPatient from "./pages/patients/RegisterPatient";
 import Login from "./pages/login/Login";
 import ScheduleAppointment from "./pages/appointments/ScheduleAppointments";
+import ViewAppointments from "./pages/appointments/ViewAppointments";
 import NotFound from "./shared/NotFound";
 import PatientDetail from "./features/PatientDetail";
 import HomeDentist from "./features/home/homeDentist";
@@ -12,15 +13,15 @@ import HomeRecepcionist from "./features/home/homeReceptionist";
 import HomeAdmin from "./features/home/homeAdmin";
 import ProtectedRoute from "./components/security/ProtectedRoute";
 import "./App.css";
+import ConsultationPage from "./pages/consultations/ConsultationPage";
+import ConsultationListPage from "./pages/consultations/ConsultationListPage";
+import ClinicalPatientsPage from "./components/Consultation/ClinicalPatientsPage";
 
 function App() {
   return (
     <BrowserRouter>
-
       <div className="flex flex-col min-h-screen">
-
         <Routes>
-
           {/* Login — sin header ni footer */}
           <Route path="/" element={<Login />} />
 
@@ -30,13 +31,10 @@ function App() {
             element={
               <ProtectedRoute>
                 <div className="flex flex-col min-h-screen">
-
                   <Header />
 
                   <main className="flex-1 flex flex-col">
-
                     <Routes>
-
                       {/* Admin */}
                       <Route
                         path="/admin"
@@ -71,11 +69,8 @@ function App() {
                       <Route
                         path="/patients"
                         element={
-                          <ProtectedRoute
-                            rol={["ADMIN", "ASSIS", "ODO"]}
-                          >
-                            <PatientList/> 
-
+                          <ProtectedRoute rol={["ADMIN", "ASSIS", "ODO"]}>
+                            <PatientList />
                           </ProtectedRoute>
                         }
                       />
@@ -83,10 +78,16 @@ function App() {
                       <Route
                         path="/patients/:id"
                         element={
-                          <ProtectedRoute
-                            rol={["ADMIN", "ASSIS", "ODO"]}
-                          >
+                          <ProtectedRoute rol={["ADMIN", "ASSIS", "ODO"]}>
                             <PatientDetail />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/consultations/patient/:patientId"
+                        element={
+                          <ProtectedRoute rol="ODO">
+                            <ConsultationPage />
                           </ProtectedRoute>
                         }
                       />
@@ -102,10 +103,37 @@ function App() {
 
                       {/* Citas */}
                       <Route
+                        path="/appointments"
+                        element={
+                          <ProtectedRoute rol={["ADMIN", "ASSIS", "ODO"]}>
+                            <ViewAppointments />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route
                         path="/appointments/schedule"
                         element={
-                          <ProtectedRoute rol={["ADMIN", "ASSIS"]}>
+                          <ProtectedRoute rol={["ADMIN", "ASSIS", "ODO"]}>
                             <ScheduleAppointment />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route
+                        path="/consultations"
+                        element={
+                          <ProtectedRoute rol="ADMIN">
+                            <ConsultationListPage />
+                          </ProtectedRoute>
+                        }
+                      />
+
+                      <Route
+                        path="/clinical-patients"
+                        element={
+                          <ProtectedRoute rol="ODO">
+                            <ClinicalPatientsPage />
                           </ProtectedRoute>
                         }
                       />

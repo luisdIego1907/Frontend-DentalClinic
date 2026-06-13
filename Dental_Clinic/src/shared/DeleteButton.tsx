@@ -37,7 +37,7 @@ export default function DeleteButton({
       onClick={handleClick}
       disabled={disabled || isDeleting}
       className={`
-        flex items-center gap-2 rounded-xl px-5 py-3 font-medium transition-colors
+        flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 font-medium transition-colors sm:w-auto
         ${
           disabled || isDeleting
             ? "cursor-not-allowed bg-slate-200 text-slate-400"

@@ -49,7 +49,7 @@ export default function Header() {
         {
           name: "Citas",
           icon: <CalendarDays size={20} />,
-          to: "/appointments/schedule",
+          to: "/appointments",
         },
       ];
     }
@@ -61,7 +61,7 @@ export default function Header() {
         {
           name: "Citas",
           icon: <CalendarDays size={20} />,
-          to: "/appointments/schedule",
+          to: "/appointments",
         },
       ];
     }
@@ -74,25 +74,19 @@ export default function Header() {
     return roleLabel.charAt(0).toUpperCase();
   };
 
-  const handleLogout = () => {
-    logout();
-    setDropdownOpen(false);
-    setIsOpen(false);
-  };
-
   const links = navLinks();
 
   const roleLabel = getRoleLabel();
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-sky-100 shadow-sm">
-      <div className="container mx-auto px-6 h-20 flex items-center justify-between">
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6">
         <button
           type="button"
           onClick={goHome}
-          className="flex items-center gap-4 text-slate-800 hover:opacity-90 transition"
+          className="flex min-w-0 items-center gap-3 text-slate-800 transition hover:opacity-90 sm:gap-4"
         >
-          <div className="w-12 h-12 rounded-2xl bg-sky-100 flex items-center justify-center shadow-sm">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-sky-100 shadow-sm sm:h-12 sm:w-12">
             <svg
               width="26"
               height="26"
@@ -107,11 +101,9 @@ export default function Header() {
             </svg>
           </div>
 
-          <span className="text-2xl font-bold tracking-tight whitespace-nowrap">
+          <span className="truncate text-xl font-bold tracking-tight sm:text-2xl">
             Clínica
-            <span className="text-sky-500 ml-2">
-              Dental
-            </span>
+            <span className="ml-1 text-sky-500 sm:ml-2">Dental</span>
           </span>
         </button>
 
@@ -173,7 +165,7 @@ export default function Header() {
 
         <button
         type="button"
-          className="md:hidden p-2.5 rounded-xl text-slate-600 hover:bg-sky-50 hover:text-sky-500 transition-all active:scale-90"
+          className="rounded-xl p-2.5 text-slate-600 transition-all hover:bg-sky-50 hover:text-sky-500 active:scale-90 md:hidden"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={26} /> : <Menu size={26} />}
@@ -181,14 +173,14 @@ export default function Header() {
       </div>
 
       {isOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-white/95 backdrop-blur-lg border-b border-sky-100 shadow-xl">
-          <nav className="flex flex-col p-6 gap-4">
+        <div className="absolute left-0 right-0 top-16 bg-white/95 backdrop-blur-lg border-b border-sky-100 shadow-xl sm:top-20 md:hidden">
+          <nav className="flex flex-col gap-3 p-4 sm:gap-4 sm:p-6">
             {links.map((link) => (
               <Link
                 key={link.name}
                 to={link.to}
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-4 text-lg font-bold text-slate-700 p-3.5 rounded-2xl hover:bg-sky-50 hover:text-sky-500 transition-all"
+                className="flex items-center gap-4 rounded-2xl p-3.5 text-base font-bold text-slate-700 transition-all hover:bg-sky-50 hover:text-sky-500 sm:text-lg"
               >
                 <span className="bg-slate-100 p-2 rounded-lg">{link.icon}</span>
                 {link.name}
@@ -200,7 +192,7 @@ export default function Header() {
                 logout();
                 setIsOpen(false);
               }}
-              className="flex items-center gap-4 text-lg font-bold text-red-500 p-3.5 rounded-2xl hover:bg-red-50 transition-all"
+              className="flex items-center gap-4 rounded-2xl p-3.5 text-base font-bold text-red-500 transition-all hover:bg-red-50 sm:text-lg"
             >
               <span className="bg-red-50 p-2 rounded-lg">
                 <LogOut size={20} />

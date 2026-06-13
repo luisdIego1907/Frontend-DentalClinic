@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { AppointmentData } from "../../data/appointment";
-import type { PatientData } from "../../data/patient";
+import type { AppointmentData, DoctorData } from "../../models/appointment";
+import type { PatientDetails } from "../../models/patient";
 import {
   validateAppointmentForm,
   type AppointmentFormErrors,
@@ -8,9 +8,9 @@ import {
 import { initialAppointmentFormData } from "./AppointmentInitialData";
 
 interface AppointmentFormProps {
-  patients: PatientData[];
-  doctors: readonly string[];
-  onSubmit: (appointmentData: AppointmentData) => boolean;
+  patients: PatientDetails[];
+  doctors: DoctorData[];
+  onSubmit: (appointmentData: AppointmentData) => boolean | Promise<boolean>;
   appointmentToEdit?: AppointmentData | null;
   onCancelEdit?: () => void;
   submitButtonErrorSignal?: number;
@@ -48,7 +48,6 @@ export default function AppointmentForm({
     setErrors({});
   }, [appointmentToEdit]);
 
-
   useEffect(() => {
     if (submitButtonErrorSignal === 0) return;
 
@@ -85,7 +84,19 @@ export default function AppointmentForm({
     });
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleDoctorChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedDoctor = doctors.find(
+      (doctor) => doctor.user_resource_id === event.target.value
+    );
+
+    setFormData({
+      ...formData,
+      doctor: selectedDoctor?.display_name ?? "",
+      doctorUserResourceId: selectedDoctor?.user_resource_id ?? "",
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const validationErrors = validateAppointmentForm(formData);
@@ -96,7 +107,7 @@ export default function AppointmentForm({
     }
 
     setErrors({});
-    const wasSaved = onSubmit(formData);
+    const wasSaved = await onSubmit(formData);
 
     if (!isEditing && wasSaved) {
       setFormData(initialAppointmentFormData);
@@ -116,8 +127,8 @@ export default function AppointmentForm({
   const errorClass = "mt-1 block text-sm text-red-600";
 
   const submitButtonClass = showSubmitErrorFeedback
-    ? "rounded-lg bg-red-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 active:scale-95"
-    : "rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
+    ? "w-full rounded-lg bg-red-600 px-6 py-2.5 sm:w-auto text-sm font-semibold text-white shadow-md transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300 active:scale-95"
+    : "w-full rounded-lg bg-blue-600 px-6 py-2.5 sm:w-auto text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95";
 
   const appointmentHours = Array.from({ length: 24 }, (_, index) =>
     String(index).padStart(2, "0")
@@ -125,13 +136,38 @@ export default function AppointmentForm({
 
   const appointmentMinutes = ["00", "15", "30", "45"];
 
+  const getAppointmentSchedule = () => {
+    const [hour, minutes] = formData.time.split(":");
+
+    if (!hour || !minutes) {
+      return "Seleccione hora y minutos";
+    }
+
+    const startMinutes = Number(hour) * 60 + Number(minutes);
+    const endMinutes = startMinutes + formData.durationMinutes;
+
+    const formatTime = (totalMinutes: number) => {
+      const normalizedMinutes = totalMinutes % (24 * 60);
+      const formattedHour = Math.floor(normalizedMinutes / 60);
+      const formattedMinutes = normalizedMinutes % 60;
+
+      return `${String(formattedHour).padStart(2, "0")}:${String(
+        formattedMinutes
+      ).padStart(2, "0")}`;
+    };
+
+    return `${formatTime(startMinutes)} - ${formatTime(endMinutes)}`;
+  };
+
+  const appointmentSchedule = getAppointmentSchedule();
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
+      className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-5 shadow-lg sm:p-8"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
+        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">
           {isEditing ? "Modificar cita" : "Registrar cita"}
         </h2>
         <p className="mt-1 text-sm text-gray-500">
@@ -171,7 +207,10 @@ export default function AppointmentForm({
                 Seleccione un paciente
               </option>
               {activePatients.map((patient) => (
-                <option key={patient.identification} value={patient.identification}>
+                <option
+                  key={patient.identification}
+                  value={patient.identification}
+                >
                   {patient.first_name} {patient.last_name} -{" "}
                   {patient.identification}
                 </option>
@@ -184,21 +223,24 @@ export default function AppointmentForm({
 
         <div>
           <label htmlFor="doctor" className={labelClass}>
-            Doctor
+            Odontólogo
           </label>
           <select
             id="doctor"
             name="doctor"
-            value={formData.doctor}
-            onChange={handleChange}
+            value={formData.doctorUserResourceId}
+            onChange={handleDoctorChange}
             className={inputClass}
           >
             <option value="" disabled>
-              Seleccione un doctor
+              Seleccione un odontólogo
             </option>
             {doctors.map((doctor) => (
-              <option key={doctor} value={doctor}>
-                {doctor}
+              <option
+                key={doctor.user_resource_id}
+                value={doctor.user_resource_id}
+              >
+                {doctor.display_name}
               </option>
             ))}
           </select>
@@ -223,10 +265,10 @@ export default function AppointmentForm({
         <div>
           <label className={labelClass}>Hora de la cita</label>
 
-          <div className="mt-1 grid grid-cols-2 gap-3">
-            <div>
+          <div className="mt-1 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex w-full items-center gap-2 sm:w-auto">
               <label htmlFor="hour" className={labelClass}>
-                Hora
+                Hora:
               </label>
               <select
                 id="hour"
@@ -239,7 +281,7 @@ export default function AppointmentForm({
                     time: `${event.target.value}:${minutes}`,
                   });
                 }}
-                className={inputClass}
+                className="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 sm:w-32"
               >
                 <option value="" disabled>
                   Seleccione
@@ -252,9 +294,9 @@ export default function AppointmentForm({
               </select>
             </div>
 
-            <div>
+            <div className="flex w-full items-center gap-2 sm:w-auto">
               <label htmlFor="minutes" className={labelClass}>
-                Minutos
+                Minutos:
               </label>
               <select
                 id="minutes"
@@ -267,7 +309,7 @@ export default function AppointmentForm({
                     time: `${hour}:${event.target.value}`,
                   });
                 }}
-                className={inputClass}
+                className="w-full min-w-0 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-200 sm:w-32"
               >
                 <option value="" disabled>
                   Seleccione
@@ -302,6 +344,14 @@ export default function AppointmentForm({
           </select>
         </div>
 
+        <div>
+          <label className={labelClass}>Horario</label>
+
+          <div className="mt-1 rounded-lg border border-gray-300 bg-gray-50 px-4 py-2.5 text-sm text-gray-800 shadow-sm">
+            {appointmentSchedule}
+          </div>
+        </div>
+
         <div className="md:col-span-2">
           <label htmlFor="reason" className={labelClass}>
             Motivo de la cita
@@ -319,21 +369,18 @@ export default function AppointmentForm({
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end gap-3">
+      <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         {isEditing && (
           <button
             type="button"
             onClick={onCancelEdit}
-            className="rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 active:scale-95"
+            className="w-full rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 active:scale-95 sm:w-auto"
           >
             Cancelar
           </button>
         )}
 
-        <button
-          type="submit"
-          className={submitButtonClass}
-        >
+        <button type="submit" className={submitButtonClass}>
           {isEditing ? "Guardar cambios" : "Agendar cita"}
         </button>
       </div>

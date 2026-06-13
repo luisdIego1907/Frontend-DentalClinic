@@ -1,27 +1,78 @@
+import { useEffect, useState } from "react";
 import { Calendar, Users, Clock, CalendarPlus, Pencil } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { PageGreeting } from "../../components/home/PageGreeting";
-import { mockCitas } from "../../mocks/appointment.mock";
 import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
+import type { AppointmentData } from "../../models/appointment";
+import { getAppointments } from "../../services/AppointmentService";
+import { useNavigate } from "react-router-dom";
 
 const BLUE = { bg: "#E6F1FB", dark: "#0C447C", mid: "#185FA5" };
 
-const citas = mockCitas;
+const getDateOnly = (date: string) => date.split("T")[0];
+
+const getToday = () => new Date().toISOString().split("T")[0];
+
+const getTomorrow = () => {
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  return tomorrow.toISOString().split("T")[0];
+};
+
+const sortByTime = (appointments: AppointmentData[]) =>
+  [...appointments].sort((a, b) => a.time.localeCompare(b.time));
 
 export default function HomeRecepcionist() {
+  const [citas, setCitas] = useState<AppointmentData[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const loadAppointments = async () => {
+      try {
+        const appointments = await getAppointments();
+        setCitas(appointments);
+      } catch (error) {
+        console.error("Error al cargar citas de recepción:", error);
+        setErrorMessage("No se pudieron cargar las citas.");
+      }
+    };
+
+    loadAppointments();
+  }, []);
+
+  const today = getToday();
+  const tomorrow = getTomorrow();
+  const citasHoy = sortByTime(
+    citas.filter((cita) => getDateOnly(cita.date) === today),
+  );
+  const citasManana = citas.filter(
+    (cita) => getDateOnly(cita.date) === tomorrow,
+  );
+  const citasPendientes = citasHoy.filter(
+    (cita) => cita.status === "Pendiente",
+  );
+  const citasEnEspera = citasHoy.filter((cita) => cita.status === "En espera");
+  const proximoTurno = citasEnEspera[0]?.time ?? "Sin turnos";
+
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
       <PageGreeting nombre="Recepción" colorClass="text-[#185FA5]" />
-      <div className="grid grid-cols-3 gap-4 mb-8">
+
+      {errorMessage && (
+        <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700">
+          {errorMessage}
+        </div>
+      )}
+
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Citas de Hoy"
-          value={citas.length}
-          sub={`${citas.filter((c) => c.status === "Pendiente").length} pendientes de confirmar`}
+          value={citasHoy.length}
+          sub={`${citasPendientes.length} pendientes de confirmar`}
           icon={Calendar}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
@@ -29,8 +80,8 @@ export default function HomeRecepcionist() {
         />
         <StatCard
           label="En Sala de Espera"
-          value={citas.filter((c) => c.status === "En espera").length}
-          sub="Próx. turno: 10:30"
+          value={citasEnEspera.length}
+          sub={`Próx. turno: ${proximoTurno}`}
           icon={Users}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
@@ -38,8 +89,8 @@ export default function HomeRecepcionist() {
         />
         <StatCard
           label="Citas Mañana"
-          value={17}
-          sub="2 sin confirmar"
+          value={citasManana.length}
+          sub={`${citasManana.filter((c) => c.status === "Pendiente").length} sin confirmar`}
           icon={CalendarPlus}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
@@ -49,12 +100,21 @@ export default function HomeRecepcionist() {
       <h2 className="text-base font-semibold text-gray-900 mb-4">
         Acceso Rápido
       </h2>
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <QuickAccessButton
           label="Registrar cita"
           description="Nueva reserva de cita"
           to="/appointments/schedule"
           icon={CalendarPlus}
+          iconBg={BLUE.bg}
+          iconColor={BLUE.dark}
+          accentBorder={BLUE.mid}
+        />
+        <QuickAccessButton
+          label="Ver citas"
+          description="Lista de citas registradas"
+          to="/appointments"
+          icon={Calendar}
           iconBg={BLUE.bg}
           iconColor={BLUE.dark}
           accentBorder={BLUE.mid}
@@ -69,8 +129,8 @@ export default function HomeRecepcionist() {
           accentBorder={BLUE.mid}
         />
         <QuickAccessButton
-          label="Ver Pacientes"
-          description="Agenda completa del día"
+          label="Ver pacientes"
+          description="Lista de pacientes"
           to="/patients"
           icon={Users}
           iconBg={BLUE.bg}
@@ -78,45 +138,53 @@ export default function HomeRecepcionist() {
           accentBorder={BLUE.mid}
         />
       </div>
-      <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
         <SectionHeader
           label="Cola de Citas — Hoy"
           icon={Clock}
           iconColor={BLUE.mid}
         />
-        {citas.map((cita) => (
-          <div
-            key={cita.id}
-            className="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-none"
-          >
-            <span
-              className="text-sm font-semibold px-3 py-1.5 rounded-lg min-w-[52px] text-center"
-              style={{ backgroundColor: BLUE.bg, color: BLUE.dark }}
+        {citasHoy.length === 0 ? (
+          <p className="px-5 py-4 text-sm text-gray-500">
+            No hay citas registradas para hoy.
+          </p>
+        ) : (
+          citasHoy.map((cita) => (
+            <div
+              key={cita.id}
+              className="flex flex-col items-start gap-3 border-b border-gray-50 px-4 py-4 last:border-none sm:flex-row sm:items-center sm:gap-4 sm:px-5"
             >
-              {cita.time}
-            </span>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">
-                {cita.patient?.first_name} {cita.patient?.last_name}
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">
-                {cita.doctor} · {cita.reason}
-              </p>
+              <span
+                className="text-sm font-semibold px-3 py-1.5 rounded-lg min-w-[52px] text-center"
+                style={{ backgroundColor: BLUE.bg, color: BLUE.dark }}
+              >
+                {cita.time}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="break-words text-sm font-medium text-gray-900">
+                  {cita.patient?.first_name} {cita.patient?.last_name}
+                </p>
+                <p className="mt-0.5 break-words text-xs text-gray-500">
+                  {cita.doctor} · {cita.reason}
+                </p>
+              </div>
+              <span className="text-xs text-gray-400">
+                {cita.durationMinutes} min
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(`/appointments/schedule?appointmentId=${cita.id}`)
+                }
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-gray-600 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:scale-95 sm:w-auto"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+                Editar
+              </button>
+              <StatusBadge estado={cita.status} />
             </div>
-            <span className="text-xs text-gray-400">
-              {cita.durationMinutes} min
-            </span>
-            <button
-              type="button"
-              onClick={() => navigate(`/appointments/schedule?appointmentId=${cita.id}`)}
-              className="flex items-center gap-1.5 text-xs text-gray-600 border border-gray-200 rounded-lg px-3 py-1.5 transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-105 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700 hover:shadow-md active:scale-95"
-            >
-              <Pencil className="w-3.5 h-3.5" />
-              Editar
-            </button>
-            <StatusBadge estado={cita.status} />
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { PatientDetails } from "../../../data/patient";
+import type { PatientDetails } from "../../../models/patient";
 import {
   validatePatientEditForm,
   type PatientEditFormErrors,
@@ -11,15 +11,10 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function PatientEditForm({
-  patient,
-  onSave,
-  onCancel,
-}: Props) {
+export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
   const [formData, setFormData] = useState<PatientDetails>(patient);
   const [errors, setErrors] = useState<PatientEditFormErrors>({});
-  const [isIdentificationFocused, setIsIdentificationFocused] =
-    useState(false);
+  const [isIdentificationFocused, setIsIdentificationFocused] = useState(false);
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -83,11 +78,8 @@ export default function PatientEditForm({
         />
 
         {errors.first_name && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.first_name}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.first_name}</p>
         )}
-
       </div>
 
       <div>
@@ -105,11 +97,8 @@ export default function PatientEditForm({
         />
 
         {errors.last_name && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.last_name}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.last_name}</p>
         )}
-
       </div>
 
       <div>
@@ -128,29 +117,32 @@ export default function PatientEditForm({
           placeholder="Ej: 1-2345-6789"
           className={`
     w-full rounded-xl border px-4 py-3 outline-none transition
-    ${errors.identification
-              ? "border-red-400 focus:ring-2 focus:ring-red-200"
-              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-            }
+    ${
+      errors.identification
+        ? "border-red-400 focus:ring-2 focus:ring-red-200"
+        : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+    }
   `}
         />
 
         {isIdentificationFocused && (
           <>
             <p
-              className={`text-sm mt-1 ${formData.identification.length === 9
-                ? "text-green-600 font-medium"
-                : "text-slate-500"
-                }`}
+              className={`text-sm mt-1 ${
+                formData.identification.length === 9
+                  ? "text-green-600 font-medium"
+                  : "text-slate-500"
+              }`}
             >
               La identificación debe contener 9 dígitos.
             </p>
 
             <p
-              className={`text-sm mt-1 font-medium ${formData.identification.length === 9
-                ? "text-green-600"
-                : "text-slate-500"
-                }`}
+              className={`text-sm mt-1 font-medium ${
+                formData.identification.length === 9
+                  ? "text-green-600"
+                  : "text-slate-500"
+              }`}
             >
               {formData.identification.length}/9 dígitos
             </p>
@@ -158,9 +150,7 @@ export default function PatientEditForm({
         )}
 
         {errors.identification && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.identification}
-          </p>
+          <p className="text-red-500 text-sm mt-1">{errors.identification}</p>
         )}
       </div>
 
@@ -178,13 +168,13 @@ export default function PatientEditForm({
           placeholder="Ej: 8888-8888"
           className={`
     w-full rounded-xl border px-4 py-3 outline-none transition
-    ${errors.phone
-              ? "border-red-400 focus:ring-2 focus:ring-red-200"
-              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
-            }
+    ${
+      errors.phone
+        ? "border-red-400 focus:ring-2 focus:ring-red-200"
+        : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+    }
   `}
         />
-        
 
         {errors.phone && (
           <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
@@ -204,9 +194,10 @@ export default function PatientEditForm({
           maxLength={150}
           className={`
             w-full rounded-xl border px-4 py-3 outline-none transition
-            ${errors.address
-              ? "border-red-400 focus:ring-2 focus:ring-red-200"
-              : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
+            ${
+              errors.address
+                ? "border-red-400 focus:ring-2 focus:ring-red-200"
+                : "border-slate-300 focus:ring-2 focus:ring-cyan-200"
             }
           `}
         />
@@ -216,18 +207,18 @@ export default function PatientEditForm({
         )}
       </div>
 
-      <div className="flex justify-end gap-3 pt-4">
+      <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
           onClick={onCancel}
-          className="px-5 py-3 rounded-xl border border-slate-300 text-slate-600 font-medium hover:bg-slate-100 transition-colors"
+          className="w-full rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-600 transition-colors hover:bg-slate-100 sm:w-auto"
         >
           Cancelar
         </button>
 
         <button
           type="submit"
-          className="px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white font-medium transition-colors"
+          className="w-full rounded-xl bg-cyan-600 px-5 py-3 font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
         >
           Guardar
         </button>

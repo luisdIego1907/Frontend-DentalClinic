@@ -11,5 +11,3 @@ export interface ConsultationFormData {
   diagnoses: Diagnosis[];
   treatments: Treatment[];
 }
-
-//Datos para la consulta

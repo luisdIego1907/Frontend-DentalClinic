@@ -1,4 +1,4 @@
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 import { StatusBadge } from "./Statusbadge";
 
 interface AppointmentRowProps {
@@ -15,18 +15,18 @@ export function AppointmentRow({
   actions,
 }: AppointmentRowProps) {
   return (
-    <div className="flex items-center gap-4 px-5 py-4 border-b border-gray-50 last:border-none">
+    <div className="flex flex-col items-start gap-3 border-b border-gray-50 px-4 py-4 last:border-none sm:flex-row sm:items-center sm:gap-4 sm:px-5">
       <span
         className="text-sm font-semibold px-3 py-1.5 rounded-lg min-w-[52px] text-center"
         style={{ backgroundColor: timeBg, color: timeColor }}
       >
         {cita.time}
       </span>
-      <div className="flex-1">
-        <p className="text-sm font-medium text-gray-900">
+      <div className="min-w-0 flex-1">
+        <p className="break-words text-sm font-medium text-gray-900">
           {cita.patient?.first_name} {cita.patient?.last_name}{" "}
         </p>
-        <p className="text-xs text-gray-500 mt-0.5">{cita.reason}</p>
+        <p className="mt-0.5 break-words text-xs text-gray-500">{cita.reason}</p>
       </div>
       <span className="text-xs text-gray-400">{cita.durationMinutes} min</span>
       {actions ?? <StatusBadge estado={cita.status} />}

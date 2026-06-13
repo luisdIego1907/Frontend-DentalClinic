@@ -1,4 +1,4 @@
-import type { Treatment } from "../../../data/treatment";
+import type { Treatment } from "../../../models/treatment";
 
 type Props = {
   treatments: Treatment[];
@@ -13,6 +13,12 @@ const emptyTreatment = (): Treatment => ({
   start_date: "",
   end_date: "",
 });
+
+const TEAL = {
+  bg: "#E1F5EE",
+  dark: "#0C447C",
+  mid: "#185FA5",
+};
 
 export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
   const handleAdd = () => onChange([...treatments, emptyTreatment()]);
@@ -38,7 +44,7 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
           key={index}
           className="bg-slate-50 border border-slate-200 rounded-lg p-4"
         >
-          <div className="flex justify-between items-center mb-3">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-slate-500">
               Tratamiento #{index + 1}
             </span>
@@ -77,7 +83,7 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
               )}
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Costo
@@ -136,7 +142,7 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
                 </label>
                 <input
                   type="date"
-                  value={treatment.end_date}
+                  value={treatment.end_date || ""}
                   onChange={(e) =>
                     handleChange(index, "end_date", e.target.value)
                   }
@@ -151,9 +157,21 @@ export default function TreatmentsTab({ treatments, onChange, errors }: Props) {
       <button
         type="button"
         onClick={handleAdd}
-        className="w-full border-2 border-dashed border-teal-400 text-teal-600 rounded-lg py-2.5 text-sm font-medium hover:bg-teal-50 transition"
+        className="w-full border-2 border-dashed rounded-lg py-2.5 text-sm font-medium transition"
+        style={{
+          borderColor: TEAL.mid,
+          color: TEAL.mid,
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            TEAL.bg;
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "transparent";
+        }}
       >
-        + Agregar tratamiento
+        + Agregar Tratamiento
       </button>
     </div>
   );

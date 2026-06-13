@@ -1,18 +1,19 @@
-
-import { validatePatientForm, type PatientFormErrors } from "../PatientValidation";
+import {
+  validatePatientForm,
+  type PatientFormErrors,
+} from "../PatientValidation";
 import { useState } from "react"; //Permite guardar informacion que cambia dentro del componente
-import type { PatientData } from "../../../data/patient";
+import type { PatientData } from "../../../models/patient";
 import { initialPatientFormData } from "./PatientInitialData";
 
 interface PatientFormProps {
   onSubmit: (patientData: PatientData) => void;
 }
 export default function PatientForm({ onSubmit }: PatientFormProps) {
-
   /*
     Se crea el estado formData
     setFormData sirve para actualizar los datos
-  */ 
+  */
   const [formData, setFormData] = useState<PatientData>(initialPatientFormData);
 
   const [errors, setErrors] = useState<PatientFormErrors>({});
@@ -24,17 +25,17 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
     //se define el tipo de evento
     event: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    >,
   ) => {
     /*
       Se extra el name (nombre del campo)
       y value (valor escrito o seleccionado)
-    */ 
+    */
     const { name, value } = event.target;
 
     /*
       Copia todos los datos del formulario del momento
-    */ 
+    */
     setFormData({
       ...formData,
       [name]: value,
@@ -74,12 +75,10 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
+      className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-5 shadow-lg sm:p-8"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">
-          Registrar paciente
-        </h2>
+        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Registrar paciente</h2>
         <p className="mt-1 text-sm text-gray-500">
           Complete la información del paciente para guardarlo en el sistema.
         </p>
@@ -205,9 +204,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             <option value="Femenino">Femenino</option>
             <option value="Otro">Otro</option>
           </select>
-          {errors.gender && (
-            <span className={errorClass}>{errors.gender}</span>
-          )}
+          {errors.gender && <span className={errorClass}>{errors.gender}</span>}
         </div>
 
         <div>
@@ -224,9 +221,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             <option value="Activo">Activo</option>
             <option value="Inactivo">Inactivo</option>
           </select>
-          {errors.status && (
-            <span className={errorClass}>{errors.status}</span>
-          )}
+          {errors.status && <span className={errorClass}>{errors.status}</span>}
         </div>
 
         <div className="md:col-span-2">
@@ -248,10 +243,10 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-stretch sm:justify-end">
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+          className="w-full rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95 sm:w-auto"
         >
           Guardar paciente
         </button>

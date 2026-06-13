@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hook/useAuth";
 import { loginUser } from "../../services/authService";
 import { isAuthenticated } from "../../auth/sessionAuth";
@@ -42,16 +41,15 @@ export default function Login() {
       } else {
         setErrorMessage("No se pudo iniciar sesión");
       }
-
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex">
+    <div className="flex min-h-screen">
       {/* Left Side - Image with overlay */}
-      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-[#1D9E75] to-[#158f68] items-center justify-center overflow-hidden">
+      <div className="relative hidden overflow-hidden bg-gradient-to-br from-[#185FA5] to-[#0C447C] lg:flex lg:w-1/2 lg:items-center lg:justify-center">
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -61,7 +59,7 @@ export default function Login() {
         />
 
         {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1D9E75]/85 to-[#0f5d47]/90" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#185FA5]/85 to-[#0C447C]/90" />
 
         {/* Logo on Image */}
         <div className="relative z-10 text-center px-12">
@@ -86,7 +84,7 @@ export default function Login() {
             </svg>
           </div>
 
-          <h1 className="text-5xl font-semibold text-white mb-4 tracking-tight">
+          <h1 className="mb-4 text-5xl font-semibold tracking-tight text-white">
             DentalCare
           </h1>
 
@@ -97,10 +95,10 @@ export default function Login() {
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="flex-1 flex items-center justify-center px-6 py-12 lg:px-12 bg-white">
+      <div className="flex flex-1 items-center justify-center bg-white px-4 py-10 sm:px-6 sm:py-12 lg:px-12">
         <div className="w-full max-w-md">
           {/* Logo for mobile */}
-          <div className="lg:hidden flex items-center justify-center mb-8">
+          <div className="mb-8 flex items-center justify-center lg:hidden">
             <svg
               width="32"
               height="32"
@@ -110,17 +108,17 @@ export default function Login() {
             >
               <path
                 d="M32 8C24 8 18 12 18 20C18 24 16 28 16 32C16 40 18 56 24 56C28 56 28 48 28 44C28 42 28 40 30 40H34C36 40 36 42 36 44C36 48 36 56 40 56C46 56 48 40 48 32C48 28 46 24 46 20C46 12 40 8 32 8Z"
-                fill="#1D9E75"
+                fill="#0C447C"
               />
             </svg>
 
-            <span className="ml-2 text-xl font-semibold text-foreground">
+            <span className="ml-2 text-xl font-semibold text-gray-900">
               DentalCare
             </span>
           </div>
 
           {/* Desktop Logo */}
-          <div className="hidden lg:flex items-center mb-12">
+          <div className="mb-12 hidden items-center lg:flex">
             <svg
               width="28"
               height="28"
@@ -130,22 +128,22 @@ export default function Login() {
             >
               <path
                 d="M32 8C24 8 18 12 18 20C18 24 16 28 16 32C16 40 18 56 24 56C28 56 28 48 28 44C28 42 28 40 30 40H34C36 40 36 42 36 44C36 48 36 56 40 56C46 56 48 40 48 32C48 28 46 24 46 20C46 12 40 8 32 8Z"
-                fill="#1D9E75"
+                fill="#0C447C"
               />
             </svg>
 
-            <span className="ml-2 text-lg font-medium text-foreground">
+            <span className="ml-2 text-lg font-medium text-gray-900">
               DentalCare
             </span>
           </div>
 
           {/* Form Content */}
           <div>
-            <h2 className="text-3xl font-medium text-foreground mb-3">
+            <h2 className="mb-3 text-2xl font-medium text-gray-900 sm:text-3xl">
               Bienvenido
             </h2>
 
-            <p className="text-muted-foreground text-sm mb-8">
+            <p className="mb-8 text-sm text-gray-500">
               Ingresa tus credenciales para continuar
             </p>
 
@@ -154,7 +152,7 @@ export default function Login() {
               <div>
                 <label
                   htmlFor="username"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="mb-2 block text-sm font-medium text-gray-900"
                 >
                   Usuario
                 </label>
@@ -165,7 +163,7 @@ export default function Login() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full px-4 py-3 bg-white border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#185FA5]"
                   placeholder="Nombre de usuario"
                   required
                 />
@@ -175,7 +173,7 @@ export default function Login() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-foreground mb-2"
+                  className="mb-2 block text-sm font-medium text-gray-900"
                 >
                   Contraseña
                 </label>
@@ -187,7 +185,7 @@ export default function Login() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-white border border-input rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all pr-12"
+                    className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 pr-12 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#185FA5]"
                     placeholder="••••••••"
                     required
                   />
@@ -196,7 +194,7 @@ export default function Login() {
                     type="button"
                     data-cy="toggle-password"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 transition-colors hover:text-gray-900"
                     aria-label={
                       showPassword ? "Ocultar contraseña" : "Mostrar contraseña"
                     }
@@ -219,7 +217,25 @@ export default function Login() {
                 type="submit"
                 data-cy="login-submit"
                 disabled={isSubmitting}
-                className="w-full bg-primary text-primary-foreground py-3.5 px-4 rounded-lg font-medium hover:bg-[#188968] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-all shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed"
+                className="
+w-full
+bg-[#185FA5]
+text-white
+py-3.5
+px-4
+rounded-lg
+font-medium
+hover:bg-[#0C447C]
+focus:outline-none
+focus:ring-2
+focus:ring-[#185FA5]
+focus:ring-offset-2
+transition-all
+shadow-sm
+hover:shadow-md
+disabled:opacity-60
+disabled:cursor-not-allowed
+"
               >
                 {isSubmitting ? "Ingresando..." : "Iniciar sesión"}
               </button>
@@ -227,7 +243,7 @@ export default function Login() {
 
             {/* Footer text */}
             <div className="mt-8 text-center">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-gray-500">
                 Sistema interno de Clinica Dental © 2026
               </p>
             </div>

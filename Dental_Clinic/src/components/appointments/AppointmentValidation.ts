@@ -1,9 +1,11 @@
-import type { AppointmentData } from "../../data/appointment";
+import type { AppointmentData } from "../../models/appointment";
 
-export type AppointmentFormErrors = Partial<Record<keyof AppointmentData, string>>;
+export type AppointmentFormErrors = Partial<
+  Record<keyof AppointmentData, string>
+>;
 
 export function validateAppointmentForm(
-  formData: AppointmentData
+  formData: AppointmentData,
 ): AppointmentFormErrors {
   const newErrors: AppointmentFormErrors = {};
 
@@ -17,8 +19,8 @@ export function validateAppointmentForm(
     newErrors.date = "La fecha de la cita es obligatoria.";
   }
 
-  if (!formData.doctor.trim()) {
-    newErrors.doctor = "El doctor es obligatorio.";
+  if (!formData.doctorUserResourceId) {
+    newErrors.doctor = "El odontólogo es obligatorio.";
   }
 
   if (!hour || !minutes) {
