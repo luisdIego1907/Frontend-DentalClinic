@@ -1,8 +1,7 @@
 /// <reference types="cypress" />
 
 describe("Home Admin", () => {
-  
-   function loginAsAdmin() {
+  function loginAsAdmin() {
     cy.env(["adminUsername", "adminPassword"]).then((env) => {
       const username = String(env.adminUsername);
       const password = String(env.adminPassword);
@@ -65,25 +64,38 @@ describe("Home Admin", () => {
     // Contenido principal del Home Admin
     cy.contains("Administración", { timeout: 10000 }).should("be.visible");
 
+    cy.contains(
+      "Resumen general de pacientes, citas y consultas registradas en el sistema de la clínica.",
+    ).should("be.visible");
+
+    cy.contains("Resumen administrativo").should("be.visible");
+    cy.contains("Indicadores principales del sistema.").should("be.visible");
+
     cy.contains("Total Pacientes").should("be.visible");
     cy.contains("Pacientes registrados").should("be.visible");
 
     cy.contains("Citas Totales Hoy").should("be.visible");
     cy.contains("Agenda global del día").should("be.visible");
 
-    cy.contains("Consultas del Mes").should("be.visible");
-    cy.contains("Total consultas registradas").should("be.visible");
+    cy.contains("Consultas Registradas").should("be.visible");
+    cy.contains("Total de consultas en el sistema").should("be.visible");
 
-    cy.contains("Acceso Rápido").should("be.visible");
+    cy.contains("Acceso rápido").should("be.visible");
+    cy.contains("Atajos a las áreas principales del panel.").should(
+      "be.visible",
+    );
 
     cy.contains("Ver Pacientes").should("be.visible");
-    cy.contains("Lista de Pacientes").should("be.visible");
+    cy.contains("Lista de pacientes").should("be.visible");
 
-    cy.contains("Ver citas").should("be.visible");
+    cy.contains("Ver Citas").should("be.visible");
     cy.contains("Agenda global").should("be.visible");
 
     cy.contains("Ver Consultas").should("be.visible");
     cy.contains("Historial clínico completo").should("be.visible");
+
+    // Activity Feed
+    cy.contains("Actividad reciente").should("be.visible");
 
     // Footer
     cy.get("footer").scrollIntoView().should("be.visible");
@@ -94,35 +106,29 @@ describe("Home Admin", () => {
       .and("contain", "Sistema interno de expediente digital")
       .and("contain", "© 2026 Clínica Dental. Todos los derechos reservados");
 
-    cy.get("footer a[href='https://www.instagram.com/']")
-      .should("be.visible")
-      .and("have.attr", "target", "_blank");
+    cy.get("footer").find("a[aria-label='Instagram']").should("be.visible");
 
-    cy.get("footer a[href='https://www.facebook.com/']")
-      .should("be.visible")
-      .and("have.attr", "target", "_blank");
+    cy.get("footer").find("a[aria-label='Facebook']").should("be.visible");
   });
 
   it("debe permitir navegar desde los accesos rápidos del home admin", () => {
-    cy.contains("Ver Pacientes")
-      .should("be.visible")
-      .click();
+    cy.contains("a", "Ver Pacientes").should("be.visible").click();
 
     cy.location("pathname", { timeout: 10000 }).should("eq", "/patients");
 
     cy.go("back");
 
-    cy.contains("Ver citas")
-      .should("be.visible")
-      .click();
+    cy.location("pathname", { timeout: 10000 }).should("eq", "/admin");
+
+    cy.contains("a", "Ver Citas").should("be.visible").click();
 
     cy.location("pathname", { timeout: 10000 }).should("eq", "/appointments");
 
     cy.go("back");
 
-    cy.contains("Ver Consultas")
-      .should("be.visible")
-      .click();
+    cy.location("pathname", { timeout: 10000 }).should("eq", "/admin");
+
+    cy.contains("a", "Ver Consultas").should("be.visible").click();
 
     cy.location("pathname", { timeout: 10000 }).should("eq", "/consultations");
   });
