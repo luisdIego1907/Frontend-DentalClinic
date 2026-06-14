@@ -68,8 +68,7 @@ export default function HomeAdmin() {
       <div className="mx-auto flex w-full max-w-[1580px] flex-col gap-7 2xl:gap-8">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-[2rem] border border-violet-100 bg-white/85 p-6 shadow-sm backdrop-blur sm:p-8 xl:p-9">
-          <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#EEEDFE]" />
-          <div className="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-sky-50" />
+         
 
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
