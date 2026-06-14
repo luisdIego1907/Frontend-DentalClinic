@@ -8,16 +8,12 @@ type Props = {
   selected?: boolean;
 
   onClick?: () => void;
-
-  /*Funcion opcional que se ejecuta cuando se marca o desmarca el checkbox*/
-  onSelect?: () => void;
 };
 
 export default function PatientCard({
   patient,
   selected = false,
   onClick,
-  onSelect,
 }: Props) {
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
@@ -50,22 +46,13 @@ export default function PatientCard({
           data-cy="patient-select-checkbox"
           type="checkbox"
           checked={selected}
+          readOnly
           aria-label={`Seleccionar paciente ${fullName}`}
-
-          //Se ejecuta cuando el usuario marca o desmarca el checkbox
-          onChange={(e) => {
-            //Evita que el click del checkbox active tambien el click de la tarjeta
-            e.stopPropagation();
-            //Ejecuta la funcion de seleccion
-            onSelect?.();
-          }}
-          // También detiene la propagación del click.
-          onClick={(e) => e.stopPropagation()}
           className="
-            w-5 h-5 rounded
-            accent-sky-500
-            cursor-pointer
-          "
+      w-5 h-5 rounded
+      accent-sky-500
+      pointer-events-none
+    "
         />
       </div>
 
@@ -86,9 +73,10 @@ export default function PatientCard({
         </div>
 
         <div className="flex-1 min-w-0">
-
-          <h3 className="truncate pr-6 text-base font-semibold text-slate-800 sm:text-lg"  
-            data-cy="patient-card-name">
+          <h3
+            className="truncate pr-6 text-base font-semibold text-slate-800 sm:text-lg"
+            data-cy="patient-card-name"
+          >
             {fullName}
           </h3>
 
@@ -96,7 +84,9 @@ export default function PatientCard({
             <div className="flex items-center gap-2 text-sm text-slate-500">
               <IdCard size={16} className="text-sky-500" />
 
-              <span data-cy="patient-card-identification" className="truncate">{patient.identification}</span>
+              <span data-cy="patient-card-identification" className="truncate">
+                {patient.identification}
+              </span>
             </div>
 
             <div className="flex items-center gap-2 text-sm text-slate-500">

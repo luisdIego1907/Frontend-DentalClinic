@@ -68,7 +68,9 @@ export default function ConsultationListPage() {
     return (
       <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
         <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
-          <p className="text-red-700">{error}</p>
+          <p className="text-red-700">
+            No se pudieron cargar las consultas para este paciente
+          </p>
         </div>
       </main>
     );
@@ -77,7 +79,9 @@ export default function ConsultationListPage() {
   return (
     <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">Consultas</h1>
+        <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">
+          Consultas
+        </h1>
 
         <p className="text-slate-500 mt-1">Historial clínico completo</p>
       </div>
