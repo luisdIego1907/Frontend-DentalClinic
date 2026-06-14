@@ -75,7 +75,9 @@ export default function PatientDetail() {
 
   if (loading) {
     return (
-      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+      <main 
+          className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12"
+          data-cy="patient-detail-loading">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
           <p className="text-slate-500">Cargando información del paciente...</p>
         </div>
@@ -85,7 +87,9 @@ export default function PatientDetail() {
 
   if (error || !patient) {
     return (
-      <main className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
+      <main 
+        className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 sm:py-12"
+        data-cy="patient-detail-error">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm sm:p-8">
           <h1 className="text-2xl font-bold text-slate-800">
             Paciente no encontrado
@@ -97,6 +101,7 @@ export default function PatientDetail() {
 
           <Link
             to="/patients"
+            data-cy="patient-detail-back-link"
             className="inline-block mt-6 bg-cyan-600 text-white px-5 py-2 rounded-lg hover:bg-cyan-700 transition"
           >
             Volver a pacientes
@@ -109,10 +114,13 @@ export default function PatientDetail() {
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
+    <main 
+      className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 sm:py-10"
+      data-cy="patient-detail-page">
       <div className="mb-6">
         <Link
           to="/patients"
+           data-cy="patient-detail-back-link"
           className="text-cyan-600 hover:text-cyan-700 font-medium"
         >
           ← Volver a pacientes
@@ -120,17 +128,23 @@ export default function PatientDetail() {
       </div>
 
       {successMessage && (
-        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+        <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700"
+            data-cy="patient-detail-success-message">
           {successMessage}
         </div>
       )}
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
+      <section 
+        className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8"
+        data-cy="patient-detail">
         <div className="mb-6 flex flex-col gap-4 border-b border-slate-200 pb-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800 sm:text-3xl">{fullName}</h1>
+            <h1 
+              className="text-2xl font-bold text-slate-800 sm:text-3xl"
+              data-cy="patient-detail-name">
+                {fullName}</h1>
 
-            <p className="text-slate-500 mt-1">
+            <p className="text-slate-500 mt-1" data-cy="patient-detail-subtitle" >
               Información detallada del paciente
             </p>
           </div>
@@ -138,6 +152,7 @@ export default function PatientDetail() {
           {permisos.editarPerfil && !isEditing && (
             <button
               type="button"
+              data-cy="patient-detail-edit-button"
               onClick={handleEdit}
               className="w-full rounded-xl bg-cyan-600 px-5 py-3 font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
             >
@@ -147,11 +162,13 @@ export default function PatientDetail() {
         </div>
 
         {isEditing ? (
+          <div data-cy="patient-detail-edit-form">
           <PatientEditForm
             patient={patient}
             onSave={handleSavePatient}
             onCancel={handleCancel}
           />
+          </div>
         ) : (
           <PatientInfo patient={patient} />
         )}

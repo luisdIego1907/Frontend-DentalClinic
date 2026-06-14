@@ -273,6 +273,7 @@ export default function PatientList() {
 
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <DeleteButton
+            data-cy="delete-selected-patients-button"
             label="Eliminar pacientes"
             loadingLabel="Eliminando pacientes..."
             disabled={selectedPatients.length === 0}
@@ -282,6 +283,7 @@ export default function PatientList() {
 
           <Link
             to="/patients/register"
+             data-cy="register-patient-button"
             className="w-full rounded-xl bg-cyan-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
           >
             Registrar Paciente
@@ -299,6 +301,7 @@ export default function PatientList() {
         </label>
 
         <input
+          data-cy="patients-search"
           id="patient-search"
           type="text"
           value={searchTerm}
@@ -348,7 +351,9 @@ export default function PatientList() {
           </div>
         </div>
       ) : filteredPatients.length === 0 ? (
-        <div className="flex items-center justify-center py-20">
+        <div className="flex items-center justify-center py-20" 
+          data-cy="patients-empty-state">
+          
           <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm sm:px-10 sm:py-12">
             <div className="mb-4 text-6xl">🔎</div>
 
@@ -364,14 +369,14 @@ export default function PatientList() {
       ) : (
         <>
           <div className="mb-4 flex flex-col gap-1 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-            <span>
+            <span data-cy="patients-count-summary">
               Mostrando {startIndex + 1} -{" "}
               {Math.min(endIndex, filteredPatients.length)} de{" "}
               {filteredPatients.length} paciente(s).
             </span>
 
             {totalPages > 1 && (
-              <span>
+              <span  data-cy="patients-page-summary">
                 Página {currentPage} de {totalPages}
               </span>
             )}
@@ -379,9 +384,11 @@ export default function PatientList() {
 
           {/* Contenedor que muestra las tarjetas de pacientes en forma de grid.
              Solo se muestran máximo 15 pacientes por página. */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6" 
+            data-cy="patients-grid">
             {paginatedPatients.map((patient) => (
               <PatientCard
+                key={patient.patient_id}
                 patient={patient}
                 selected={selectedPatients.includes(patient.patient_id)}
                 onSelect={() => handleSelectPatient(patient.patient_id)}
@@ -394,6 +401,7 @@ export default function PatientList() {
             <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
               <button
                 type="button"
+                data-cy="patients-prev-page"
                 onClick={handlePreviousPage}
                 disabled={currentPage === 1}
                 className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
@@ -401,12 +409,14 @@ export default function PatientList() {
                 Anterior
               </button>
 
-              <span className="text-sm font-medium text-slate-600">
+              <span className="text-sm font-medium text-slate-600"  
+                data-cy="patients-page-indicator">
                 Página {currentPage} de {totalPages}
               </span>
 
               <button
                 type="button"
+                data-cy="patients-next-page"
                 onClick={handleNextPage}
                 disabled={currentPage === totalPages}
                 className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"

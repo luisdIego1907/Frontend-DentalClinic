@@ -147,7 +147,7 @@ export default function Login() {
               Ingresa tus credenciales para continuar
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" data-cy="login-form">
               {/* Username Input */}
               <div>
                 <label
@@ -159,6 +159,7 @@ export default function Login() {
 
                 <input
                   id="username"
+                  data-cy="login-username"
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -180,6 +181,7 @@ export default function Login() {
                 <div className="relative">
                   <input
                     id="password"
+                    data-cy="login-password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -190,6 +192,7 @@ export default function Login() {
 
                   <button
                     type="button"
+                    data-cy="toggle-password"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-500 transition-colors hover:text-gray-900"
                     aria-label={
@@ -206,12 +209,13 @@ export default function Login() {
               </div>
 
               {errorMessage && (
-                <p className="text-sm text-red-600">{errorMessage}</p>
+                <p className="text-sm text-red-600" data-cy="login-error" role="alert">{errorMessage}</p>
               )}
 
               {/* Submit Button */}
               <button
                 type="submit"
+                data-cy="login-submit"
                 disabled={isSubmitting}
                 className="
 w-full

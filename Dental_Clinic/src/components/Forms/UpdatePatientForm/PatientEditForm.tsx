@@ -62,13 +62,15 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
   };
 
   return (
-    <form onSubmit={handleSave} className="space-y-6">
+    <form onSubmit={handleSave} className="space-y-6"
+      data-cy="patient-edit-form">
       <div>
         <label className="block text-sm font-semibold text-slate-600 mb-2">
           Nombre
         </label>
 
         <input
+          data-cy="patient-edit-first-name-input"
           type="text"
           name="first_name"
           value={formData.first_name}
@@ -88,6 +90,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
         </label>
 
         <input
+          data-cy="patient-edit-last-name-input"
           type="text"
           name="last_name"
           value={formData.last_name}
@@ -107,6 +110,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
         </label>
 
         <input
+          data-cy="patient-edit-identification-input"
           type="text"
           name="identification"
           value={formData.identification}
@@ -160,6 +164,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
         </label>
 
         <input
+          data-cy="patient-edit-phone-input"
           type="text"
           name="phone"
           value={formatPhone(formData.phone)}
@@ -187,6 +192,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
         </label>
 
         <input
+          data-cy="patient-edit-address-input"
           type="text"
           name="address"
           value={formData.address}
@@ -210,6 +216,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
       <div className="flex flex-col-reverse gap-3 pt-4 sm:flex-row sm:justify-end">
         <button
           type="button"
+          data-cy="patient-edit-cancel-button"
           onClick={onCancel}
           className="w-full rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-600 transition-colors hover:bg-slate-100 sm:w-auto"
         >
@@ -218,6 +225,7 @@ export default function PatientEditForm({ patient, onSave, onCancel }: Props) {
 
         <button
           type="submit"
+           data-cy="patient-edit-save-button"
           className="w-full rounded-xl bg-cyan-600 px-5 py-3 font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
         >
           Guardar
