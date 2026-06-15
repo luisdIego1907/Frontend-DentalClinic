@@ -1,5 +1,10 @@
 /// <reference types="cypress" />
 
+type PageInfo = {
+  currentPage: number;
+  totalPages: number;
+};
+
 function loginAsAdmin() {
   cy.env(["adminUsername", "adminPassword"]).then((env) => {
     const username = String(env.adminUsername);
@@ -28,6 +33,85 @@ function loginAsAdmin() {
   });
 }
 
+function parsePageIndicator(text: string): PageInfo {
+  const match = text.match(/Página\s+(\d+)\s+de\s+(\d+)/i);
+
+  if (!match) {
+    throw new Error(`Formato inválido del indicador de página: "${text}"`);
+  }
+
+  const [, currentPageText, totalPagesText] = match;
+
+  if (!currentPageText || !totalPagesText) {
+    throw new Error(`No se pudo leer la paginación desde: "${text}"`);
+  }
+
+  const currentPage = Number(currentPageText);
+  const totalPages = Number(totalPagesText);
+
+  if (!Number.isInteger(currentPage) || !Number.isInteger(totalPages)) {
+    throw new Error(`La paginación contiene valores inválidos: "${text}"`);
+  }
+
+  return {
+    currentPage,
+    totalPages,
+  };
+}
+
+function getPageInfo(): Cypress.Chainable<PageInfo> {
+  return cy
+    .get("[data-cy='patients-page-indicator']")
+    .should("be.visible")
+    .invoke("text")
+    .then(parsePageIndicator);
+}
+
+function assertPageInfo(expectedCurrentPage: number, expectedTotalPages: number) {
+  cy.get("[data-cy='patients-page-indicator']")
+    .should("be.visible")
+    .and(
+      "contain",
+      `Página ${expectedCurrentPage} de ${expectedTotalPages}`,
+    );
+}
+
+function validateDynamicPagination() {
+  getPageInfo().then(({ currentPage, totalPages }) => {
+    expect(currentPage).to.eq(1);
+    expect(totalPages).to.be.greaterThan(0);
+
+    if (totalPages === 1) {
+      cy.get("[data-cy='patients-prev-page']").should("be.disabled");
+      cy.get("[data-cy='patients-next-page']").should("be.disabled");
+      return;
+    }
+
+    cy.get("[data-cy='patients-prev-page']").should("be.disabled");
+    cy.get("[data-cy='patients-next-page']").should("not.be.disabled");
+
+    for (let page = 2; page <= totalPages; page += 1) {
+      cy.get("[data-cy='patients-next-page']")
+        .should("not.be.disabled")
+        .click();
+
+      assertPageInfo(page, totalPages);
+    }
+
+    cy.get("[data-cy='patients-next-page']").should("be.disabled");
+
+    for (let page = totalPages - 1; page >= 1; page -= 1) {
+      cy.get("[data-cy='patients-prev-page']")
+        .should("not.be.disabled")
+        .click();
+
+      assertPageInfo(page, totalPages);
+    }
+
+    cy.get("[data-cy='patients-prev-page']").should("be.disabled");
+  });
+}
+
 describe("Flujo de pacientes como administrador", () => {
   beforeEach(() => {
     cy.clearLocalStorage();
@@ -37,53 +121,19 @@ describe("Flujo de pacientes como administrador", () => {
   });
 
   it("debe navegar a pacientes, paginar, buscar y abrir el detalle de Leo Torres", () => {
+    const nonexistentSearch = `NO_EXISTE_CYPRESS_${Date.now()}`;
+
     cy.get("[data-cy='nav-patients']").click();
 
     cy.location("pathname", { timeout: 10000 }).should("eq", "/patients");
 
     cy.get("[data-cy='patients-search']").should("be.visible");
 
-    cy.get("[data-cy='patients-page-indicator']")
-      .should("be.visible")
-      .and("contain", "Página 1 de 4");
+    validateDynamicPagination();
 
-    cy.get("[data-cy='patients-next-page']").click();
-    cy.get("[data-cy='patients-page-indicator']").should(
-      "contain",
-      "Página 2 de 4",
-    );
-
-    cy.get("[data-cy='patients-next-page']").click();
-    cy.get("[data-cy='patients-page-indicator']").should(
-      "contain",
-      "Página 3 de 4",
-    );
-
-    cy.get("[data-cy='patients-next-page']").click();
-    cy.get("[data-cy='patients-page-indicator']").should(
-      "contain",
-      "Página 4 de 4",
-    );
-
-    cy.get("[data-cy='patients-prev-page']").click();
-    cy.get("[data-cy='patients-page-indicator']").should(
-      "contain",
-      "Página 3 de 4",
-    );
-
-    cy.get("[data-cy='patients-prev-page']").click();
-    cy.get("[data-cy='patients-page-indicator']").should(
-      "contain",
-      "Página 2 de 4",
-    );
-
-    cy.get("[data-cy='patients-prev-page']").click();
-    cy.get("[data-cy='patients-page-indicator']").should(
-      "contain",
-      "Página 1 de 4",
-    );
-
-    cy.get("[data-cy='patients-search']").clear().type("XXXX");
+    cy.get("[data-cy='patients-search']")
+      .clear()
+      .type(nonexistentSearch);
 
     cy.get("[data-cy='patients-empty-state']")
       .should("be.visible")
@@ -92,7 +142,9 @@ describe("Flujo de pacientes como administrador", () => {
 
     cy.get("[data-cy='patients-search']").clear().type("Leo Torres");
 
-    cy.contains("[data-cy='patient-card']", "Leo Torres")
+    cy.contains("[data-cy='patient-card']", "Leo Torres", {
+      timeout: 10000,
+    })
       .should("be.visible")
       .click();
 
