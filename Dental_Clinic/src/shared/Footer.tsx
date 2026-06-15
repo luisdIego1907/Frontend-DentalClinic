@@ -134,17 +134,87 @@ export default function Footer() {
                     <a
                       href="#"
                       aria-label="Instagram"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-[#534AB7] hover:text-[#534AB7]"
+                      className="
+                      group relative flex items-center justify-center
+                      w-10 h-10 rounded-full bg-white text-slate-500
+                      shadow-sm border border-slate-200
+                      transition-all duration-300
+                      hover:-translate-y-1 hover:shadow-xl"
                     >
-                      <FaInstagram size={17} />
+                      <span
+                        className="
+                        absolute inset-0 rounded-full
+                        ring-0 ring-pink-500/30
+                        group-hover:ring-4
+                        transition-all duration-300"
+                      />
+
+                      <FaInstagram
+                        size={17}
+                        className="
+                        relative z-10
+                        transition-all duration-300
+                        group-hover:text-pink-600
+                        group-hover:scale-110"
+                      />
+
+                      <span
+                        className="
+                        pointer-events-none absolute -top-10
+                        px-3 py-1.5 rounded-lg
+                        bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500
+                        text-white text-xs font-medium
+                        opacity-0 translate-y-2
+                        group-hover:opacity-100
+                        group-hover:translate-y-0
+                        transition-all duration-300
+                        whitespace-nowrap shadow-lg"
+                      >
+                        Instagram
+                      </span>
                     </a>
 
                     <a
                       href="#"
                       aria-label="Facebook"
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-[#534AB7] hover:text-[#534AB7]"
+                      className="
+                      group relative flex items-center justify-center
+                      w-10 h-10 rounded-full bg-white text-slate-500
+                      shadow-sm border border-slate-200
+                      transition-all duration-300
+                      hover:-translate-y-1 hover:shadow-xl"
                     >
-                      <FaFacebookF size={15} />
+                      <span
+                        className="
+                        absolute inset-0 rounded-full
+                        ring-0 ring-blue-600/30
+                        group-hover:ring-4
+                        transition-all duration-300"
+                      />
+
+                      <FaFacebookF
+                        size={15}
+                        className="
+                        relative z-10
+                        transition-all duration-300
+                        group-hover:text-blue-600
+                        group-hover:scale-110"
+                      />
+
+                      <span
+                        className="
+                        pointer-events-none absolute -top-10
+                        px-3 py-1.5 rounded-lg
+                        bg-blue-600
+                        text-white text-xs font-medium
+                        opacity-0 translate-y-2
+                        group-hover:opacity-100
+                        group-hover:translate-y-0
+                        transition-all duration-300
+                        whitespace-nowrap shadow-lg"
+                      >
+                        Facebook
+                      </span>
                     </a>
                   </div>
                 </div>
