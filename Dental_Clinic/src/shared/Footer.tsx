@@ -132,7 +132,7 @@ export default function Footer() {
 
                   <div className="flex items-center gap-3">
                     <a
-                      href="#"
+                      href="https://www.instagram.com/" target="_blank"
                       aria-label="Instagram"
                       className="
                       group relative flex items-center justify-center
@@ -175,7 +175,7 @@ export default function Footer() {
                     </a>
 
                     <a
-                      href="#"
+                      href="https://www.facebook.com/" target="_blank"
                       aria-label="Facebook"
                       className="
                       group relative flex items-center justify-center
