@@ -1,15 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   Users,
   Clock,
   CalendarPlus,
   Pencil,
-  UserPlus,
   ClipboardList,
+  UserPlus,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
 import { PageGreeting } from "../../components/home/PageGreeting";
 import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
@@ -18,23 +16,13 @@ import { StatusBadge } from "../../components/home/Statusbadge";
 
 import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
+import { useNavigate } from "react-router-dom";
+import { getDateOnly, getToday, getTomorrow } from "../../utils/dateHelpers";
 
 const BLUE = {
   bg: "#E6F1FB",
-  soft: "#F8FBFF",
   dark: "#0C447C",
   mid: "#185FA5",
-};
-
-const getDateOnly = (date: string) => date.split("T")[0];
-
-const getToday = () => new Date().toISOString().split("T")[0];
-
-const getTomorrow = () => {
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  return tomorrow.toISOString().split("T")[0];
 };
 
 const sortByTime = (appointments: AppointmentData[]) =>
@@ -63,41 +51,31 @@ export default function HomeRecepcionist() {
   const today = getToday();
   const tomorrow = getTomorrow();
 
-  const citasHoy = useMemo(
-    () => sortByTime(citas.filter((cita) => getDateOnly(cita.date) === today)),
-    [citas, today],
+  const citasHoy = sortByTime(
+    citas.filter((cita) => getDateOnly(cita.date) === today),
   );
 
-  const citasManana = useMemo(
-    () => citas.filter((cita) => getDateOnly(cita.date) === tomorrow),
-    [citas, tomorrow],
+  const citasManana = citas.filter(
+    (cita) => getDateOnly(cita.date) === tomorrow,
   );
 
-  const citasPendientes = useMemo(
-    () => citasHoy.filter((cita) => cita.status === "Pendiente"),
-    [citasHoy],
+  const citasPendientes = citasHoy.filter(
+    (cita) => cita.status === "Pendiente",
   );
 
-  const citasEnEspera = useMemo(
-    () => citasHoy.filter((cita) => cita.status === "En espera"),
-    [citasHoy],
-  );
+  const citasEnEspera = citasHoy.filter((cita) => cita.status === "En espera");
 
-  const citasMananaPendientes = useMemo(
-    () => citasManana.filter((cita) => cita.status === "Pendiente").length,
-    [citasManana],
-  );
+  const citasMananaPendientes = citasManana.filter(
+    (cita) => cita.status === "Pendiente",
+  ).length;
 
   const proximoTurno = citasEnEspera[0]?.time ?? "Sin turnos";
 
   return (
     <main className="relative isolate overflow-hidden bg-slate-50 px-4 py-5 text-sm sm:px-6 sm:text-base lg:px-8 2xl:px-10 2xl:text-base min-[1800px]:text-[17px]">
-
       <div className="mx-auto flex w-full max-w-[1580px] flex-col gap-7 2xl:gap-8">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-[2rem] border border-sky-100 bg-white/85 p-6 shadow-sm backdrop-blur sm:p-8 xl:p-9">
-         
-
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <PageGreeting nombre="Recepción" colorClass="text-[#185FA5]" />
@@ -113,9 +91,11 @@ export default function HomeRecepcionist() {
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#185FA5] 2xl:text-sm">
                   Hoy
                 </p>
+
                 <p className="mt-1 text-2xl font-bold text-slate-900 2xl:text-3xl min-[1800px]:text-4xl">
                   {citasHoy.length}
                 </p>
+
                 <p className="text-xs text-slate-500 2xl:text-sm min-[1800px]:text-base">
                   citas registradas
                 </p>
@@ -125,9 +105,11 @@ export default function HomeRecepcionist() {
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 2xl:text-sm">
                   Próximo turno
                 </p>
+
                 <p className="mt-1 text-2xl font-bold text-slate-900 2xl:text-3xl min-[1800px]:text-4xl">
                   {proximoTurno}
                 </p>
+
                 <p className="text-xs text-slate-500 2xl:text-sm min-[1800px]:text-base">
                   sala de espera
                 </p>

@@ -14,15 +14,13 @@ import { getAppointments } from "../../services/AppointmentService";
 import { getPatients } from "../../services/PatientService";
 import { getAllConsultations } from "../../services/ConsultationService";
 
+import { getDateOnly, getToday } from "../../utils/dateHelpers";
+
 const PURPLE = {
   bg: "#EEEDFE",
   dark: "#3C3489",
   mid: "#534AB7",
 };
-
-const getDateOnly = (date: string) => date.split("T")[0];
-
-const getToday = () => new Date().toISOString().split("T")[0];
 
 const sortByTime = (appointments: AppointmentData[]) =>
   [...appointments].sort((a, b) => a.time.localeCompare(b.time));
@@ -34,6 +32,8 @@ export default function HomeAdmin() {
     ConsultationSummaryResponse[]
   >([]);
   const [errorMessage, setErrorMessage] = useState("");
+
+  const today = getToday();
 
   useEffect(() => {
     const loadHomeData = async () => {
@@ -57,19 +57,16 @@ export default function HomeAdmin() {
     loadHomeData();
   }, []);
 
-  const citasHoy = useMemo(() => {
-    const today = getToday();
-
-    return sortByTime(citas.filter((cita) => getDateOnly(cita.date) === today));
-  }, [citas]);
+  const citasHoy = useMemo(
+    () => sortByTime(citas.filter((cita) => getDateOnly(cita.date) === today)),
+    [citas, today],
+  );
 
   return (
     <main className="relative isolate overflow-hidden bg-slate-50 px-4 py-5 text-sm sm:px-6 lg:px-8 2xl:px-10 2xl:text-base min-[1800px]:text-[17px]">
       <div className="mx-auto flex w-full max-w-[1580px] flex-col gap-7 2xl:gap-8">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-[2rem] border border-violet-100 bg-white/85 p-6 shadow-sm backdrop-blur sm:p-8 xl:p-9">
-         
-
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <PageGreeting
@@ -98,9 +95,7 @@ export default function HomeAdmin() {
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
                   Panel
                 </p>
-                <p className="mt-1 text-2xl font-bold text-slate-900">
-                  Admin
-                </p>
+                <p className="mt-1 text-2xl font-bold text-slate-900">Admin</p>
                 <p className="text-xs text-slate-500">vista general</p>
               </div>
             </div>

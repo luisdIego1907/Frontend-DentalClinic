@@ -7,8 +7,6 @@ import {
   Stethoscope,
   AlertCircle,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
 import { PageGreeting } from "../../components/home/PageGreeting";
 import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
@@ -20,8 +18,14 @@ import {
   getAppointmentDoctors,
   getAppointments,
 } from "../../services/AppointmentService";
-
 import type { AppointmentData, DoctorData } from "../../models/appointment";
+import { useNavigate } from "react-router-dom";
+import {
+  getCurrentMonth,
+  getDateOnly,
+  getMonthOnly,
+  getToday,
+} from "../../utils/dateHelpers";
 
 const TEAL = {
   bg: "#E1F5EE",
@@ -35,23 +39,13 @@ interface JwtPayload {
   externalId?: string;
 }
 
-const getDateOnly = (date: string) => date.split("T")[0];
-
-const getToday = () => new Date().toISOString().split("T")[0];
-
-const getMonthOnly = (date: string) => getDateOnly(date).slice(0, 7);
-
-const getCurrentMonth = () => new Date().toISOString().slice(0, 7);
-
 const sortByTime = (appointments: AppointmentData[]) =>
   [...appointments].sort((a, b) => a.time.localeCompare(b.time));
 
 function decodeJwtPayload(token: string): JwtPayload {
   const payload = token.split(".")[1];
 
-  if (!payload) {
-    return {};
-  }
+  if (!payload) return {};
 
   const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
   const paddedBase64 = base64.padEnd(
@@ -64,10 +58,7 @@ function decodeJwtPayload(token: string): JwtPayload {
 
 function getCurrentUserResourceId() {
   const token = getToken();
-
-  if (!token) {
-    return "";
-  }
+  if (!token) return "";
 
   try {
     const payload = decodeJwtPayload(token);
@@ -78,9 +69,7 @@ function getCurrentUserResourceId() {
 }
 
 function getDoctorDisplayName(doctor: DoctorData | undefined) {
-  if (!doctor) {
-    return "Odontólogo";
-  }
+  if (!doctor) return "Odontólogo";
 
   return doctor.display_name || `${doctor.first_name} ${doctor.last_name}`;
 }
@@ -91,6 +80,9 @@ export default function HomeDentist() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const navigate = useNavigate();
+
+  const today = getToday();
+  const currentMonth = getCurrentMonth();
 
   useEffect(() => {
     const loadDentistData = async () => {
@@ -126,9 +118,6 @@ export default function HomeDentist() {
     loadDentistData();
   }, []);
 
-  const today = getToday();
-  const currentMonth = getCurrentMonth();
-
   const citasHoy = useMemo(
     () =>
       sortByTime(
@@ -141,7 +130,10 @@ export default function HomeDentist() {
   );
 
   const citasConfirmadasHoy = useMemo(
-    () => citasHoy.filter((cita) => cita.status === "Confirmada").length,
+    () =>
+      citasHoy.filter(
+        (cita) => cita.status === "Pendiente" || cita.status === "Confirmada",
+      ).length,
     [citasHoy],
   );
 
@@ -169,21 +161,16 @@ export default function HomeDentist() {
 
   return (
     <main className="relative isolate overflow-hidden bg-slate-50 px-4 py-5 text-sm sm:px-6 sm:text-base lg:px-8 2xl:px-10 2xl:text-base min-[1800px]:text-[17px]">
-      {/* Fondo decorativo */}
-
-
       <div className="mx-auto flex w-full max-w-[1580px] flex-col gap-7 2xl:gap-8">
         {/* HERO */}
         <section className="relative overflow-hidden rounded-[2rem] border border-emerald-100 bg-white/85 p-6 shadow-sm backdrop-blur sm:p-8 xl:p-9">
-         
-
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <PageGreeting nombre={doctorName} colorClass="text-[#185FA5]" />
 
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base 2xl:text-lg min-[1800px]:text-xl">
-                Panel clínico para revisar las citas asignadas, acceder a
-                pacientes y comenzar la atención odontológica del día.
+                Panel clínico para revisar las citas asignadas y comenzar la
+                atención odontológica del día.
               </p>
             </div>
 
@@ -283,7 +270,7 @@ export default function HomeDentist() {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 2xl:gap-5">
                 <QuickAccessButton
                   label="Atención de emergencia"
-                  description="Seleccionar un paciente de la lista sin cita"
+                  description="Paciente sin cita"
                   to="/patients?emergency=true"
                   icon={AlertCircle}
                   iconBg={TEAL.bg}
@@ -293,7 +280,7 @@ export default function HomeDentist() {
 
                 <QuickAccessButton
                   label="Ver citas"
-                  description="Lista de citas registradas"
+                  description="Lista de citas"
                   to="/appointments"
                   icon={Calendar}
                   iconBg={TEAL.bg}
@@ -303,7 +290,7 @@ export default function HomeDentist() {
 
                 <QuickAccessButton
                   label="Ver mis pacientes"
-                  description="Lista de pacientes asignados"
+                  description="Pacientes asignados"
                   to="/clinical-patients"
                   icon={Users}
                   iconBg={TEAL.bg}
@@ -314,7 +301,7 @@ export default function HomeDentist() {
             </section>
           </div>
 
-          {/* CITAS DE HOY */}
+          {/* CITAS */}
           <aside className="min-w-0 2xl:sticky 2xl:top-32 2xl:self-start min-[1800px]:top-36">
             <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white/90 shadow-sm backdrop-blur">
               <div className="border-b border-slate-100 bg-gradient-to-r from-white to-emerald-50/60">
