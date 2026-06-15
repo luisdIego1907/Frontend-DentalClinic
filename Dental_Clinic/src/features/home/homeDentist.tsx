@@ -12,6 +12,7 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { AppointmentRow } from "../../components/home/AppointmentRow";
 import { SectionHeader } from "../../components/home/SectionHeader";
+
 import { getToken } from "../../auth/sessionAuth";
 import {
   getAppointmentDoctors,
@@ -26,7 +27,13 @@ import {
   getToday,
 } from "../../utils/dateHelpers";
 
-const TEAL = { bg: "#E1F5EE", dark: "#0C447C", mid: "#185FA5" };
+const TEAL = {
+  bg: "#E1F5EE",
+  soft: "#F0FDF8",
+  dark: "#0C447C",
+  mid: "#185FA5",
+  green: "#1D9E75",
+};
 
 interface JwtPayload {
   externalId?: string;
@@ -71,6 +78,7 @@ export default function HomeDentist() {
   const [citas, setCitas] = useState<AppointmentData[]>([]);
   const [currentDoctor, setCurrentDoctor] = useState<DoctorData | undefined>();
   const [errorMessage, setErrorMessage] = useState("");
+
   const navigate = useNavigate();
 
   const today = getToday();

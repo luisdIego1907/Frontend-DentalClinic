@@ -13,6 +13,7 @@ import { StatCard } from "../../components/home/StatCard";
 import { QuickAccessButton } from "../../components/home/QuickAcessButton";
 import { SectionHeader } from "../../components/home/SectionHeader";
 import { StatusBadge } from "../../components/home/Statusbadge";
+
 import type { AppointmentData } from "../../models/appointment";
 import { getAppointments } from "../../services/AppointmentService";
 import { useNavigate } from "react-router-dom";
@@ -133,7 +134,6 @@ export default function HomeRecepcionist() {
                 <h2 className="text-lg font-bold text-slate-950 2xl:text-xl min-[1800px]:text-2xl">
                   Resumen de recepción
                 </h2>
-
                 <p className="text-sm text-slate-500 2xl:text-base min-[1800px]:text-[17px]">
                   Indicadores principales del flujo de citas.
                 </p>
@@ -178,7 +178,6 @@ export default function HomeRecepcionist() {
                 <h2 className="text-lg font-bold text-slate-950 2xl:text-xl min-[1800px]:text-2xl">
                   Acceso rápido
                 </h2>
-
                 <p className="text-sm text-slate-500 2xl:text-base min-[1800px]:text-[17px]">
                   Acciones frecuentes para recepción y agenda.
                 </p>
