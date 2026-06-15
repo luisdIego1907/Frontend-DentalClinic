@@ -1,5 +1,5 @@
 {
- "api": {
- "url": "http://localhost:5026"
- }
+  "api": {
+    "url": "https://dentalclinic-f5gpbjfhdvdkcraa.westus3-01.azurewebsites.net"
+  }
 }
