@@ -5,9 +5,9 @@ interface StatCardProps {
   value: number | string;
   sub: string;
   icon: LucideIcon;
-  iconBg: string; // e.g. "#E1F5EE"
-  iconColor: string; // e.g. "#0F6E56"
-  subColor: string; // e.g. "#1D9E75"
+  iconBg: string;
+  iconColor: string;
+  subColor: string;
 }
 
 export function StatCard({
@@ -20,18 +20,31 @@ export function StatCard({
   subColor,
 }: StatCardProps) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white p-4 sm:p-5">
-      <div className="flex items-start justify-between mb-3">
-        <p className="text-sm text-gray-500">{label}</p>
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-5 2xl:p-6 min-[1800px]:p-7">
+      <div className="mb-3 flex items-start justify-between gap-4 2xl:mb-4 min-[1800px]:mb-5">
+        <p className="text-sm font-medium text-slate-500 2xl:text-base min-[1800px]:text-lg">
+          {label}
+        </p>
+
         <div
-          className="w-9 h-9 rounded-full flex items-center justify-center"
+          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full 2xl:h-11 2xl:w-11 min-[1800px]:h-13 min-[1800px]:w-13"
           style={{ backgroundColor: iconBg }}
         >
-          <Icon className="w-4 h-4" style={{ color: iconColor }} />
+          <Icon
+            className="h-4 w-4 2xl:h-5 2xl:w-5 min-[1800px]:h-6 min-[1800px]:w-6"
+            style={{ color: iconColor }}
+          />
         </div>
       </div>
-      <p className="text-2xl font-semibold text-gray-900 sm:text-3xl">{value}</p>
-      <p className="text-xs mt-1" style={{ color: subColor }}>
+
+      <p className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl 2xl:text-4xl min-[1800px]:text-5xl">
+        {value}
+      </p>
+
+      <p
+        className="mt-1 text-xs font-medium 2xl:mt-2 2xl:text-sm min-[1800px]:text-base"
+        style={{ color: subColor }}
+      >
         {sub}
       </p>
     </div>
