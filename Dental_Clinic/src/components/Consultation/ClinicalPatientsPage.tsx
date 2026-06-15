@@ -28,6 +28,7 @@ export default function ClinicalPatientsPage() {
             patient={p}
             onClick={() => setSelectedPatient(p)}
             selected={selectedPatient?.patient_id === p.patient_id}
+            cardSelect={true}
           />
         ))}
       </div>

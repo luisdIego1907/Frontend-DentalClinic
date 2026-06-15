@@ -283,7 +283,7 @@ export default function PatientList() {
 
           <Link
             to="/patients/register"
-             data-cy="register-patient-button"
+            data-cy="register-patient-button"
             className="w-full rounded-xl bg-cyan-600 px-5 py-3 text-center font-medium text-white transition-colors hover:bg-cyan-700 sm:w-auto"
           >
             Registrar Paciente
@@ -351,9 +351,10 @@ export default function PatientList() {
           </div>
         </div>
       ) : filteredPatients.length === 0 ? (
-        <div className="flex items-center justify-center py-20" 
-          data-cy="patients-empty-state">
-          
+        <div
+          className="flex items-center justify-center py-20"
+          data-cy="patients-empty-state"
+        >
           <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white px-6 py-10 text-center shadow-sm sm:px-10 sm:py-12">
             <div className="mb-4 text-6xl">🔎</div>
 
@@ -376,7 +377,7 @@ export default function PatientList() {
             </span>
 
             {totalPages > 1 && (
-              <span  data-cy="patients-page-summary">
+              <span data-cy="patients-page-summary">
                 Página {currentPage} de {totalPages}
               </span>
             )}
@@ -384,8 +385,10 @@ export default function PatientList() {
 
           {/* Contenedor que muestra las tarjetas de pacientes en forma de grid.
              Solo se muestran máximo 15 pacientes por página. */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6" 
-            data-cy="patients-grid">
+          <div
+            className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+            data-cy="patients-grid"
+          >
             {paginatedPatients.map((patient) => (
               <PatientCard
                 key={patient.patient_id}
@@ -409,8 +412,10 @@ export default function PatientList() {
                 Anterior
               </button>
 
-              <span className="text-sm font-medium text-slate-600"  
-                data-cy="patients-page-indicator">
+              <span
+                className="text-sm font-medium text-slate-600"
+                data-cy="patients-page-indicator"
+              >
                 Página {currentPage} de {totalPages}
               </span>
 
