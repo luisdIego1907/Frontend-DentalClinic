@@ -3,17 +3,21 @@ import type { PatientDetails } from "../models/patient";
 
 type Props = {
   patient: PatientDetails;
-  /*Indica si la tarjeta esta seleccionada o no.
-    Opcional porque la tarjeta en si puede usarse sin seleccion*/
+  //Indica si la tarjeta puede usarse sin selección
   selected?: boolean;
-
   onClick?: () => void;
+  //Seleccionar opcionalmente con un checkbox
+  onSelect?: () => void;
+  //Validar el uso del card
+  cardSelect?: boolean;
 };
 
 export default function PatientCard({
   patient,
   selected = false,
   onClick,
+  onSelect,
+  cardSelect = false,
 }: Props) {
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
@@ -46,13 +50,22 @@ export default function PatientCard({
           data-cy="patient-select-checkbox"
           type="checkbox"
           checked={selected}
-          readOnly
+          readOnly={cardSelect}
           aria-label={`Seleccionar paciente ${fullName}`}
-          className="
+          onChange={
+            !cardSelect
+              ? (e) => {
+                  e.stopPropagation();
+                  onSelect?.();
+                }
+              : undefined
+          }
+          onClick={!cardSelect ? (e) => e.stopPropagation() : undefined}
+          className={`
       w-5 h-5 rounded
       accent-sky-500
-      pointer-events-none
-    "
+      ${cardSelect ? "pointer-events-none" : "cursor-pointer"}
+    `}
         />
       </div>
 
