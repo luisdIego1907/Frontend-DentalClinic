@@ -153,6 +153,11 @@ export default function ViewAppointments() {
 
   const hasFilters = Boolean(startDate || endDate);
 
+  //Filtrar a que solo se vean 5 pantalla
+  const MAX_APPOINTMENTS = 5;
+
+  const limitedAppointments = filteredAppointments.slice(0, MAX_APPOINTMENTS);
+
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10">
       <section className="mx-auto w-full max-w-6xl">
@@ -161,7 +166,9 @@ export default function ViewAppointments() {
             Citas
           </span>
 
-          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">Ver citas</h1>
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            Ver citas
+          </h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
             Consulte las citas registradas y filtre la agenda por rango de
@@ -249,7 +256,7 @@ export default function ViewAppointments() {
             </div>
           ) : (
             <div className="space-y-4">
-              {filteredAppointments.map((appointment) => (
+              {limitedAppointments.map((appointment) => (
                 <div
                   key={appointment.id}
                   className="rounded-xl border border-gray-200 bg-gray-50 p-4"

@@ -21,7 +21,11 @@ export default function ClinicalPatientsPage() {
   return (
     <div className="grid grid-cols-1 gap-4 p-4 lg:grid-cols-3 lg:gap-6 lg:p-6">
       {/* LISTA */}
-      <div className="space-y-3 lg:col-span-1">
+      <div
+        className={`space-y-3 lg:col-span-1 ${
+          selectedPatient ? "hidden lg:block" : "block"
+        }`}
+      >
         {patients.map((p) => (
           <PatientCard
             key={p.patient_id}
@@ -35,6 +39,15 @@ export default function ClinicalPatientsPage() {
 
       {/* DETALLE CLÍNICO */}
       <div className="lg:col-span-2">
+        {selectedPatient && (
+          <button
+            className="mb-3 text-sm text-blue-600 lg:hidden"
+            onClick={() => setSelectedPatient(null)}
+          >
+            ← Volver a pacientes
+          </button>
+        )}
+
         {!selectedPatient ? (
           <p className="text-slate-500">Selecciona un paciente</p>
         ) : (
