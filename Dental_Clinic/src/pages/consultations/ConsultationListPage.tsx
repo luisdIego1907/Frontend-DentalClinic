@@ -49,16 +49,17 @@ export default function ConsultationListPage() {
     });
   }, [consultations, patientFilter, doctorFilter, reasonFilter]);
 
-  const MAX_CONSULTATIONS = 6;
-
-  const limitedConsultations = filteredConsultations.slice(
-    0,
-    MAX_CONSULTATIONS,
-  );
-
   const toggleExpand = (id: number) => {
     setExpandedId(expandedId === id ? null : id);
   };
+  //Agregar paginación
+  const [page, setPage] = useState(1);
+  const pageSize = 6;
+
+  const paginatedConsultations = filteredConsultations.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
 
   if (loading) {
     return (
@@ -160,7 +161,7 @@ export default function ConsultationListPage() {
 
       {/* TABLA */}
 
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm pb-4 sm:pb-5 lg:pb-6">
         <div className="hidden grid-cols-5 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 md:grid">
           <span>Fecha</span>
           <span>Paciente</span>
@@ -174,118 +175,163 @@ export default function ConsultationListPage() {
             No se encontraron consultas.
           </p>
         ) : (
-          limitedConsultations.map((consultation) => (
-            <div
-              key={consultation.consultation_id}
-              className="border-b border-slate-100 last:border-none"
-            >
-              <div className="grid grid-cols-1 gap-3 px-4 py-4 transition hover:bg-slate-50 md:grid-cols-5 md:items-center md:px-5">
-                <span className="text-sm text-slate-700">
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
-                    Fecha
+          <>
+            {paginatedConsultations.map((consultation) => (
+              <div
+                key={consultation.consultation_id}
+                className="border-b border-slate-100 last:border-none"
+              >
+                <div className="grid grid-cols-1 gap-3 px-4 py-4 transition hover:bg-slate-50 md:grid-cols-5 md:items-center md:px-5">
+                  <span className="text-sm text-slate-700">
+                    <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                      Fecha
+                    </span>
+                    {consultation.consultation_date}
                   </span>
-                  {consultation.consultation_date}
-                </span>
 
-                <span className="text-sm text-slate-700">
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
-                    Paciente
+                  <span className="text-sm text-slate-700">
+                    <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                      Paciente
+                    </span>
+                    {consultation.patient_first_name}{" "}
+                    {consultation.patient_last_name}
                   </span>
-                  {consultation.patient_first_name}{" "}
-                  {consultation.patient_last_name}
-                </span>
 
-                <span className="text-sm text-slate-700">
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
-                    Odontólogo
+                  <span className="text-sm text-slate-700">
+                    <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                      Odontólogo
+                    </span>
+                    {consultation.odontologist_first_name}{" "}
+                    {consultation.odontologist_last_name}
                   </span>
-                  {consultation.odontologist_first_name}{" "}
-                  {consultation.odontologist_last_name}
-                </span>
 
-                <span className="break-words text-sm text-slate-700">
-                  <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
-                    Motivo
+                  <span className="break-words text-sm text-slate-700">
+                    <span className="mb-1 block text-xs font-semibold uppercase text-slate-400 md:hidden">
+                      Motivo
+                    </span>
+                    {consultation.reason}
                   </span>
-                  {consultation.reason}
-                </span>
 
-                <div className="flex justify-start md:justify-end">
-                  <button
-                    onClick={() => toggleExpand(consultation.consultation_id)}
-                    className="
-                      flex
-                      items-center
-                      gap-1
-                      text-xs
-                      font-medium
-                      text-purple-600
-                      hover:text-purple-700
-                    "
-                  >
-                    {expandedId === consultation.consultation_id ? (
-                      <>
-                        Ocultar
-                        <ChevronUp size={14} />
-                      </>
-                    ) : (
-                      <>
-                        Ver detalle
-                        <ChevronDown size={14} />
-                      </>
-                    )}
-                  </button>
+                  <div className="flex justify-start md:justify-end">
+                    <button
+                      onClick={() => toggleExpand(consultation.consultation_id)}
+                      className="
+                  flex
+                  items-center
+                  gap-1
+                  text-xs
+                  font-medium
+                  text-purple-600
+                  hover:text-purple-700
+                "
+                    >
+                      {expandedId === consultation.consultation_id ? (
+                        <>
+                          Ocultar
+                          <ChevronUp size={14} />
+                        </>
+                      ) : (
+                        <>
+                          Ver detalle
+                          <ChevronDown size={14} />
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
+
+                {expandedId === consultation.consultation_id && (
+                  <div className="space-y-5 bg-slate-50 px-4 pb-5 md:px-6">
+                    <div>
+                      <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">
+                        Diagnósticos
+                      </h3>
+
+                      {consultation.diagnoses.length === 0 ? (
+                        <p className="text-sm text-slate-400">
+                          Sin diagnósticos
+                        </p>
+                      ) : (
+                        <ul className="space-y-2">
+                          {consultation.diagnoses.map((d) => (
+                            <li
+                              key={d.diagnosis_id}
+                              className="text-sm text-slate-700"
+                            >
+                              • {d.description}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">
+                        Tratamientos
+                      </h3>
+
+                      {consultation.treatments.length === 0 ? (
+                        <p className="text-sm text-slate-400">
+                          Sin tratamientos
+                        </p>
+                      ) : (
+                        <ul className="space-y-2">
+                          {consultation.treatments.map((t) => (
+                            <li
+                              key={t.treatment_id}
+                              className="text-sm text-slate-700"
+                            >
+                              • {t.description} — ${t.cost.toLocaleString()} —{" "}
+                              {t.status}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {/* PAGINACIÓN */}
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <button
+                onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                disabled={page === 1}
+                className="
+            flex items-center gap-1
+            rounded-lg border border-slate-200
+            bg-white px-4 py-2 text-sm font-medium text-slate-700
+            shadow-sm transition
+            hover:bg-slate-50 hover:text-slate-900
+            active:scale-95
+            disabled:cursor-not-allowed disabled:opacity-40
+          "
+              >
+                ← Anterior
+              </button>
+
+              <div className="rounded-lg bg-slate-100 px-3 py-1 text-sm font-medium text-slate-600">
+                Página {page}
               </div>
 
-              {expandedId === consultation.consultation_id && (
-                <div className="space-y-5 bg-slate-50 px-4 pb-5 md:px-6">
-                  <div>
-                    <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">
-                      Diagnósticos
-                    </h3>
-
-                    {consultation.diagnoses.length === 0 ? (
-                      <p className="text-sm text-slate-400">Sin diagnósticos</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {consultation.diagnoses.map((d) => (
-                          <li
-                            key={d.diagnosis_id}
-                            className="text-sm text-slate-700"
-                          >
-                            • {d.description}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-
-                  <div>
-                    <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">
-                      Tratamientos
-                    </h3>
-
-                    {consultation.treatments.length === 0 ? (
-                      <p className="text-sm text-slate-400">Sin tratamientos</p>
-                    ) : (
-                      <ul className="space-y-2">
-                        {consultation.treatments.map((t) => (
-                          <li
-                            key={t.treatment_id}
-                            className="text-sm text-slate-700"
-                          >
-                            • {t.description} — ${t.cost.toLocaleString()} —{" "}
-                            {t.status}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              )}
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page * pageSize >= filteredConsultations.length}
+                className="
+            flex items-center gap-1
+            rounded-lg border border-slate-200
+            bg-white px-4 py-2 text-sm font-medium text-slate-700
+            shadow-sm transition
+            hover:bg-slate-50 hover:text-slate-900
+            active:scale-95
+            disabled:cursor-not-allowed disabled:opacity-40
+          "
+              >
+                Siguiente →
+              </button>
             </div>
-          ))
+          </>
         )}
       </section>
     </main>

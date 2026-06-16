@@ -153,10 +153,14 @@ export default function ViewAppointments() {
 
   const hasFilters = Boolean(startDate || endDate);
 
-  //Filtrar a que solo se vean 5 pantalla
-  const MAX_APPOINTMENTS = 5;
+  //Paginacion de las citas 5 por pagina
+  const [page, setPage] = useState(1);
+  const pageSize = 4;
 
-  const limitedAppointments = filteredAppointments.slice(0, MAX_APPOINTMENTS);
+  const paginatedAppointments = filteredAppointments.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
 
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10">
@@ -255,68 +259,93 @@ export default function ViewAppointments() {
               No hay citas registradas con los filtros seleccionados.
             </div>
           ) : (
-            <div className="space-y-4">
-              {limitedAppointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="rounded-xl border border-gray-200 bg-gray-50 p-4"
-                >
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {appointment.patient
-                          ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
-                          : "Paciente no seleccionado"}
-                      </p>
-
-                      {appointment.patient && (
-                        <p className="text-sm text-gray-600">
-                          Identificación: {appointment.patient.identification}
+            <>
+              <div className="space-y-4">
+                {paginatedAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="rounded-xl border border-gray-200 bg-gray-50 p-4"
+                  >
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          {appointment.patient
+                            ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
+                            : "Paciente no seleccionado"}
                         </p>
-                      )}
 
-                      <p className="text-sm text-gray-600">
-                        Fecha: {formatDateToDayMonthYear(appointment.date)}
-                      </p>
-
-                      <p className="text-sm text-gray-600">
-                        Horario: {getTimeOnly(appointment.time)} -{" "}
-                        {getAppointmentEndTime(
-                          appointment.time,
-                          appointment.durationMinutes,
+                        {appointment.patient && (
+                          <p className="text-sm text-gray-600">
+                            Identificación: {appointment.patient.identification}
+                          </p>
                         )}
-                      </p>
 
-                      <p className="text-sm text-gray-600">
-                        Odontólogo: {appointment.doctor || "Sin asignar"}
-                      </p>
+                        <p className="text-sm text-gray-600">
+                          Fecha: {formatDateToDayMonthYear(appointment.date)}
+                        </p>
 
-                      <p className="text-sm text-gray-600">
-                        Motivo: {appointment.reason}
-                      </p>
-                    </div>
+                        <p className="text-sm text-gray-600">
+                          Horario: {getTimeOnly(appointment.time)} -{" "}
+                          {getAppointmentEndTime(
+                            appointment.time,
+                            appointment.durationMinutes,
+                          )}
+                        </p>
 
-                    <div className="flex flex-col items-stretch gap-3 sm:items-start md:items-end">
-                      <div className="flex flex-wrap items-center gap-3">
-                        <span className="text-xs text-gray-400">
-                          {appointment.durationMinutes} min
-                        </span>
-                        <StatusBadge estado={appointment.status} />
+                        <p className="text-sm text-gray-600">
+                          Odontólogo: {appointment.doctor || "Sin asignar"}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Motivo: {appointment.reason}
+                        </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleEditAppointment(appointment)}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95 sm:w-auto"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        Editar
-                      </button>
+                      <div className="flex flex-col items-stretch gap-3 sm:items-start md:items-end">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="text-xs text-gray-400">
+                            {appointment.durationMinutes} min
+                          </span>
+                          <StatusBadge estado={appointment.status} />
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleEditAppointment(appointment)}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95 sm:w-auto"
+                        >
+                          <Pencil className="h-4 w-4" />
+                          Editar
+                        </button>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* PAGINACIÓN (CORRECTA Y FUERA DEL MAP) */}
+              <div className="mt-6 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page === 1}
+                  className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-95 disabled:opacity-40"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="rounded-lg bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">
+                  Página {page}
                 </div>
-              ))}
-            </div>
+
+                <button
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={page * pageSize >= filteredAppointments.length}
+                  className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-95 disabled:opacity-40"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </>
           )}
         </div>
       </section>
