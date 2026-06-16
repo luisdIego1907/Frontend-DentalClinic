@@ -53,6 +53,7 @@ export default function ConsultationListPage() {
     setExpandedId(expandedId === id ? null : id);
   };
   //Agregar paginación
+  //Se mostraran 6 consultas por pagina
   const [page, setPage] = useState(1);
   const pageSize = 6;
 
