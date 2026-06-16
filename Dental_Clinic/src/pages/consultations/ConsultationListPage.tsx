@@ -49,6 +49,13 @@ export default function ConsultationListPage() {
     });
   }, [consultations, patientFilter, doctorFilter, reasonFilter]);
 
+  const MAX_CONSULTATIONS = 6;
+
+  const limitedConsultations = filteredConsultations.slice(
+    0,
+    MAX_CONSULTATIONS,
+  );
+
   const toggleExpand = (id: number) => {
     setExpandedId(expandedId === id ? null : id);
   };
@@ -167,7 +174,7 @@ export default function ConsultationListPage() {
             No se encontraron consultas.
           </p>
         ) : (
-          filteredConsultations.map((consultation) => (
+          limitedConsultations.map((consultation) => (
             <div
               key={consultation.consultation_id}
               className="border-b border-slate-100 last:border-none"
