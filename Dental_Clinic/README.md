@@ -7,3 +7,5 @@ Instalar react-router-doom
 Instalar Tailwind
 
    npm install tailwindcss @tailwindcss/vite
+
+   App desplegada con Vercel: https://frontend-dentalclinic.vercel.app/
