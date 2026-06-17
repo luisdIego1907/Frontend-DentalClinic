@@ -41,7 +41,7 @@ export function ActivityFeed({ citas, consultations }: Props) {
       {recentActivity.map((item, i) => (
         <div
           key={i}
-          className="flex items-start gap-3 px-5 py-3 border-b last:border-none"
+          className="flex flex-col gap-2 border-b px-4 py-3 last:border-none sm:flex-row sm:items-start sm:gap-3 sm:px-5"
         >
           <div className="mt-0.5">
             {item.type === "appointment" ? (
@@ -51,14 +51,14 @@ export function ActivityFeed({ citas, consultations }: Props) {
             )}
           </div>
 
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900">{item.title}</p>
+          <div className="min-w-0 flex-1">
+            <p className="break-words text-sm font-medium text-gray-900">{item.title}</p>
             {item.subtitle && (
-              <p className="text-xs text-gray-500">{item.subtitle}</p>
+              <p className="break-words text-xs text-gray-500">{item.subtitle}</p>
             )}
           </div>
 
-          <span className="text-xs text-gray-400 whitespace-nowrap">
+          <span className="text-xs text-gray-400 sm:whitespace-nowrap">
             {new Date(item.date).toLocaleString()}
           </span>
         </div>

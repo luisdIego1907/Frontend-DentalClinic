@@ -75,10 +75,11 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto max-w-4xl rounded-2xl bg-white p-8 shadow-lg"
+      className="mx-auto w-full max-w-4xl rounded-2xl bg-white p-5 shadow-lg sm:p-8"
+      data-cy="register-patient-form"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Registrar paciente</h2>
+        <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Registrar paciente</h2>
         <p className="mt-1 text-sm text-gray-500">
           Complete la información del paciente para guardarlo en el sistema.
         </p>
@@ -90,6 +91,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Identificación
           </label>
           <input
+            data-cy="patient-identification-input"
             id="identification"
             type="text"
             name="identification"
@@ -108,6 +110,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Nombre
           </label>
           <input
+            data-cy="patient-first-name-input"
             id="first_name"
             type="text"
             name="first_name"
@@ -126,6 +129,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Apellido
           </label>
           <input
+            data-cy="patient-last-name-input"
             id="last_name"
             type="text"
             name="last_name"
@@ -144,6 +148,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Fecha de nacimiento
           </label>
           <input
+            data-cy="patient-birth-date-input"
             id="birth_date"
             type="date"
             name="birth_date"
@@ -161,6 +166,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Teléfono
           </label>
           <input
+            data-cy="patient-phone-input"
             id="phone"
             type="text"
             name="phone"
@@ -177,6 +183,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Correo electrónico
           </label>
           <input
+            data-cy="patient-email-input"
             id="email"
             type="email"
             name="email"
@@ -193,6 +200,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Género
           </label>
           <select
+            data-cy="patient-gender-input"
             id="gender"
             name="gender"
             value={formData.gender}
@@ -212,6 +220,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Estado
           </label>
           <select
+            data-cy="patient-status-input"
             id="status"
             name="status"
             value={formData.status}
@@ -229,6 +238,7 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
             Dirección
           </label>
           <textarea
+            data-cy="patient-address-input"
             id="address"
             name="address"
             value={formData.address}
@@ -243,10 +253,11 @@ export default function PatientForm({ onSubmit }: PatientFormProps) {
         </div>
       </div>
 
-      <div className="mt-8 flex justify-end">
+      <div className="mt-8 flex justify-stretch sm:justify-end">
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95"
+          className="w-full rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 active:scale-95 sm:w-auto"
+          data-cy="patient-save-button"
         >
           Guardar paciente
         </button>

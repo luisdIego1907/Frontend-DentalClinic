@@ -1,6 +1,6 @@
 interface PageGreetingProps {
   nombre: string;
-  colorClass: string; // e.g. "text-[#1D9E75]"
+  colorClass: string;
 }
 
 export function PageGreeting({ nombre, colorClass }: PageGreetingProps) {
@@ -12,11 +12,15 @@ export function PageGreeting({ nombre, colorClass }: PageGreetingProps) {
   });
 
   return (
-    <div className="mb-6">
-      <h1 className="text-2xl font-semibold text-gray-900">
-        Buenas tardes, <span className={colorClass}>{nombre}</span> 👋
+    <div className="mb-6 2xl:mb-7 min-[1800px]:mb-8">
+      <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl 2xl:text-4xl min-[1800px]:text-5xl">
+        Buenas tardes,{" "}
+        <span className={colorClass}>{nombre}</span>
       </h1>
-      <p className="text-sm text-gray-500 mt-1 capitalize">{fecha}</p>
+
+      <p className="mt-2 text-sm capitalize text-slate-500 sm:text-base 2xl:text-lg min-[1800px]:text-xl">
+        {fecha}
+      </p>
     </div>
   );
 }

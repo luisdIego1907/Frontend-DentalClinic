@@ -41,7 +41,7 @@ export default function DiagnosesTab({ diagnoses, onChange, errors }: Props) {
           key={index}
           className="bg-slate-50 border border-slate-200 rounded-lg p-4"
         >
-          <div className="flex justify-between items-center mb-3">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs font-semibold text-slate-500">
               Diagnóstico #{index + 1}
             </span>

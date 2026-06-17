@@ -95,7 +95,7 @@ export async function loginUser(request: LoginRequest): Promise<void> {
   const expiresIn = data.expiresIn;
 
   if (!token || !expiresIn) {
-    throw new Error("El backend no devolvió token o expiración");
+    throw new Error("Credenciales incorrectas");
   }
 
   const payload = decodeJwtPayload(token);

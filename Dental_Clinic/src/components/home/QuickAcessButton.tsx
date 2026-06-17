@@ -8,7 +8,7 @@ interface QuickAccessButtonProps {
   iconBg: string;
   iconColor: string;
   accentBorder: string;
-  to: string; // ruta destino
+  to: string;
 }
 
 export function QuickAccessButton({
@@ -23,21 +23,35 @@ export function QuickAccessButton({
   return (
     <Link
       to={to}
-      className="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3 text-left transition-all"
-      onMouseEnter={(e) => (e.currentTarget.style.borderColor = accentBorder)}
-      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "")}
+      className="group flex min-w-0 items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-5 2xl:gap-4 2xl:p-6 min-[1800px]:p-7"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = accentBorder;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "";
+      }}
     >
       <div
-        className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+        className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl 2xl:h-12 2xl:w-12 min-[1800px]:h-14 min-[1800px]:w-14"
         style={{ backgroundColor: iconBg }}
       >
-        <Icon className="w-5 h-5" style={{ color: iconColor }} />
+        <Icon
+          className="h-5 w-5 2xl:h-6 2xl:w-6 min-[1800px]:h-7 min-[1800px]:w-7"
+          style={{ color: iconColor }}
+        />
       </div>
-      <div className="flex-1">
-        <p className="text-sm font-medium text-gray-900">{label}</p>
-        <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-slate-900 2xl:text-base min-[1800px]:text-lg">
+          {label}
+        </p>
+
+        <p className="mt-0.5 line-clamp-2 text-xs text-slate-500 2xl:text-sm min-[1800px]:text-base">
+          {description}
+        </p>
       </div>
-      <ChevronRight className="w-4 h-4 text-gray-400" />
+
+      <ChevronRight className="h-4 w-4 flex-shrink-0 text-slate-400 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-slate-600 2xl:h-5 2xl:w-5 min-[1800px]:h-6 min-[1800px]:w-6" />
     </Link>
   );
 }

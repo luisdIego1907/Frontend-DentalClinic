@@ -8,30 +8,31 @@ export default function PatientInfo({ patient }: Props) {
   const fullName = `${patient.first_name} ${patient.last_name}`;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6"
+      data-cy="patient-detail-info">
       <div>
         <p className="text-sm font-semibold text-slate-500">ID</p>
-        <p className="text-lg text-slate-800">{patient.patient_id}</p>
+        <p data-cy="patient-detail-id" className="break-words text-base text-slate-800 sm:text-lg">{patient.patient_id}</p>
       </div>
 
       <div>
         <p className="text-sm font-semibold text-slate-500">Nombre completo</p>
-        <p className="text-lg text-slate-800">{fullName}</p>
+        <p data-cy="patient-detail-full-name" className="break-words text-base text-slate-800 sm:text-lg">{fullName}</p>
       </div>
 
       <div>
         <p className="text-sm font-semibold text-slate-500">Identificación</p>
-        <p className="text-lg text-slate-800">{patient.identification}</p>
+        <p data-cy="patient-detail-identification" className="break-words text-base text-slate-800 sm:text-lg">{patient.identification}</p>
       </div>
 
       <div>
         <p className="text-sm font-semibold text-slate-500">Teléfono</p>
-        <p className="text-lg text-slate-800">{patient.phone}</p>
+        <p data-cy="patient-detail-phone" className="break-words text-base text-slate-800 sm:text-lg">{patient.phone}</p>
       </div>
 
       <div>
         <p className="text-sm font-semibold text-slate-500">Dirección</p>
-        <p className="text-lg text-slate-800">{patient.address}</p>
+        <p data-cy="patient-detail-address" className="break-words text-base text-slate-800 sm:text-lg">{patient.address}</p>
       </div>
     </div>
   );

@@ -153,15 +153,26 @@ export default function ViewAppointments() {
 
   const hasFilters = Boolean(startDate || endDate);
 
+  //Paginacion de las citas 5 por pagina
+  const [page, setPage] = useState(1);
+  const pageSize = 4;
+
+  const paginatedAppointments = filteredAppointments.slice(
+    (page - 1) * pageSize,
+    page * pageSize,
+  );
+
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-10">
-      <section className="mx-auto max-w-6xl">
-        <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm">
+    <main className="min-h-screen bg-gray-100 px-4 py-8 sm:py-10">
+      <section className="mx-auto w-full max-w-6xl">
+        <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm sm:mb-8 sm:p-6">
           <span className="mb-2 inline-block rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700">
             Citas
           </span>
 
-          <h1 className="text-3xl font-bold text-gray-900">Ver citas</h1>
+          <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+            Ver citas
+          </h1>
 
           <p className="mt-2 max-w-2xl text-sm text-gray-500">
             Consulte las citas registradas y filtre la agenda por rango de
@@ -170,12 +181,12 @@ export default function ViewAppointments() {
         </div>
 
         {errorMessage && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-medium text-red-700 shadow-sm">
+          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm font-medium text-red-700 shadow-sm sm:px-5">
             {errorMessage}
           </div>
         )}
 
-        <div className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
+        <div className="mb-6 rounded-2xl bg-white p-5 shadow-sm sm:p-6">
           <div className="mb-4 flex items-center gap-2 text-gray-900">
             <Search className="h-5 w-5 text-blue-600" />
             <h2 className="text-lg font-semibold">Filtrar citas</h2>
@@ -219,7 +230,7 @@ export default function ViewAppointments() {
               onClick={clearFilters}
               disabled={!hasFilters}
               title="Limpiar filtros"
-              className="flex h-[42px] items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-[42px] w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 md:w-auto"
             >
               <X className="h-4 w-4" />
               Limpiar
@@ -227,7 +238,7 @@ export default function ViewAppointments() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white p-6 shadow-sm">
+        <div className="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
           <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-2 text-gray-900">
               <CalendarDays className="h-5 w-5 text-blue-600" />
@@ -248,68 +259,93 @@ export default function ViewAppointments() {
               No hay citas registradas con los filtros seleccionados.
             </div>
           ) : (
-            <div className="space-y-4">
-              {filteredAppointments.map((appointment) => (
-                <div
-                  key={appointment.id}
-                  className="rounded-xl border border-gray-200 bg-gray-50 p-4"
-                >
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900">
-                        {appointment.patient
-                          ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
-                          : "Paciente no seleccionado"}
-                      </p>
-
-                      {appointment.patient && (
-                        <p className="text-sm text-gray-600">
-                          Identificación: {appointment.patient.identification}
+            <>
+              <div className="space-y-4">
+                {paginatedAppointments.map((appointment) => (
+                  <div
+                    key={appointment.id}
+                    className="rounded-xl border border-gray-200 bg-gray-50 p-4"
+                  >
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <p className="font-semibold text-gray-900">
+                          {appointment.patient
+                            ? `${appointment.patient.first_name} ${appointment.patient.last_name}`
+                            : "Paciente no seleccionado"}
                         </p>
-                      )}
 
-                      <p className="text-sm text-gray-600">
-                        Fecha: {formatDateToDayMonthYear(appointment.date)}
-                      </p>
-
-                      <p className="text-sm text-gray-600">
-                        Horario: {getTimeOnly(appointment.time)} -{" "}
-                        {getAppointmentEndTime(
-                          appointment.time,
-                          appointment.durationMinutes,
+                        {appointment.patient && (
+                          <p className="text-sm text-gray-600">
+                            Identificación: {appointment.patient.identification}
+                          </p>
                         )}
-                      </p>
 
-                      <p className="text-sm text-gray-600">
-                        Odontólogo: {appointment.doctor || "Sin asignar"}
-                      </p>
+                        <p className="text-sm text-gray-600">
+                          Fecha: {formatDateToDayMonthYear(appointment.date)}
+                        </p>
 
-                      <p className="text-sm text-gray-600">
-                        Motivo: {appointment.reason}
-                      </p>
-                    </div>
+                        <p className="text-sm text-gray-600">
+                          Horario: {getTimeOnly(appointment.time)} -{" "}
+                          {getAppointmentEndTime(
+                            appointment.time,
+                            appointment.durationMinutes,
+                          )}
+                        </p>
 
-                    <div className="flex flex-col items-start gap-3 md:items-end">
-                      <div className="flex items-center gap-3">
-                        <span className="text-xs text-gray-400">
-                          {appointment.durationMinutes} min
-                        </span>
-                        <StatusBadge estado={appointment.status} />
+                        <p className="text-sm text-gray-600">
+                          Odontólogo: {appointment.doctor || "Sin asignar"}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          Motivo: {appointment.reason}
+                        </p>
                       </div>
 
-                      <button
-                        type="button"
-                        onClick={() => handleEditAppointment(appointment)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        Editar
-                      </button>
+                      <div className="flex flex-col items-stretch gap-3 sm:items-start md:items-end">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <span className="text-xs text-gray-400">
+                            {appointment.durationMinutes} min
+                          </span>
+                          <StatusBadge estado={appointment.status} />
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleEditAppointment(appointment)}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 active:scale-95 sm:w-auto"
+                        >
+                          <Pencil className="h-4 w-4" />
+                          Editar
+                        </button>
+                      </div>
                     </div>
                   </div>
+                ))}
+              </div>
+
+              {/* PAGINACIÓN (CORRECTA Y FUERA DEL MAP) */}
+              <div className="mt-6 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page === 1}
+                  className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-95 disabled:opacity-40"
+                >
+                  ← Anterior
+                </button>
+
+                <div className="rounded-lg bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600">
+                  Página {page}
                 </div>
-              ))}
-            </div>
+
+                <button
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={page * pageSize >= filteredAppointments.length}
+                  className="flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 active:scale-95 disabled:opacity-40"
+                >
+                  Siguiente →
+                </button>
+              </div>
+            </>
           )}
         </div>
       </section>
